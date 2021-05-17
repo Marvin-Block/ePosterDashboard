@@ -39,95 +39,6 @@
                 style="max-width: 150px;"
               />
               <v-spacer />
-              <v-dialog
-                v-model="dialog"
-                max-width="500px"
-              >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    color="primary"
-                    dark
-                    class="mb-2"
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    Neues Gerät
-                  </v-btn>
-                </template>
-                <v-card>
-                  <v-card-title>
-                    <span class="text-h5">Hans</span>
-                  </v-card-title>
-
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            label="Dessert name"
-                          />
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            label="Calories"
-                          />
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            label="Fat (g)"
-                          />
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            label="Carbs (g)"
-                          />
-                        </v-col>
-                        <v-col
-                          cols="12"
-                          sm="6"
-                          md="4"
-                        >
-                          <v-text-field
-                            label="Protein (g)"
-                          />
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                  </v-card-text>
-
-                  <v-card-actions>
-                    <v-spacer />
-                    <v-btn
-                      color="blue darken-1"
-                      text
-                    >
-                      Cancel
-                    </v-btn>
-                    <v-btn
-                      color="blue darken-1"
-                      text
-                    >
-                      Save
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog>
             </v-toolbar>
           </template>
           <template v-slot:item.updatedAt="{ item }">
@@ -152,6 +63,7 @@
                   class="px-2 ml-1"
                   elevation="0"
                   min-width="0"
+                  :disabled="action.disabled"
                   small
                   text
                   v-on="on"
@@ -171,7 +83,7 @@
                     {{ action.title }}
                   </v-toolbar>
                   <v-card-text>
-                    <div v-if="action.action === 'download' || action.action === 'preview'">
+                    <div v-if="action.action === 'ssh' || action.action === 'restart'">
                       <div class="text-h3 pa-3">
                         {{ action.text }}
                       </div>
@@ -211,7 +123,7 @@
                         {{ action.info }}
                       </div>
                     </div>
-                    <div v-else>
+                    <div v-else-if="action.action === 'delete'">
                       <div class="text-h3 pa-3">
                         {{ action.text }}
                       </div>
@@ -297,42 +209,51 @@
       actions: [
         {
           color: 'success',
-          icon: 'mdi-download',
-          action: 'download',
-          title: 'Download',
-          text: 'Der Download wurde gestartet.',
-          info: 'Sollte kein Download starten, melden Sie sich bitte bei der IT.',
+          icon: 'mdi-monitor',
+          action: 'ssh',
+          disabled: false,
+          title: 'SSH',
+          text: 'Die SSH Anfrage wurde in einem neuen Fenster geöffnet.',
+          info: 'Bitte stellen Sie sicher das WinSCP oder Putty installiert ist.',
         },
         {
           color: '',
-          icon: 'mdi-image-frame',
-          action: 'preview',
-          title: 'Vorschau',
-          text: 'Die Vorschau wurde in einem neuen Fenster geöffnet.',
-          info: 'Sollte kein Video angezeigt werden, melden Sie sich bitte bei der IT.',
+          icon: 'mdi-refresh',
+          action: 'restart',
+          disabled: true,
+          title: 'Neustart',
+          text: 'Dieser Bereich befindet sich noch in der Entwicklung.',
+          info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
+        },
+        {
+          color: 'black',
+          icon: 'mdi-auto-fix',
+          action: 'link',
+          disabled: false,
+          title: 'Links',
+          text: '',
+          info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
         },
         {
           color: 'info',
           icon: 'mdi-pencil',
           action: 'edit',
+          disabled: false,
           title: 'Ändern',
           text: '',
-          info: 'Das Feld "Rotation" ist noch etwas buggy. Soll das Feld leer sein, muss einmal was eingetragen und gelöscht werden.',
+          info: '',
         },
         {
           color: 'error',
           icon: 'mdi-close',
           action: 'delete',
+          disabled: false,
           title: 'Löschen',
-          text: 'Sind Sie sich sicher, dass dieses Video gelöscht werden soll ?',
-          info: 'Gelöschte Videos sind nicht wiederherstellbar',
+          text: 'Sind Sie sich sicher, dass dieses Gerät gelöscht werden soll ?',
+          info: 'Gelöschte Geräte sind nicht wiederherstellbar, werden aber bei der nächsten Anfrage wieder angelegt.',
         },
       ],
       headers: [
-        {
-          text: 'ID',
-          value: 'id',
-        },
         {
           text: 'Standort',
           value: 'location',
@@ -366,54 +287,28 @@
       items: [],
       editFields: [
         {
-          name: 'Name',
-          value: 'name',
+          name: 'Standort',
+          value: 'location',
           type: 'text',
           rules: [
-            v => !!v || 'Name ist ein Pflichtfeld',
-            v => (v && v.length > 10) || 'Der Name muss mindestens 10 Zeichen lang sein',
+            v => !!v || 'Der Standort ist ein Pflichtfeld',
+            v => /^\d{3}\s-\s.*/.test(v) || 'Bitte auf das Format achten -> 000 - HierDerName',
           ],
         },
         {
-          name: 'Kalenderwoche',
-          value: 'calendarWeek',
+          name: 'Typ',
+          value: 'type',
           type: 'text',
           rules: [
-            v => /^(?=[\s\S])/.test(v) ? /^KW\d{2}$/.test(v) || 'Format KW00, KW99, etc' : true,
-          ],
-        },
-        {
-          name: 'Höhe',
-          value: 'height',
-          type: 'number',
-          rules: [
-            v => !!v || 'Höhe ist ein Pflichtfeld',
-            v => /^\d{3,4}$/.test(v) || 'Die Höhe muss 3-4 stellig sein',
-          ],
-        },
-        {
-          name: 'Breite',
-          value: 'width',
-          type: 'number',
-          rules: [
-            v => !!v || 'Breite ist ein Pflichtfeld',
-            v => /^\d{3,4}$/.test(v) || 'Die Breite muss 3-4 stellig sein',
+            v => /^(?=[\s\S])/.test(v) ? /^(eposter|fernseher)$/i.test(v) || 'ePoster oder Fernseher' : true,
           ],
         },
         {
           name: 'Ausrichtung',
-          value: 'orientation_V2',
+          value: 'orientation',
           type: 'text',
           rules: [
             v => /^(?=[\s\S])/.test(v) ? /^(hoch|breit)$/i.test(v) || 'Hoch oder Breit' : true,
-          ],
-        },
-        {
-          name: 'Rotation',
-          value: 'rotation',
-          type: 'text',
-          rules: [
-            v => /^(?=[\s\S])/.test(v) ? /^(rechts|links)$/i.test(v) || 'Rechts oder Links' : true,
           ],
         },
       ],
@@ -441,39 +336,16 @@
       actionHandle: function (action, item) {
         this[action.action](item)
       },
-      download: function (item) {
-        axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, { responseType: 'blob' })
-          .then(resp => {
-            if (resp.data.type !== 'video/mp4') return
-            const url = window.URL.createObjectURL(resp.data)
-            const a = document.createElement('a')
-            a.style.display = 'none'
-            a.href = url
-            a.download = item.name
-            document.body.appendChild(a)
-            a.click()
-            window.URL.revokeObjectURL(url)
-          })
-          .catch((error) => {
-            this.alert = {
-              value: true,
-              type: 'error',
-              text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message,
-            }
-          })
+      ssh: function (item) {
+        window.open('ssh://pi@' + item.ip)
       },
-      preview: function (item) {
-        axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`)
-          .then(response => {
-            window.open(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, 's', `width= ${item.height > item.width ? '576' : '1024'}, height= ${item.height > item.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
-          })
-          .catch((error) => {
-            this.alert = {
-              value: true,
-              type: 'error',
-              text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message,
-            }
-          })
+      restart: function (item) {
+        // todo: add restart at some point
+        console.log(item.ip)
+      },
+      link: function (item) {
+        // todo: add link dialog
+        console.log(item.link)
       },
       edit: function (item) {
         this.selectedItem = item
