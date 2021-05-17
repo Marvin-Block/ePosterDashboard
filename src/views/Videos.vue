@@ -319,10 +319,10 @@
           text: 'ID',
           value: 'id',
         },
-        {
-          text: 'KW',
-          value: 'calendarWeek',
-        },
+        // {
+        //   text: 'KW',
+        //   value: 'calendarWeek',
+        // },
         {
           text: 'Name',
           value: 'name',
@@ -364,14 +364,14 @@
             v => (v && v.length > 4) || 'Der Name muss mindestens 5 Zeichen lang sein',
           ],
         },
-        {
-          name: 'Kalenderwoche',
-          value: 'calendarWeek',
-          type: 'text',
-          rules: [
-            v => /^(?=[\s\S])/.test(v) ? /^KW\d{2}$/.test(v) || 'Format KW00, KW99, etc' : true,
-          ],
-        },
+        // {
+        //   name: 'Kalenderwoche',
+        //   value: 'calendarWeek',
+        //   type: 'text',
+        //   rules: [
+        //     v => /^(?=[\s\S])/.test(v) ? /^KW\d{2}$/.test(v) || 'Format KW00, KW99, etc' : true,
+        //   ],
+        // },
         {
           name: 'Höhe',
           value: 'height',
@@ -419,16 +419,16 @@
             v => (v && v.length > 4) || 'Der Name muss mindestens 5 Zeichen lang sein',
           ],
         },
-        {
-          name: 'Kalenderwoche',
-          value: 'calendarWeek',
-          data: null,
-          disabled: false,
-          type: 'text',
-          rules: [
-            v => !v || /^KW\d{2}$/.test(v) || 'Format KW00, KW99, etc',
-          ],
-        },
+        // {
+        //   name: 'Kalenderwoche',
+        //   value: 'calendarWeek',
+        //   data: null,
+        //   disabled: false,
+        //   type: 'text',
+        //   rules: [
+        //     v => !v || /^KW\d{2}$/.test(v) || 'Format KW00, KW99, etc',
+        //   ],
+        // },
         {
           name: 'Ausrichtung',
           value: 'orientation_V2',
