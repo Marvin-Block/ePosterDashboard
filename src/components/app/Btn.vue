@@ -1,6 +1,7 @@
 <template>
   <v-btn
     :color="color"
+    :disabled="disabled"
     v-bind="$attrs"
     v-on="$listeners"
   >
@@ -16,6 +17,10 @@
       color: {
         type: String,
         default: 'primary',
+      },
+      disabled: {
+        type: Boolean,
+        default: true,
       },
     },
   }
