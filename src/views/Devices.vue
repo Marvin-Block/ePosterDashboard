@@ -54,7 +54,7 @@
               v-for="(action, i) in actions"
               :key="i"
               transition="dialog-bottom-transition"
-              max-width="600"
+              :max-width="action.width"
             >
               <template v-slot:activator="{ on, attrs }">
                 <app-btn
@@ -77,10 +77,15 @@
               >
                 <v-card>
                   <v-toolbar
-                    color="primary"
+                    :color="action.color"
                     dark
                   >
-                    {{ action.title }}
+                    <v-toolbar-title>
+                      <v-icon
+                        v-text="action.icon"
+                      />
+                      {{ action.title }}
+                    </v-toolbar-title>
                   </v-toolbar>
                   <v-card-text>
                     <div v-if="action.action === 'ssh' || action.action === 'restart'">
@@ -134,6 +139,54 @@
                       >
                         Löschen
                       </v-btn>
+                      <v-divider class="mx-3 mb-2 mt-4" />
+                      <div class="mx-3 mb-2">
+                        {{ action.info }}
+                      </div>
+                    </div>
+                    <div v-else-if="action.action === 'link'">
+                      <div class="text-h3 pa-3" />
+                      <v-row
+                        justify="center"
+                        class="mx-3"
+                      >
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
+                          <v-expansion-panels
+                            accordion
+                          >
+                            <v-expansion-panel
+                              v-for="(item, i) in videos"
+                              :key="i"
+                            >
+                              <v-expansion-panel-header> {{ item.name }} </v-expansion-panel-header>
+                              <v-expansion-panel-content>
+                                {{ item }}
+                              </v-expansion-panel-content>
+                            </v-expansion-panel>
+                          </v-expansion-panels>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
+                          <v-expansion-panels
+                            accordion
+                          >
+                            <v-expansion-panel
+                              v-for="(item, i) in devices"
+                              :key="i"
+                            >
+                              <v-expansion-panel-header> {{ item.location }} </v-expansion-panel-header>
+                              <v-expansion-panel-content>
+                                {{ item }}
+                              </v-expansion-panel-content>
+                            </v-expansion-panel>
+                          </v-expansion-panels>
+                        </v-col>
+                      </v-row>
                       <v-divider class="mx-3 mb-2 mt-4" />
                       <div class="mx-3 mb-2">
                         {{ action.info }}
@@ -212,6 +265,7 @@
           icon: 'mdi-monitor',
           action: 'ssh',
           disabled: false,
+          width: 600,
           title: 'SSH',
           text: 'Die SSH Anfrage wurde in einem neuen Fenster geöffnet.',
           info: 'Bitte stellen Sie sicher das WinSCP oder Putty installiert ist.',
@@ -221,6 +275,7 @@
           icon: 'mdi-refresh',
           action: 'restart',
           disabled: true,
+          width: 600,
           title: 'Neustart',
           text: 'Dieser Bereich befindet sich noch in der Entwicklung.',
           info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
@@ -229,7 +284,8 @@
           color: 'black',
           icon: 'mdi-auto-fix',
           action: 'link',
-          disabled: false,
+          disabled: true,
+          width: null,
           title: 'Links',
           text: '',
           info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
@@ -239,6 +295,7 @@
           icon: 'mdi-pencil',
           action: 'edit',
           disabled: false,
+          width: 600,
           title: 'Ändern',
           text: '',
           info: '',
@@ -248,6 +305,7 @@
           icon: 'mdi-close',
           action: 'delete',
           disabled: false,
+          width: 600,
           title: 'Löschen',
           text: 'Sind Sie sich sicher, dass dieses Gerät gelöscht werden soll ?',
           info: 'Gelöschte Geräte sind nicht wiederherstellbar, werden aber bei der nächsten Anfrage wieder angelegt.',
@@ -322,6 +380,7 @@
     computed: {
       ...sync('app', [
         'devices',
+        'videos',
       ]),
     },
     methods: {
@@ -339,11 +398,10 @@
       },
       restart: function (item) {
         // todo: add restart at some point
-        console.log(item.ip)
       },
       link: function (item) {
         // todo: add link dialog
-        console.log(item.link)
+        this.selectedItem = Object.assign(this.selectedItem, item)
       },
       edit: function (item) {
         this.selectedItem = Object.assign(this.selectedItem, item)

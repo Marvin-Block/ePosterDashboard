@@ -263,7 +263,6 @@
     computed: {
       videos: get('app/videos'),
       devices: get('app/devices'),
-      sales: get('sales/sales'),
     },
     methods: {
       formatTime: function (time, format) {

@@ -24,4 +24,26 @@
 <div id="app"></div>
 <!-- built files will be auto injected -->
 </body>
+<style>
+    /* Works on Firefox */
+    * {
+        scrollbar-width: auto;
+        scrollbar-color: #757575 #e1e1e1;
+    }
+
+    /* Works on Chrome, Edge, and Safari */
+    *::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: #e1e1e1;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: #757575;
+        border-radius: 8px;
+        border: 1px solid #e1e1e1;
+    }
+</style>
 </html>

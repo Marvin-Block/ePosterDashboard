@@ -42,7 +42,7 @@
               <v-spacer />
               <v-dialog
                 v-model="dialog"
-                max-width="500px"
+                max-width="900"
               >
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
@@ -65,7 +65,12 @@
                     color="primary"
                     dark
                   >
-                    Video Hochladen
+                    <v-toolbar-title>
+                      <v-icon>
+                        mdi-upload
+                      </v-icon>
+                      Video Hochladen
+                    </v-toolbar-title>
                   </v-toolbar>
 
                   <v-card-text>
@@ -129,7 +134,7 @@
               v-for="(action, i) in actions"
               :key="i"
               transition="dialog-bottom-transition"
-              max-width="600"
+              :max-width="action.width"
             >
               <template v-slot:activator="{ on, attrs }">
                 <app-btn
@@ -152,10 +157,15 @@
               >
                 <v-card>
                   <v-toolbar
-                    color="primary"
+                    :color="action.color"
                     dark
                   >
-                    {{ action.title }}
+                    <v-toolbar-title>
+                      <v-icon
+                        v-text="action.icon"
+                      />
+                      {{ action.title }}
+                    </v-toolbar-title>
                   </v-toolbar>
                   <v-card-text>
                     <div v-if="action.action === 'download' || action.action === 'preview'">
@@ -198,7 +208,7 @@
                         {{ action.info }}
                       </div>
                     </div>
-                    <div v-else>
+                    <div v-else-if="action.action === 'delete'">
                       <div class="text-h3 pa-3">
                         {{ action.text }}
                       </div>
@@ -209,6 +219,65 @@
                       >
                         Löschen
                       </v-btn>
+                      <v-divider class="mx-3 mb-2 mt-4" />
+                      <div class="mx-3 mb-2">
+                        {{ action.info }}
+                      </div>
+                    </div>
+                    <div v-else-if="action.action === 'link'">
+                      <div class="text-h3 pa-3">
+                        {{ action.text }}
+                      </div>
+                      <v-row
+                        justify="center"
+                        class="mx-3"
+                      >
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
+                          Left
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
+                          <v-sheet
+                            color="grey darken-2"
+                            rounded
+                            class="hidden-sm-and-down"
+                            style="max-height: 500px;overflow-y: scroll"
+                          >
+                            <v-expansion-panels
+                              accordion
+                            >
+                              <v-expansion-panel
+                                v-for="(item, i) in selectedItem.link"
+                                :key="i"
+                              >
+                                <v-expansion-panel-header> {{ item.linkUUID }} </v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                  <v-row
+                                    v-for="(entry, j) in item"
+                                    :key="j"
+                                  >
+                                    <v-col
+                                      cols="6"
+                                    >
+                                      {{ entry }}
+                                    </v-col>
+                                    <v-col
+                                      cols="6"
+                                    >
+                                      {{ item[entry] }}
+                                    </v-col>
+                                  </v-row>
+                                </v-expansion-panel-content>
+                              </v-expansion-panel>
+                            </v-expansion-panels>
+                          </v-sheet>
+                        </v-col>
+                      </v-row>
                       <v-divider class="mx-3 mb-2 mt-4" />
                       <div class="mx-3 mb-2">
                         {{ action.info }}
@@ -287,6 +356,7 @@
           icon: 'mdi-download',
           action: 'download',
           disabled: false,
+          width: 600,
           title: 'Download',
           text: 'Der Download wurde gestartet.',
           info: 'Sollte kein Download starten, melden Sie sich bitte bei der IT.',
@@ -296,6 +366,7 @@
           icon: 'mdi-image-frame',
           action: 'preview',
           disabled: false,
+          width: 600,
           title: 'Vorschau',
           text: 'Die Vorschau wurde in einem neuen Fenster geöffnet.',
           info: 'Sollte kein Video angezeigt werden, melden Sie sich bitte bei der IT.',
@@ -304,7 +375,8 @@
           color: 'black',
           icon: 'mdi-auto-fix',
           action: 'link',
-          disabled: false,
+          disabled: true,
+          width: null,
           title: 'Links',
           text: '',
           info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
@@ -314,6 +386,7 @@
           icon: 'mdi-pencil',
           action: 'edit',
           disabled: false,
+          width: 600,
           title: 'Ändern',
           text: '',
           info: 'Das Feld "Rotation" ist noch etwas buggy. Soll das Feld leer sein, muss einmal was eingetragen und gelöscht werden.',
@@ -323,6 +396,7 @@
           icon: 'mdi-close',
           action: 'delete',
           disabled: false,
+          width: 600,
           title: 'Löschen',
           text: 'Sind Sie sich sicher, dass dieses Video gelöscht werden soll ?',
           info: 'Gelöschte Videos sind nicht wiederherstellbar',
@@ -669,7 +743,7 @@
       },
       link: function (item) {
         // todo: add link dialog
-        console.log(item.link)
+        this.selectedItem = Object.assign(this.selectedItem, item)
       },
       edit: function (item) {
         this.selectedItem = Object.assign(this.selectedItem, item)
