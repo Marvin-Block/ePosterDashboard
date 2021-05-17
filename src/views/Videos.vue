@@ -1,3 +1,4 @@
+<!--suppress JSUnresolvedVariable, HtmlUnknownTag, JSUnusedGlobalSymbols -->
 <template>
   <v-container
     id="data-tables-view"
@@ -12,7 +13,7 @@
         <v-data-table
           item-key="videoUUID"
           :headers="headers"
-          :items="this.videos"
+          :items="videos"
           :search.sync="search"
           :page.sync="page"
           :items-per-page="itemsPerPage"
@@ -22,7 +23,7 @@
           no-results-text="Es wurde leider nichts gefunden"
           no-data-text="Es scheint keine Videos zu geben"
           loading-text="Videos werden geladen..."
-          :loading="this.videos.length < 1"
+          :loading="videos.length < 1"
           @page-count="pageCount = $event"
         >
           <template v-slot:top>
@@ -501,9 +502,93 @@
         const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
         return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i]
       },
+      /**
+       * Link Object retrieved from the API
+       * @typedef {Object} Link
+       * @property {Number} id - id
+       * @property {String} linkUUID - Unique identifier for the Link
+       * @property {String} deviceUUID - Unique identifier for the Device
+       * @property {String} videoUUID - Unique identifier for the Video
+       * @property {String} name - Name of the Link (optional)
+       * @property {String} start - Start time as Unix Timestamp (Format: Milliseconds)
+       * @property {String} end - End time as Unix Timestamp (Format: Milliseconds)
+       * @property {Boolean} active - Is Video visible or not
+       * @property {Number} position - Position of the Video
+       * @property {String} createdAt - Entry created at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z")
+       * @property {String} updatedAt - Entry updated at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z"))
+       */
+      /**
+       * Video Object retrieved from the API
+       * @typedef {Object} Video
+       * @property {Number} id - id
+       * @property {String} videoUUID - Unique identifier
+       * @property {String} name - Name
+       * @property {String} path - Path on Server
+       * @property {Number} size - File size
+       * @property {Number} width - Width
+       * @property {Number} height - Height
+       * @property {String} md5 - MD5 hash
+       * @property {String} calendarWeek - Calendar Week (optional)
+       * @property {String} orientation_V2 - Orientation (optional)
+       * @property {String} rotation - Rotation (optional)
+       * @property {String} createdAt - Entry created at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z")
+       * @property {String} updatedAt - Entry updated at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z"))
+       * @property {Array} link - Array of {@link Link} objects
+       */
+      /**
+       * Action for the Video Data Table
+       * @typedef {Object} Action
+       * @property {String} color - Color for the action icon
+       * @property {String} icon - Material Design Icon (Format: mdi-...)
+       * @property {String} action - Action identifier
+       * @property {String} title - Displayname
+       * @property {String} text - Textbox content
+       * @property {String} info - Additional Information
+       */
+      /**
+       * Calls the given function and passes it the {@link Video} object
+       * @param {Action} action - Action Object
+       * @param {Video} item - Video Object
+       */
       actionHandle: function (action, item) {
         this[action.action](item)
       },
+      /**
+       * Link Object retrieved from the API
+       * @typedef {Object} Link
+       * @property {Number} id - id
+       * @property {String} linkUUID - Unique identifier for the Link
+       * @property {String} deviceUUID - Unique identifier for the Device
+       * @property {String} videoUUID - Unique identifier for the Video
+       * @property {String} name - Name of the Link (optional)
+       * @property {String} start - Start time as Unix Timestamp (Format: Milliseconds)
+       * @property {String} end - End time as Unix Timestamp (Format: Milliseconds)
+       * @property {Boolean} active - Is Video visible or not
+       * @property {Number} position - Position of the Video
+       * @property {String} createdAt - Entry created at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z")
+       * @property {String} updatedAt - Entry updated at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z"))
+       */
+      /**
+       * Video Object retrieved from the API
+       * @typedef {Object} Video
+       * @property {Number} id - id
+       * @property {String} videoUUID - Unique identifier
+       * @property {String} name - Name
+       * @property {String} path - Path on Server
+       * @property {Number} size - File size
+       * @property {Number} width - Width
+       * @property {Number} height - Height
+       * @property {String} md5 - MD5 hash
+       * @property {String} calendarWeek - Calendar Week (optional)
+       * @property {String} orientation_V2 - Orientation (optional)
+       * @property {String} rotation - Rotation (optional)
+       * @property {String} createdAt - Entry created at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z")
+       * @property {String} updatedAt - Entry updated at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z"))
+       * @property {Array} link - Array of {@link Link} objects
+       */
+      /**
+       * @param {Video} item - Video Object
+       */
       download: function (item) {
         axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, { responseType: 'blob' })
           .then(resp => {
@@ -525,10 +610,48 @@
             }
           })
       },
+      /**
+       * Link Object retrieved from the API
+       * @typedef {Object} Link
+       * @property {Number} id - id
+       * @property {String} linkUUID - Unique identifier for the Link
+       * @property {String} deviceUUID - Unique identifier for the Device
+       * @property {String} videoUUID - Unique identifier for the Video
+       * @property {String} name - Name of the Link (optional)
+       * @property {String} start - Start time as Unix Timestamp (Format: Milliseconds)
+       * @property {String} end - End time as Unix Timestamp (Format: Milliseconds)
+       * @property {Boolean} active - Is Video visible or not
+       * @property {Number} position - Position of the Video
+       * @property {String} createdAt - Entry created at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z")
+       * @property {String} updatedAt - Entry updated at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z"))
+       */
+      /**
+       * Video Object retrieved from the API
+       * @typedef {Object} Video
+       * @property {Number} id - id
+       * @property {String} videoUUID - Unique identifier
+       * @property {String} name - Name
+       * @property {String} path - Path on Server
+       * @property {Number} size - File size
+       * @property {Number} width - Width
+       * @property {Number} height - Height
+       * @property {String} md5 - MD5 hash
+       * @property {String} calendarWeek - Calendar Week (optional)
+       * @property {String} orientation_V2 - Orientation (optional)
+       * @property {String} rotation - Rotation (optional)
+       * @property {String} createdAt - Entry created at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z")
+       * @property {String} updatedAt - Entry updated at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z"))
+       * @property {Array} link - Array of {@link Link} objects
+       */
+      /**
+       * @param {Video} item - Video Object
+       */
       preview: function (item) {
         axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`)
           .then(response => {
-            window.open(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, 's', `width= ${item.height > item.width ? '576' : '1024'}, height= ${item.height > item.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
+            if (response.status === 200) {
+              window.open(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, 's', `width= ${item.height > item.width ? '576' : '1024'}, height= ${item.height > item.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
+            }
           })
           .catch((error) => {
             this.alert = {
@@ -606,7 +729,6 @@
       upload: function () {
         if (this.validate()) {
           // todo: add upload
-          const a = {}
           this.newItem.forEach(entry => {
             console.log(entry.name, entry.data)
           })
