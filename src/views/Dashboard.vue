@@ -200,8 +200,9 @@
       ],
       stats: [
         {
-          actionIcon: 'mdi-calendar-range',
-          actionText: `Heute - ${moment(new Date()).format('DD.MM.YYYY')}`,
+          // actionIcon: 'mdi-calendar-range',
+          // actionText: `Heute - ${moment(new Date()).format('DD.MM.YYYY')}`,
+          actionText: 'Statischer Inhalt',
           color: 'primary',
           icon: 'mdi-creation',
           title: 'Neue Videos',
@@ -209,7 +210,7 @@
         },
         {
           // actionIcon: 'mdi-history',
-          actionText: '-',
+          actionText: 'Statischer Inhalt',
           color: 'success',
           icon: 'mdi-wifi',
           title: 'Geräte Online',
@@ -217,15 +218,17 @@
         },
         {
           // actionIcon: 'mdi-history',
-          actionText: '-',
+          // actionText: '-',
+          actionText: 'Statischer Inhalt',
           color: 'error',
           icon: 'mdi-wifi-off',
           title: 'Geräte Offline',
           value: '5',
         },
         {
-          actionIcon: 'mdi-calendar-range',
-          actionText: `Heute - ${moment(new Date()).format('DD.MM.YYYY')}`,
+          // actionIcon: 'mdi-calendar-range',
+          // actionText: `Heute - ${moment(new Date()).format('DD.MM.YYYY')}`,
+          actionText: 'Statischer Inhalt',
           color: '#254AA5',
           icon: 'mdi-monitor-clean',
           title: 'Neue Geräte',

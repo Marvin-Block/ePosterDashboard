@@ -102,7 +102,7 @@
                         <v-text-field
                           v-for="(field, j) in editFields"
                           :key="j"
-                          v-model="item[field.value]"
+                          v-model="selectedItem[field.value]"
                           class="pb-1"
                           :type="field.type"
                           :label="field.name"
@@ -113,7 +113,7 @@
                           :loading="loadingButton"
                           color="success"
                           class="mr-4"
-                          @click="sendEdit"
+                          @click="sendEdit(item);dialog.value = false; resetValidation(action.action)"
                         >
                           Speichern
                         </v-btn>
@@ -130,7 +130,7 @@
                       <v-btn
                         block
                         color="error"
-                        @click="sendDelete"
+                        @click="sendDelete(); dialog.value = false"
                       >
                         Löschen
                       </v-btn>
@@ -255,6 +255,10 @@
       ],
       headers: [
         {
+          text: 'ID',
+          value: 'id',
+        },
+        {
           text: 'Standort',
           value: 'location',
         },
@@ -327,12 +331,6 @@
       unixToReadable (ms, format) {
         return moment(moment.unix(ms / 1000)).format(format)
       },
-      bytesToSize: function (bytes) {
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
-        if (bytes === 0) return '0 Byte'
-        const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
-        return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i]
-      },
       actionHandle: function (action, item) {
         this[action.action](item)
       },
@@ -348,15 +346,16 @@
         console.log(item.link)
       },
       edit: function (item) {
-        this.selectedItem = item
+        this.selectedItem = Object.assign(this.selectedItem, item)
       },
-      sendEdit: function () {
+      sendEdit: function (item) {
         if (this.validate()) {
           this.loadingButton = true
-          axios.put('http://kodizabbix:3330/v2/video',
-                    _.pick(this.selectedItem, 'videoUUID', 'name', 'calendarWeek', 'orientation_V2', 'rotation'),
+          axios.put('http://kodizabbix:3330/v2/device',
+                    _.pick(this.selectedItem, 'deviceUUID', 'location', 'type', 'orientation'),
           ).then((response) => {
             this.loadingButton = false
+            Object.assign(item, this.selectedItem)
             this.alert = {
               value: true,
               type: 'success',
@@ -378,7 +377,8 @@
         this.selectedItem = item
       },
       sendDelete: function () {
-        axios.delete(`http://kodizabbix:3330/v2/video/${this.selectedItem.videoUUID}`)
+        console.log('???')
+        axios.delete(`http://kodizabbix:3330/v2/device/${this.selectedItem.deviceUUID}`)
           .then((response) => {
             const itemPos = this.devices.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
             this.devices.splice(itemPos, 1)
