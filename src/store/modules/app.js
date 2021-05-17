@@ -5,6 +5,12 @@ import { make } from 'vuex-pathify'
 const state = {
   drawer: null,
   drawerImage: false,
+  networkStatus: {
+    text: 'Verbindung wird aufgebaut',
+    icon: 'mdi-cloud-search',
+    color: 'blue',
+    darken: '1',
+  },
   mini: true,
   videos: [],
   devices: [],
@@ -124,7 +130,7 @@ const state = {
           to: '/forms/extended/',
         },
         {
-          title: 'Valiation Forms',
+          title: 'Validation Forms',
           to: '/forms/validation/',
         },
         {
@@ -185,6 +191,7 @@ const state = {
 
 const mutations = make.mutations(state)
 
+// noinspection JSUnusedLocalSymbols
 const actions = {
   ...make.actions(state),
   init: async ({ dispatch }) => {

@@ -1,5 +1,4 @@
 <template>
-<!-- todo: add 'mini-variant' below -->
   <v-navigation-drawer
     id="default-drawer"
     v-model="drawer"
@@ -33,30 +32,28 @@
       <default-list :items="items" />
     </div>
 
-<!--    <template #append>-->
-<!--      <div class="pa-4 text-center">-->
-<!--        <app-btn-->
-<!--          class="text-none mb-4"-->
-<!--          color="white"-->
-<!--          href="https://vuetifyjs.com"-->
-<!--          small-->
-<!--          text-->
-<!--        >-->
-<!--          Documentation-->
-<!--        </app-btn>-->
-
-<!--        <app-btn-->
-<!--          block-->
-<!--          class="text-none"-->
-<!--          color="secondary"-->
-<!--          href="https://store.vuetifyjs.com/products/vuetify-material-dashboard-pro"-->
-<!--        >-->
-<!--          Buy Now-->
-<!--        </app-btn>-->
-<!--      </div>-->
-<!--    </template>-->
-
-    <div class="pt-12" />
+    <template
+      #append
+      v-bind="networkStatus"
+    >
+      <v-list-item
+        :class="`py-1 ${networkStatus.color} darken-${networkStatus.darken} white--text`"
+        style="position: fixed; bottom:0; width: 100%; margin: 0"
+      >
+        <v-list-item-icon
+          class="my-2 mx-3 align-self-center"
+        >
+          <v-icon>
+            {{ networkStatus.icon }}
+          </v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ networkStatus.text }}
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </template>
   </v-navigation-drawer>
 </template>
 
@@ -96,6 +93,7 @@
         'drawer',
         'drawerImage',
         'mini',
+        'networkStatus',
       ]),
       isMobile: function () {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
