@@ -138,6 +138,7 @@
                   class="px-2 ml-1"
                   elevation="0"
                   min-width="0"
+                  :disabled="action.disabled"
                   small
                   text
                   v-on="on"
@@ -285,6 +286,7 @@
           color: 'success',
           icon: 'mdi-download',
           action: 'download',
+          disabled: false,
           title: 'Download',
           text: 'Der Download wurde gestartet.',
           info: 'Sollte kein Download starten, melden Sie sich bitte bei der IT.',
@@ -293,14 +295,25 @@
           color: '',
           icon: 'mdi-image-frame',
           action: 'preview',
+          disabled: false,
           title: 'Vorschau',
           text: 'Die Vorschau wurde in einem neuen Fenster geöffnet.',
           info: 'Sollte kein Video angezeigt werden, melden Sie sich bitte bei der IT.',
         },
         {
+          color: 'black',
+          icon: 'mdi-auto-fix',
+          action: 'link',
+          disabled: false,
+          title: 'Links',
+          text: '',
+          info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
+        },
+        {
           color: 'info',
           icon: 'mdi-pencil',
           action: 'edit',
+          disabled: false,
           title: 'Ändern',
           text: '',
           info: 'Das Feld "Rotation" ist noch etwas buggy. Soll das Feld leer sein, muss einmal was eingetragen und gelöscht werden.',
@@ -309,16 +322,17 @@
           color: 'error',
           icon: 'mdi-close',
           action: 'delete',
+          disabled: false,
           title: 'Löschen',
           text: 'Sind Sie sich sicher, dass dieses Video gelöscht werden soll ?',
           info: 'Gelöschte Videos sind nicht wiederherstellbar',
         },
       ],
       headers: [
-        {
-          text: 'ID',
-          value: 'id',
-        },
+        // {
+        //   text: 'ID',
+        //   value: 'id',
+        // },
         // {
         //   text: 'KW',
         //   value: 'calendarWeek',
@@ -364,14 +378,6 @@
             v => (v && v.length > 4) || 'Der Name muss mindestens 5 Zeichen lang sein',
           ],
         },
-        // {
-        //   name: 'Kalenderwoche',
-        //   value: 'calendarWeek',
-        //   type: 'text',
-        //   rules: [
-        //     v => /^(?=[\s\S])/.test(v) ? /^KW\d{2}$/.test(v) || 'Format KW00, KW99, etc' : true,
-        //   ],
-        // },
         {
           name: 'Höhe',
           value: 'height',
@@ -660,6 +666,10 @@
               text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message,
             }
           })
+      },
+      link: function (item) {
+        // todo: add link dialog
+        console.log(item.link)
       },
       edit: function (item) {
         this.selectedItem = item
