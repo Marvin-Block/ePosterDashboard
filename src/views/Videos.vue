@@ -237,7 +237,7 @@
     <v-snackbar
       v-model="alert.value"
       class="v-snackbar--material"
-      timeout="-1"
+      timeout="5000"
       bottom
       right
       color="transparent"
