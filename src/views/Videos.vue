@@ -38,7 +38,7 @@
                 single-line
                 style="max-width: 150px;"
               />
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-dialog
                 v-model="dialog"
                 max-width="500px"
@@ -83,23 +83,21 @@
                         :label="field.name"
                         :disabled="field.disabled"
                         :rules="field.rules"
-                      >
-                      </v-text-field>
+                      />
                       <v-file-input
-                        :rules="videoRules"
                         v-model="video"
+                        :rules="videoRules"
                         show-size
                         label="Video"
                         accept="video/mp4"
                         placeholder="Wähle ein Video aus"
                         @change="inspectVideo"
-                      >
-                      </v-file-input>
+                      />
                     </v-form>
                   </v-card-text>
 
                   <v-card-actions>
-                    <v-spacer></v-spacer>
+                    <v-spacer />
                     <v-btn
                       color="green darken-1"
                       text
@@ -483,7 +481,7 @@
       ],
       selectedItem: {},
       videoRules: [
-        v => !!v || 'Das Video ist ein Pflichtfeld'
+        v => !!v || 'Das Video ist ein Pflichtfeld',
       ],
       video: null,
       search: undefined,
@@ -590,33 +588,30 @@
           })
       },
       validate: function () {
-        if (this.$refs.form[0])
-          return this.$refs.form[0].validate()
-        else
-          return this.$refs.form.validate()
+        if (this.$refs.form[0]) { return this.$refs.form[0].validate() } else { return this.$refs.form.validate() }
       },
       resetValidation: function (action) {
         if (action === 'edit') { this.$refs.form[0].resetValidation() }
       },
       inspectVideo: function () {
-        let vid = document.createElement("video");
-        vid.src = URL.createObjectURL(this.video);
-        vid.addEventListener("loadedmetadata", e => {
+        const vid = document.createElement('video')
+        vid.src = URL.createObjectURL(this.video)
+        vid.addEventListener('loadedmetadata', e => {
           this.newItem[4].data = e.path[0].videoHeight
           this.newItem[5].data = e.path[0].videoWidth
           this.newItem[6].data = e.path[0].duration
           this.newItem[2].data = e.path[0].videoWidth > e.path[0].videoHeight ? 'Breit' : 'Hoch'
-        });
+        })
       },
       upload: function () {
         if (this.validate()) {
           // todo: add upload
-          let a = {}
+          const a = {}
           this.newItem.forEach(entry => {
             console.log(entry.name, entry.data)
           })
         }
-      }
+      },
     },
   }
 </script>

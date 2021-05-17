@@ -68,7 +68,10 @@
       </v-col>
 
       <v-col cols="12" />
-      <v-col cols="12" md="6">
+      <v-col
+        cols="12"
+        md="6"
+      >
         <material-card
           icon="mdi-widgets"
           icon-small
@@ -97,7 +100,10 @@
           </v-card-text>
         </material-card>
       </v-col>
-      <v-col cols="12" md="6">
+      <v-col
+        cols="12"
+        md="6"
+      >
         <material-card
           icon="mdi-monitor-cellphone-star"
           icon-small
@@ -109,8 +115,7 @@
               no-data-text="Es scheint keine neuen Geräte zu geben"
               loading-text="Geräte werden geladen..."
               hide-default-footer
-            >
-            </v-data-table>
+            />
           </v-card-text>
         </material-card>
       </v-col>
@@ -122,7 +127,7 @@
   // Utilities
   import { get, sync } from 'vuex-pathify'
   import Vue from 'vue'
-  import moment from "moment";
+  import moment from 'moment'
 
   const lineSmooth = Vue.chartist.Interpolation.cardinal({
     tension: 0,
@@ -337,6 +342,6 @@
         const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
         return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i]
       },
-    }
+    },
   }
 </script>

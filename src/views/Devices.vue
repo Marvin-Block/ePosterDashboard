@@ -38,7 +38,7 @@
                 single-line
                 style="max-width: 150px;"
               />
-              <v-spacer></v-spacer>
+              <v-spacer />
               <v-dialog
                 v-model="dialog"
                 max-width="500px"
@@ -56,7 +56,7 @@
                 </template>
                 <v-card>
                   <v-card-title>
-                    <span class="headline">Hans</span>
+                    <span class="text-h5">Hans</span>
                   </v-card-title>
 
                   <v-card-text>
@@ -69,7 +69,7 @@
                         >
                           <v-text-field
                             label="Dessert name"
-                          ></v-text-field>
+                          />
                         </v-col>
                         <v-col
                           cols="12"
@@ -78,7 +78,7 @@
                         >
                           <v-text-field
                             label="Calories"
-                          ></v-text-field>
+                          />
                         </v-col>
                         <v-col
                           cols="12"
@@ -87,7 +87,7 @@
                         >
                           <v-text-field
                             label="Fat (g)"
-                          ></v-text-field>
+                          />
                         </v-col>
                         <v-col
                           cols="12"
@@ -96,7 +96,7 @@
                         >
                           <v-text-field
                             label="Carbs (g)"
-                          ></v-text-field>
+                          />
                         </v-col>
                         <v-col
                           cols="12"
@@ -105,14 +105,14 @@
                         >
                           <v-text-field
                             label="Protein (g)"
-                          ></v-text-field>
+                          />
                         </v-col>
                       </v-row>
                     </v-container>
                   </v-card-text>
 
                   <v-card-actions>
-                    <v-spacer></v-spacer>
+                    <v-spacer />
                     <v-btn
                       color="blue darken-1"
                       text
@@ -135,7 +135,7 @@
           </template>
           <template v-slot:item.lastRequest="{ item }">
             <v-icon :color="item.lastRequest > (new Date).valueOf() - 300000 ? 'success' : 'error'">
-              mdi-{{ item.lastRequest > (new Date).valueOf() - 300000 ? 'wifi' : 'wifi-off'  }}
+              mdi-{{ item.lastRequest > (new Date).valueOf() - 300000 ? 'wifi' : 'wifi-off' }}
             </v-icon>
           </template>
           <template v-slot:item.actions="{ item }">
@@ -271,267 +271,267 @@
 </template>
 
 <script>
-import { sync } from 'vuex-pathify'
-import MaterialCard from '@/components/MaterialCard'
-import axios from 'axios'
-import _ from 'lodash'
-import moment from 'moment'
-export default {
-  name: 'Devices',
-  components:
-    {
-      MaterialCard,
+  import { sync } from 'vuex-pathify'
+  import MaterialCard from '@/components/MaterialCard'
+  import axios from 'axios'
+  import _ from 'lodash'
+  import moment from 'moment'
+  export default {
+    name: 'Devices',
+    components:
+      {
+        MaterialCard,
+      },
+    data: () => ({
+      alert: {
+        value: false,
+        type: 'error',
+        text: 'Oopsie.. :(',
+      },
+      valid: true,
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 10,
+      loading: false,
+      loadingButton: false,
+      actions: [
+        {
+          color: 'success',
+          icon: 'mdi-download',
+          action: 'download',
+          title: 'Download',
+          text: 'Der Download wurde gestartet.',
+          info: 'Sollte kein Download starten, melden Sie sich bitte bei der IT.',
+        },
+        {
+          color: '',
+          icon: 'mdi-image-frame',
+          action: 'preview',
+          title: 'Vorschau',
+          text: 'Die Vorschau wurde in einem neuen Fenster geöffnet.',
+          info: 'Sollte kein Video angezeigt werden, melden Sie sich bitte bei der IT.',
+        },
+        {
+          color: 'info',
+          icon: 'mdi-pencil',
+          action: 'edit',
+          title: 'Ändern',
+          text: '',
+          info: 'Das Feld "Rotation" ist noch etwas buggy. Soll das Feld leer sein, muss einmal was eingetragen und gelöscht werden.',
+        },
+        {
+          color: 'error',
+          icon: 'mdi-close',
+          action: 'delete',
+          title: 'Löschen',
+          text: 'Sind Sie sich sicher, dass dieses Video gelöscht werden soll ?',
+          info: 'Gelöschte Videos sind nicht wiederherstellbar',
+        },
+      ],
+      headers: [
+        {
+          text: 'ID',
+          value: 'id',
+        },
+        {
+          text: 'Standort',
+          value: 'location',
+        },
+        {
+          text: 'Beschreibung',
+          value: 'description',
+        },
+        {
+          text: 'Typ',
+          value: 'type',
+        },
+        {
+          text: 'Letzte Änderung',
+          value: 'updatedAt',
+        },
+        {
+          text: 'Status',
+          value: 'lastRequest',
+        },
+        {
+          text: 'Verlinkungen',
+          value: 'link.length',
+        },
+        {
+          sortable: false,
+          text: '',
+          value: 'actions',
+        },
+      ],
+      items: [],
+      editFields: [
+        {
+          name: 'Name',
+          value: 'name',
+          type: 'text',
+          rules: [
+            v => !!v || 'Name ist ein Pflichtfeld',
+            v => (v && v.length > 10) || 'Der Name muss mindestens 10 Zeichen lang sein',
+          ],
+        },
+        {
+          name: 'Kalenderwoche',
+          value: 'calendarWeek',
+          type: 'text',
+          rules: [
+            v => /^(?=[\s\S])/.test(v) ? /^KW\d{2}$/.test(v) || 'Format KW00, KW99, etc' : true,
+          ],
+        },
+        {
+          name: 'Höhe',
+          value: 'height',
+          type: 'number',
+          rules: [
+            v => !!v || 'Höhe ist ein Pflichtfeld',
+            v => /^\d{3,4}$/.test(v) || 'Die Höhe muss 3-4 stellig sein',
+          ],
+        },
+        {
+          name: 'Breite',
+          value: 'width',
+          type: 'number',
+          rules: [
+            v => !!v || 'Breite ist ein Pflichtfeld',
+            v => /^\d{3,4}$/.test(v) || 'Die Breite muss 3-4 stellig sein',
+          ],
+        },
+        {
+          name: 'Ausrichtung',
+          value: 'orientation_V2',
+          type: 'text',
+          rules: [
+            v => /^(?=[\s\S])/.test(v) ? /^(hoch|breit)$/i.test(v) || 'Hoch oder Breit' : true,
+          ],
+        },
+        {
+          name: 'Rotation',
+          value: 'rotation',
+          type: 'text',
+          rules: [
+            v => /^(?=[\s\S])/.test(v) ? /^(rechts|links)$/i.test(v) || 'Rechts oder Links' : true,
+          ],
+        },
+      ],
+      selectedItem: {},
+      search: undefined,
+    }),
+    computed: {
+      ...sync('app', [
+        'devices',
+      ]),
     },
-  data: () => ({
-    alert: {
-      value: false,
-      type: 'error',
-      text: 'Oopsie.. :(',
+    methods: {
+      formatTime: function (time, format) {
+        return moment(time).format(format)
+      },
+      unixToReadable (ms, format) {
+        return moment(moment.unix(ms / 1000)).format(format)
+      },
+      bytesToSize: function (bytes) {
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+        if (bytes === 0) return '0 Byte'
+        const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
+        return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i]
+      },
+      actionHandle: function (action, item) {
+        this[action.action](item)
+      },
+      download: function (item) {
+        axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, { responseType: 'blob' })
+          .then(resp => {
+            if (resp.data.type !== 'video/mp4') return
+            const url = window.URL.createObjectURL(resp.data)
+            const a = document.createElement('a')
+            a.style.display = 'none'
+            a.href = url
+            a.download = item.name
+            document.body.appendChild(a)
+            a.click()
+            window.URL.revokeObjectURL(url)
+          })
+          .catch((error) => {
+            this.alert = {
+              value: true,
+              type: 'error',
+              text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message,
+            }
+          })
+      },
+      preview: function (item) {
+        axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`)
+          .then(response => {
+            window.open(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, 's', `width= ${item.height > item.width ? '576' : '1024'}, height= ${item.height > item.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
+          })
+          .catch((error) => {
+            this.alert = {
+              value: true,
+              type: 'error',
+              text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message,
+            }
+          })
+      },
+      edit: function (item) {
+        this.selectedItem = item
+      },
+      sendEdit: function () {
+        if (this.validate()) {
+          this.loadingButton = true
+          axios.put('http://kodizabbix:3330/v2/video',
+                    _.pick(this.selectedItem, 'videoUUID', 'name', 'calendarWeek', 'orientation_V2', 'rotation'),
+          ).then((response) => {
+            this.loadingButton = false
+            this.alert = {
+              value: true,
+              type: 'success',
+              text: response.data.message,
+            }
+          }).catch((error) => {
+            this.loadingButton = false
+            this.alert = {
+              value: true,
+              type: 'error',
+              text: error.response.data.message,
+            }
+          }).finally(() => {
+            this.selectedItem = {}
+          })
+        }
+      },
+      delete: function (item) {
+        this.selectedItem = item
+      },
+      sendDelete: function () {
+        axios.delete(`http://kodizabbix:3330/v2/video/${this.selectedItem.videoUUID}`)
+          .then((response) => {
+            const itemPos = this.devices.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
+            this.devices.splice(itemPos, 1)
+            this.alert = {
+              value: true,
+              type: 'success',
+              text: response.data.message,
+            }
+          })
+          .catch(error => {
+            this.alert = {
+              value: true,
+              type: 'error',
+              text: error.response.data.message,
+            }
+          })
+      },
+      validate: function () {
+        return this.$refs.form[0].validate()
+      },
+      resetValidation: function (action) {
+        if (action === 'edit') { this.$refs.form[0].resetValidation() }
+      },
     },
-    valid: true,
-    page: 1,
-    pageCount: 0,
-    itemsPerPage: 10,
-    loading: false,
-    loadingButton: false,
-    actions: [
-      {
-        color: 'success',
-        icon: 'mdi-download',
-        action: 'download',
-        title: 'Download',
-        text: 'Der Download wurde gestartet.',
-        info: 'Sollte kein Download starten, melden Sie sich bitte bei der IT.',
-      },
-      {
-        color: '',
-        icon: 'mdi-image-frame',
-        action: 'preview',
-        title: 'Vorschau',
-        text: 'Die Vorschau wurde in einem neuen Fenster geöffnet.',
-        info: 'Sollte kein Video angezeigt werden, melden Sie sich bitte bei der IT.',
-      },
-      {
-        color: 'info',
-        icon: 'mdi-pencil',
-        action: 'edit',
-        title: 'Ändern',
-        text: '',
-        info: 'Das Feld "Rotation" ist noch etwas buggy. Soll das Feld leer sein, muss einmal was eingetragen und gelöscht werden.',
-      },
-      {
-        color: 'error',
-        icon: 'mdi-close',
-        action: 'delete',
-        title: 'Löschen',
-        text: 'Sind Sie sich sicher, dass dieses Video gelöscht werden soll ?',
-        info: 'Gelöschte Videos sind nicht wiederherstellbar',
-      },
-    ],
-    headers: [
-      {
-        text: 'ID',
-        value: 'id',
-      },
-      {
-        text: 'Standort',
-        value: 'location',
-      },
-      {
-        text: 'Beschreibung',
-        value: 'description',
-      },
-      {
-        text: 'Typ',
-        value: 'type',
-      },
-      {
-        text: 'Letzte Änderung',
-        value: 'updatedAt',
-      },
-      {
-        text: 'Status',
-        value: 'lastRequest',
-      },
-      {
-        text: 'Verlinkungen',
-        value: 'link.length',
-      },
-      {
-        sortable: false,
-        text: '',
-        value: 'actions',
-      },
-    ],
-    items: [],
-    editFields: [
-      {
-        name: 'Name',
-        value: 'name',
-        type: 'text',
-        rules: [
-          v => !!v || 'Name ist ein Pflichtfeld',
-          v => (v && v.length > 10) || 'Der Name muss mindestens 10 Zeichen lang sein',
-        ],
-      },
-      {
-        name: 'Kalenderwoche',
-        value: 'calendarWeek',
-        type: 'text',
-        rules: [
-          v => /^(?=[\s\S])/.test(v) ? /^KW\d{2}$/.test(v) || 'Format KW00, KW99, etc' : true,
-        ],
-      },
-      {
-        name: 'Höhe',
-        value: 'height',
-        type: 'number',
-        rules: [
-          v => !!v || 'Höhe ist ein Pflichtfeld',
-          v => /^\d{3,4}$/.test(v) || 'Die Höhe muss 3-4 stellig sein',
-        ],
-      },
-      {
-        name: 'Breite',
-        value: 'width',
-        type: 'number',
-        rules: [
-          v => !!v || 'Breite ist ein Pflichtfeld',
-          v => /^\d{3,4}$/.test(v) || 'Die Breite muss 3-4 stellig sein',
-        ],
-      },
-      {
-        name: 'Ausrichtung',
-        value: 'orientation_V2',
-        type: 'text',
-        rules: [
-          v => /^(?=[\s\S])/.test(v) ? /^(hoch|breit)$/i.test(v) || 'Hoch oder Breit' : true,
-        ],
-      },
-      {
-        name: 'Rotation',
-        value: 'rotation',
-        type: 'text',
-        rules: [
-          v => /^(?=[\s\S])/.test(v) ? /^(rechts|links)$/i.test(v) || 'Rechts oder Links' : true,
-        ],
-      },
-    ],
-    selectedItem: {},
-    search: undefined,
-  }),
-  computed: {
-    ...sync('app', [
-      'devices',
-    ]),
-  },
-  methods: {
-    formatTime: function (time, format) {
-      return moment(time).format(format)
-    },
-    unixToReadable(ms, format) {
-      return moment(moment.unix(ms / 1000)).format(format);
-    },
-    bytesToSize: function (bytes) {
-      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
-      if (bytes === 0) return '0 Byte'
-      const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
-      return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i]
-    },
-    actionHandle: function (action, item) {
-      this[action.action](item)
-    },
-    download: function (item) {
-      axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, { responseType: 'blob' })
-        .then(resp => {
-          if (resp.data.type !== 'video/mp4') return
-          const url = window.URL.createObjectURL(resp.data)
-          const a = document.createElement('a')
-          a.style.display = 'none'
-          a.href = url
-          a.download = item.name
-          document.body.appendChild(a)
-          a.click()
-          window.URL.revokeObjectURL(url)
-        })
-        .catch((error) => {
-          this.alert = {
-            value: true,
-            type: 'error',
-            text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message,
-          }
-        })
-    },
-    preview: function (item) {
-      axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`)
-        .then(response => {
-          window.open(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, 's', `width= ${item.height > item.width ? '576' : '1024'}, height= ${item.height > item.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
-        })
-        .catch((error) => {
-          this.alert = {
-            value: true,
-            type: 'error',
-            text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message,
-          }
-        })
-    },
-    edit: function (item) {
-      this.selectedItem = item
-    },
-    sendEdit: function () {
-      if (this.validate()) {
-        this.loadingButton = true
-        axios.put('http://kodizabbix:3330/v2/video',
-          _.pick(this.selectedItem, 'videoUUID', 'name', 'calendarWeek', 'orientation_V2', 'rotation'),
-        ).then((response) => {
-          this.loadingButton = false
-          this.alert = {
-            value: true,
-            type: 'success',
-            text: response.data.message,
-          }
-        }).catch((error) => {
-          this.loadingButton = false
-          this.alert = {
-            value: true,
-            type: 'error',
-            text: error.response.data.message,
-          }
-        }).finally(() => {
-          this.selectedItem = {}
-        })
-      }
-    },
-    delete: function (item) {
-      this.selectedItem = item
-    },
-    sendDelete: function () {
-      axios.delete(`http://kodizabbix:3330/v2/video/${this.selectedItem.videoUUID}`)
-        .then((response) => {
-          const itemPos = this.devices.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
-          this.devices.splice(itemPos, 1)
-          this.alert = {
-            value: true,
-            type: 'success',
-            text: response.data.message,
-          }
-        })
-        .catch(error => {
-          this.alert = {
-            value: true,
-            type: 'error',
-            text: error.response.data.message,
-          }
-        })
-    },
-    validate: function () {
-      return this.$refs.form[0].validate()
-    },
-    resetValidation: function (action) {
-      if (action === 'edit') { this.$refs.form[0].resetValidation() }
-    },
-  },
-}
+  }
 </script>
 <style lang="sass">
 .v-snackbar--material
