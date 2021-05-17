@@ -177,7 +177,7 @@
                         <v-text-field
                           v-for="(field, j) in editFields"
                           :key="j"
-                          v-model="item[field.value]"
+                          v-model="selectedItem[field.value]"
                           class="pb-1"
                           :type="field.type"
                           :label="field.name"
@@ -188,7 +188,7 @@
                           :loading="loadingButton"
                           color="success"
                           class="mr-4"
-                          @click="sendEdit"
+                          @click="sendEdit(item); dialog.value = false; resetValidation(action.action)"
                         >
                           Speichern
                         </v-btn>
@@ -205,7 +205,7 @@
                       <v-btn
                         block
                         color="error"
-                        @click="sendDelete"
+                        @click="sendDelete(); dialog.value = false"
                       >
                         Löschen
                       </v-btn>
@@ -672,15 +672,16 @@
         console.log(item.link)
       },
       edit: function (item) {
-        this.selectedItem = item
+        this.selectedItem = Object.assign(this.selectedItem, item)
       },
-      sendEdit: function () {
+      sendEdit: function (item) {
         if (this.validate()) {
           this.loadingButton = true
           axios.put('http://kodizabbix:3330/v2/video',
                     _.pick(this.selectedItem, 'videoUUID', 'name', 'calendarWeek', 'orientation_V2', 'rotation'),
           ).then((response) => {
             this.loadingButton = false
+            Object.assign(item, this.selectedItem)
             this.alert = {
               value: true,
               type: 'success',
