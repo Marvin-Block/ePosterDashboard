@@ -1,10 +1,8 @@
-# [Vuetify Material Dashboard PRO](https://store.vuetifyjs.com/products/vuetify-material-dashboard-free)
+# [KODiNET ePoster Dashboard](http://kodizabbix/)
 
-![version](https://img.shields.io/badge/version-1.2.0-blue.svg)[![Chat](https://img.shields.io/badge/chat-on%20discord-7289da.svg)](https://discord.com/invite/s93b7Fv)
+![Produkt Bild](https://i.imgur.com/x9QlwwL.png)
 
-![Product Gif](https://cdn.shopify.com/s/files/1/2695/0984/products/screen1_c85e2d5f-c56e-42a2-8361-47d8cc853fce.png?v=1605990715)
-
-**Vuetify Material Dashboard PRO** is a beautiful resource built over [Vuetify](https://vuetifyjs.com/en/), [Vuex](https://vuex.vuejs.org/installation.html) and [Vuejs](https://vuejs.org/). It will help you get started and quickly developing dashboards in no time. Using the Dashboard is pretty simple but requires basic knowledge of Javascript, [Vuejs](https://vuejs.org/v2/guide/) and [Vue-Router](https://router.vuejs.org/en/).
+[comment]: <> (**Vuetify Material Dashboard PRO** is a beautiful resource built over [Vuetify]&#40;https://vuetifyjs.com/en/&#41;, [Vuex]&#40;https://vuex.vuejs.org/installation.html&#41; and [Vuejs]&#40;https://vuejs.org/&#41;. It will help you get started and quickly developing dashboards in no time. Using the Dashboard is pretty simple but requires basic knowledge of Javascript, [Vuejs]&#40;https://vuejs.org/v2/guide/&#41; and [Vue-Router]&#40;https://router.vuejs.org/en/&#41;.)
 
 ## Getting Started
 
@@ -34,39 +32,6 @@ Vuex is a state management pattern + library for Vue.js applications. It serves 
 We used the latest 3.x [Vue CLI](https://github.com/vuejs/vue-cli) which aims to reduce project configuration
 to as little as possible. Almost everything is inside `package.json` + some other related files such as
 `.babel.config.js`, `.eslintrc.js` and `.postcssrc.js`.
-
-Let us know what you think and what we can improve below. And good luck with development!
-
-## Table of Contents
-
-- [Demo](#demo)
-- [Quick Start](#quick-start)
-- [Documentation](#documentation)
-- [File Structure](#file-structure)
-- [Browser Support](#browser-support)
-- [Resources](#resources)
-- [Reporting Issues](#reporting-issues)
-- [Technical Support or Questions](#technical-support-or-questions)
-- [Licensing](#licensing)
-- [Useful Links](#useful-links)
-
-## Demo
-
-- [Start page](https://vuetify-material-dashboard.vuetifyjs.com/)
-- [Icons page](https://vuetify-material-dashboard.vuetifyjs.com/components/icons/)
-- [Notifications page](https://vuetify-material-dashboard.vuetifyjs.com/components/notifications/)
-
-[View More](https://vuetify-material-dashboard.vuetifyjs.com/)
-
-## Quick start
-
-Quick start options:
-
-- Download from [Vuetify](https://store.vuetifyjs.com/products/vuetify-material-dashboard-pro)
-
-## Documentation
-
-The documentation for **Vuetify Material Dashboard PRO** is hosted [here](https://vuetifyjs.com/).
 
 ## File Structure
 
@@ -214,36 +179,6 @@ vuetify-material-dashboard/
 
 </details>
 
-## Browser Support
-
-Vuetify Material Dashboard aims to support the last two versions of the following browsers:
-
-## Resources
-
-- [Live Preview](https://vuetify-material-dashboard.vuetifyjs.com/)
-- Product Page: [Product](https://store.vuetifyjs.com/products/vuetify-material-dashboard-pro)
-- Documentation is [Here](https://vuetifyjs.com/)
-- License Agreement: [License](https://store.vuetifyjs.com/licenses)
-- Contact: [Contact](https://store.vuetifyjs.com/contact-us)
-- Issues: [Github Issues Page](https://github.com/vuetifyjs/premium-theme-issues)
-
-## Reporting Issues
-
-We use GitHub Issues as the official bug tracker for the **Vuetify Material Dashboard** theme. Here is some advice for our users that want to report an issue:
-
-1. Providing us reproducible steps for the issue will shorten the time it takes for it to be fixed.
-2. Some issues may be browser specific, so specifying in what browser you encountered the issue might help.
-
-## Technical Support or Questions
-
-If you have questions or need help integrating the product please reach out in [Discord](https://discord.com/invite/s93b7Fv) or file an issue [here](https://github.com/vuetifyjs/premium-theme-issues).
-
-## Licensing
-
 ## Useful Links
 
 - [Documentation](https://vuetifyjs.com/)
-- [Vuetify Store](https://store.vuetifyjs.com/)
-- [Free Vuetify Themes](https://store.vuetifyjs.com/collections/free-products)
-- [Discord](https://discord.com/invite/s93b7Fv)
-- [Twitter](https://twitter.com/vuetifyjs)
