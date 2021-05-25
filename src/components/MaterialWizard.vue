@@ -3,14 +3,6 @@
     class="v-card--wizard"
     elevation="12"
   >
-    <v-card-title class="justify-center text-h3 font-weight-light pt-5">
-      Build your profile
-    </v-card-title>
-
-    <div class="text-center text-h4 grey--text font-weight-light mb-6">
-      This information will let us know more about you.
-    </div>
-
     <v-tabs
       ref="tabs"
       v-model="internalValue"
@@ -50,7 +42,7 @@
         min-width="125"
         @click="$emit('click:prev')"
       >
-        Previous
+        Zurück
       </v-btn>
 
       <v-spacer />
@@ -61,7 +53,7 @@
         min-width="100"
         @click="$emit('click:next')"
       >
-        {{ internalValue === items.length - 1 ? 'Finish' : 'Next' }}
+        {{ internalValue === items.length - 1 ? 'Beenden' : 'Weiter' }}
       </v-btn>
     </v-card-actions>
   </v-card>
