@@ -1,7 +1,7 @@
 <template>
   <v-card
     class="v-card--wizard"
-    elevation="12"
+    elevation="3"
   >
     <v-tabs
       ref="tabs"

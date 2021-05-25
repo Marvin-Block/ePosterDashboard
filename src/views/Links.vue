@@ -4,6 +4,7 @@
     fluid
     tag="section"
   >
+<!--    todo: add validation -->
     <validation-observer v-slot="{ valid }">
       <material-wizard
         v-model="tab"
