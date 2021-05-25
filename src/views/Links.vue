@@ -100,7 +100,6 @@
                 range
                 scrollable
                 show-week
-                show-adjacent-months
               />
             </v-col>
             <v-col
@@ -110,7 +109,7 @@
               <v-row>
                 <v-col>
                   <v-menu
-                    ref="menu"
+                    ref="startMenu"
                     v-model="startTimeMenu"
                     :close-on-content-click="false"
                     :nudge-right="40"
@@ -123,7 +122,7 @@
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
                         v-model="startTime"
-                        label="Start Uhrzeit"
+                        label="Anfangs Uhrzeit"
                         prepend-icon="mdi-clock-time-four-outline"
                         readonly
                         v-bind="attrs"
@@ -136,7 +135,7 @@
                       full-width
                       format="24hr"
                       scrollable
-                      @click:minute="$refs.menu.save(startTime)"
+                      @click:minute="$refs.startMenu.save(startTime)"
                     ></v-time-picker>
                   </v-menu>
                 </v-col>
@@ -144,7 +143,7 @@
               <v-row>
                 <v-col>
                   <v-menu
-                    ref="menu"
+                    ref="endMenu"
                     v-model="endTimeMenu"
                     :close-on-content-click="false"
                     :nudge-right="40"
@@ -170,7 +169,7 @@
                       full-width
                       format="24hr"
                       scrollable
-                      @click:minute="$refs.menu.save(endTime)"
+                      @click:minute="$refs.endMenu.save(endTime)"
                     ></v-time-picker>
                   </v-menu>
                 </v-col>
@@ -184,15 +183,39 @@
         </v-tab-item>
       </material-wizard>
     </validation-observer>
+    <v-snackbar
+      v-model="alert.value"
+      class="v-snackbar--material"
+      timeout="5000"
+      bottom
+      right
+      color="transparent"
+    >
+      <v-alert
+        v-model="alert.value"
+        class="ma-0"
+        :type="alert.type"
+        dismissible
+      >
+        {{ alert.text }}
+      </v-alert>
+    </v-snackbar>
   </v-container>
 </template>
 
 <script>
   import { get } from 'vuex-pathify'
+  import axios from 'axios'
+  import _ from 'lodash'
   export default {
     name: 'Links',
 
     data: () => ({
+      alert: {
+        value: false,
+        type: 'error',
+        text: 'Oopsie.. :(',
+      },
       dateMenu: false,
       dates: [],
       startTime: null,
@@ -203,45 +226,6 @@
       videoSelected: [],
       deviceSearch: '',
       deviceSelected: [],
-      account: [],
-      accounts: [
-        {
-          icon: 'mdi-pencil',
-          type: 'design',
-        },
-        {
-          icon: 'mdi-code-tags',
-          type: 'code',
-        },
-        {
-          icon: 'mdi-laptop',
-          type: 'develop',
-        },
-      ],
-      address: '',
-      city: '',
-      email: '',
-      first: '',
-      image: null,
-      last: '',
-      state: '',
-      states: [
-        'Alabama', 'Alaska', 'American Samoa', 'Arizona',
-        'Arkansas', 'California', 'Colorado', 'Connecticut',
-        'Delaware', 'District of Columbia', 'Federated States of Micronesia',
-        'Florida', 'Georgia', 'Guam', 'Hawaii', 'Idaho',
-        'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
-        'Louisiana', 'Maine', 'Marshall Islands', 'Maryland',
-        'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi',
-        'Missouri', 'Montana', 'Nebraska', 'Nevada',
-        'New Hampshire', 'New Jersey', 'New Mexico', 'New York',
-        'North Carolina', 'North Dakota', 'Northern Mariana Islands', 'Ohio',
-        'Oklahoma', 'Oregon', 'Palau', 'Pennsylvania', 'Puerto Rico',
-        'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee',
-        'Texas', 'Utah', 'Vermont', 'Virgin Island', 'Virginia',
-        'Washington', 'West Virginia', 'Wisconsin', 'Wyoming',
-      ],
-      street: '',
       tab: 0,
       tabs: ['Videos', 'Geräte', 'Zeitraum'],
       videoHeaders: [
@@ -275,9 +259,6 @@
       dateRangeText () {
         return this.dates.join(' ~ ')
       },
-      stringAccount () {
-        return this.account.join(',')
-      },
       scope () {
         if (this.tab === 0) return 'videos'
         else if (this.tab === 2) return 'geräte'
@@ -293,7 +274,6 @@
         if (
           steps.includes(2)
         ) steps.push(3)
-        console.log(this.videoSelected, this.deviceSelected)
         return steps
       },
     },
@@ -302,7 +282,43 @@
         if (!valid) return
 
         if (this.tab === this.tabs.length - 1) {
-          alert('Form finished')
+          // todo: send link create thingy
+          const postData = new FormData()
+          const postVideos = []
+          const postDevices = []
+          this.videoSelected.forEach(video => {
+            postVideos.push(video.videoUUID)
+          })
+          this.deviceSelected.forEach(device => {
+            postDevices.push(device.deviceUUID)
+          })
+          postData.append('content', postVideos)
+          postData.append('devices', postDevices)
+          postData.append('start', new Date(this.dates[0] + ' ' + this.startTime).valueOf())
+          postData.append('end', new Date(this.dates[1] + ' ' + this.endTime).valueOf())
+          postData.append('active', 1)
+          console.log()
+          axios.post('http://kodizabbix:3330/v2/link', postData, {
+            'Content-Type': 'multipart/form-data',
+          }).then((response) => {
+            console.log(response)
+            this.alert = {
+              value: true,
+              type: 'success',
+              text: response.data.message,
+            }
+          }).catch((error) => {
+            console.log(error.response)
+            this.alert = {
+              value: true,
+              type: 'error',
+              text: error.response.data.message,
+            }
+          }).finally(() => {
+            this.videoSelected = []
+            this.deviceSelected = []
+            this.tab = 0
+          })
         } else {
           this.tab++
         }
