@@ -53,6 +53,7 @@
       getDeviceError: false,
       getLinkError: false,
       getLogError: false,
+      client: null,
     }),
     computed: {
       ...sync('app', [
@@ -66,9 +67,42 @@
     created: function () {
       this.networkStatus = this.statusList[3]
       this.getData()
-      // this.interval = setInterval(this.getData, 10000)
+      this.createWebsocket()
+      setInterval(() => {
+        if (this.client.readyState === 1) {
+          this.client.send('device')
+          this.client.send('video')
+          this.client.send('link')
+        }
+      }, 2000)
     },
     methods: {
+      createWebsocket: function () {
+        this.client = new WebSocket('ws://kodizabbix:3331')
+        this.client.addEventListener('error', () => {
+          this.networkStatus = this.statusList[1]
+          setTimeout(() => { this.createWebsocket() }, 5000)
+        })
+        this.client.addEventListener('message', (e) => {
+          const response = JSON.parse(e.data)
+          if (response.type === 'device') {
+            this.devices = response.rows
+          }
+          if (response.type === 'video') {
+            this.videos = response.rows
+          }
+          if (response.type === 'link') {
+            this.links = response.rows
+          }
+        })
+        this.client.addEventListener('close', () => {
+          this.networkStatus = this.statusList[1]
+          setTimeout(() => { this.createWebsocket() }, 5000)
+        })
+        this.client.addEventListener('open', () => {
+          this.networkStatus = this.statusList[0]
+        })
+      },
       // we do not talk about this code :)
       // i might make this fancy at some point
       getData: function () {

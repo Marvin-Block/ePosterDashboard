@@ -15,38 +15,38 @@
         @click:prev="tab--"
       >
         <v-tab-item class="pb-12">
-          <v-row>
-            <v-col
-              cols="12"
-              md="6"
-            >
-              <v-chip
-                v-if="deviceSelected.length < 1"
-                class="ma-2 text-h5"
-                color="error"
-                outlined
-              >
-                <v-icon left>
-                  mdi-exclamation
-                </v-icon>
-                Bitte wählen Sie mindestens ein (1) Gerät aus
-              </v-chip>
-              <v-chip
-                v-else
-                class="ma-2 text-h5"
-                color="success"
-                outlined
-              >
-                Aktuelle auswahl: {{ deviceSelected.length }}
-              </v-chip>
-            </v-col>
-            <v-col
-              cols="12"
-              md="6"
-            >
-              <div
-                class="float-right"
-              >
+<!--          <v-row>-->
+<!--            <v-col-->
+<!--              cols="12"-->
+<!--              md="6"-->
+<!--            >-->
+<!--              <v-chip-->
+<!--                v-if="deviceSelected.length < 1"-->
+<!--                class="ma-2 text-h5"-->
+<!--                color="error"-->
+<!--                outlined-->
+<!--              >-->
+<!--                <v-icon left>-->
+<!--                  mdi-exclamation-->
+<!--                </v-icon>-->
+<!--                Bitte wählen Sie mindestens ein (1) Gerät aus-->
+<!--              </v-chip>-->
+<!--              <v-chip-->
+<!--                v-else-->
+<!--                class="ma-2 text-h5"-->
+<!--                color="success"-->
+<!--                outlined-->
+<!--              >-->
+<!--                Aktuelle auswahl: {{ deviceSelected.length }}-->
+<!--              </v-chip>-->
+<!--            </v-col>-->
+<!--            <v-col-->
+<!--              cols="12"-->
+<!--              md="6"-->
+<!--            >-->
+<!--              <div-->
+<!--                class="float-right"-->
+<!--              >-->
 <!--                <v-btn-->
 <!--                  class="hidden-sm-and-down"-->
 <!--                  color="blue"-->
@@ -61,9 +61,9 @@
 <!--                  </v-icon>-->
 <!--                  Hilfe-->
 <!--                </v-btn>-->
-              </div>
-            </v-col>
-          </v-row>
+<!--              </div>-->
+<!--            </v-col>-->
+<!--          </v-row>-->
           <v-data-table
             v-model="deviceSelected"
             :headers="deviceHeaders"
@@ -91,44 +91,64 @@
                   single-line
                   style="max-width: 150px;"
                 />
+                <v-spacer />
+                <v-chip
+                  v-if="deviceSelected.length < 1"
+                  class="ma-2 text-h5"
+                  color="error"
+                  outlined
+                >
+                  <v-icon left>
+                    mdi-exclamation
+                  </v-icon>
+                  Bitte wählen Sie mindestens ein (1) Gerät aus
+                </v-chip>
+                <v-chip
+                  v-else
+                  class="ma-2 text-h5"
+                  color="success"
+                  outlined
+                >
+                  Aktuelle auswahl: {{ deviceSelected.length }}
+                </v-chip>
               </v-toolbar>
             </template>
           </v-data-table>
         </v-tab-item>
 
         <v-tab-item class="pb-12">
-          <v-row>
-            <v-col
-              cols="12"
-              md="6"
-            >
-              <v-chip
-                v-if="videoSelected.length < 1"
-                class="ma-2 text-h5"
-                color="error"
-                outlined
-              >
-                <v-icon left>
-                  mdi-exclamation
-                </v-icon>
-                Bitte wählen Sie mindestens ein (1) Video aus
-              </v-chip>
-              <v-chip
-                v-else
-                class="ma-2 text-h5"
-                color="success"
-                outlined
-              >
-                Aktuelle auswahl: {{ videoSelected.length }}
-              </v-chip>
-            </v-col>
-            <v-col
-              cols="12"
-              md="6"
-            >
-              <div
-                class="float-right"
-              >
+<!--          <v-row>-->
+<!--            <v-col-->
+<!--              cols="12"-->
+<!--              md="6"-->
+<!--            >-->
+<!--              <v-chip-->
+<!--                v-if="videoSelected.length < 1"-->
+<!--                class="ma-2 text-h5"-->
+<!--                color="error"-->
+<!--                outlined-->
+<!--              >-->
+<!--                <v-icon left>-->
+<!--                  mdi-exclamation-->
+<!--                </v-icon>-->
+<!--                Bitte wählen Sie mindestens ein (1) Video aus-->
+<!--              </v-chip>-->
+<!--              <v-chip-->
+<!--                v-else-->
+<!--                class="ma-2 text-h5"-->
+<!--                color="success"-->
+<!--                outlined-->
+<!--              >-->
+<!--                Aktuelle auswahl: {{ videoSelected.length }}-->
+<!--              </v-chip>-->
+<!--            </v-col>-->
+<!--            <v-col-->
+<!--              cols="12"-->
+<!--              md="6"-->
+<!--            >-->
+<!--              <div-->
+<!--                class="float-right"-->
+<!--              >-->
 <!--                <v-btn-->
 <!--                  class="hidden-sm-and-down"-->
 <!--                  color="blue"-->
@@ -143,9 +163,9 @@
 <!--                  </v-icon>-->
 <!--                  Hilfe-->
 <!--                </v-btn>-->
-              </div>
-            </v-col>
-          </v-row>
+<!--              </div>-->
+<!--            </v-col>-->
+<!--          </v-row>-->
           <v-data-table
             v-model="videoSelected"
             :headers="videoHeaders"
@@ -173,6 +193,26 @@
                   single-line
                   style="max-width: 150px;"
                 />
+                <v-spacer />
+                <v-chip
+                  v-if="videoSelected.length < 1"
+                  class="ma-2 text-h5"
+                  color="error"
+                  outlined
+                >
+                  <v-icon left>
+                    mdi-exclamation
+                  </v-icon>
+                  Bitte wählen Sie mindestens ein (1) Video aus
+                </v-chip>
+                <v-chip
+                  v-else
+                  class="ma-2 text-h5"
+                  color="success"
+                  outlined
+                >
+                  Aktuelle auswahl: {{ videoSelected.length }}
+                </v-chip>
               </v-toolbar>
             </template>
           </v-data-table>
@@ -182,11 +222,11 @@
           <v-row>
             <v-col
               cols="12"
-              md="6"
+              md="12"
             >
               <v-chip
                 v-if="dates.length < 2"
-                class="ma-2 text-h5"
+                class="ma-2 text-h5 float-right"
                 color="error"
                 outlined
               >
@@ -199,28 +239,28 @@
                 v-else
               >
                 <v-chip
-                  class="ma-2 text-h5"
+                  class="ma-2 text-h5 float-right"
                   color="success"
                   outlined
                 >
-                  Von: {{ dates[0] }} {{ startTime }} Uhr
+                  Bis: {{ dates[1] }} {{ endTime ? endTime + ' Uhr' : '' }}
                 </v-chip>
                 <v-chip
-                  class="ma-2 text-h5"
+                  class="ma-2 text-h5 float-right"
                   color="success"
                   outlined
                 >
-                  Bis: {{ dates[1] }} {{ endTime }} Uhr
+                  Von: {{ dates[0] }} {{ startTime ? startTime + ' Uhr' : '' }}
                 </v-chip>
               </div>
             </v-col>
-            <v-col
-              cols="12"
-              md="6"
-            >
-              <div
-                class="float-right"
-              >
+<!--            <v-col-->
+<!--              cols="12"-->
+<!--              md="6"-->
+<!--            >-->
+<!--              <div-->
+<!--                class="float-right"-->
+<!--              >-->
 <!--                <v-btn-->
 <!--                  class="hidden-sm-and-down"-->
 <!--                  color="blue"-->
@@ -235,8 +275,8 @@
 <!--                  </v-icon>-->
 <!--                  Hilfe-->
 <!--                </v-btn>-->
-              </div>
-            </v-col>
+<!--              </div>-->
+<!--            </v-col>-->
           </v-row>
           <v-row>
             <v-col
