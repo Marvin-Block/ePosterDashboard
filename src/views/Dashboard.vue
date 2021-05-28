@@ -5,11 +5,8 @@
     tag="section"
   >
     <v-row>
-
-<!--      stat cards below-->
+      <!--      stat cards below-->
       <v-col
-        v-for="(stat, i) in stats"
-        :key="i"
         cols="12"
         md="6"
         lg="3"
@@ -19,7 +16,7 @@
         >
           <v-card-title class="align-start">
             <v-sheet
-              :color="stat.color"
+              color="primary"
               class="overflow-hidden mt-n9 transition-swing v-card--material__sheet"
               elevation="6"
               max-width="100%"
@@ -33,8 +30,9 @@
                 >
                   <v-icon
                     large
-                    v-text="stat.icon"
-                  />
+                  >
+                    mdi-creation
+                  </v-icon>
                 </div>
 
                 <div
@@ -49,15 +47,16 @@
               class="text-h4 pl-4 v-card--material__title"
             >
               <template>
-                {{ stat.title }}
+                Neue Videos
               </template>
 
               <div class="text-subtitle-1 mb-n2">
                 <template>
                   <div
                     class="text-right text-h3 v-card__subtitle--material-stats"
-                    v-text="stat.value"
-                  />
+                  >
+                    {{ videosToday }}
+                  </div>
                 </template>
               </div>
             </div>
@@ -69,22 +68,238 @@
               <v-icon
                 class="mr-2"
                 small
-                v-text="stat.actionIcon"
-              />
+              >
+                mdi-calendar-range
+              </v-icon>
               <div
                 class="text-truncate"
-                v-text="stat.actionText"
               >
+                Heute dazugekommen - {{ today }}
               </div>
             </v-card-actions>
           </template>
         </v-card>
       </v-col>
 
-<!--      Spacer-->
+<!----------------------------------------->
+
+      <v-col
+        cols="12"
+        md="6"
+        lg="3"
+      >
+        <v-card
+          class="v-card--material mt-4"
+        >
+          <v-card-title class="align-start">
+            <v-sheet
+              color="success"
+              class="overflow-hidden mt-n9 transition-swing v-card--material__sheet"
+              elevation="6"
+              max-width="100%"
+              rounded
+            >
+              <v-theme-provider
+                dark
+              >
+                <div
+                  class="pa-7"
+                >
+                  <v-icon
+                    large
+                  >
+                    mdi-wifi
+                  </v-icon>
+                </div>
+
+                <div
+                  class="text-h4 white--text pa-7 v-card--material__title"
+                >
+                  header
+                </div>
+              </v-theme-provider>
+            </v-sheet>
+
+            <div
+              class="text-h4 pl-4 v-card--material__title"
+            >
+              <template>
+                Geräte Online
+              </template>
+
+              <div class="text-subtitle-1 mb-n2">
+                <template>
+                  <div
+                    class="text-right text-h3 v-card__subtitle--material-stats"
+                  >
+                    {{ onlineDevices }}
+                  </div>
+                </template>
+              </div>
+            </div>
+          </v-card-title>
+          <template>
+            <v-divider class="mt-2 mx-4" />
+
+            <v-card-actions class="px-4 text-caption grey--text">
+              <div class="mr-2 mt-5" />
+              <div class="text-truncate" />
+            </v-card-actions>
+          </template>
+        </v-card>
+      </v-col>
+
+<!----------------------------------------->
+
+      <v-col
+        cols="12"
+        md="6"
+        lg="3"
+      >
+        <v-card
+          class="v-card--material mt-4"
+        >
+          <v-card-title class="align-start">
+            <v-sheet
+              color="error"
+              class="overflow-hidden mt-n9 transition-swing v-card--material__sheet"
+              elevation="6"
+              max-width="100%"
+              rounded
+            >
+              <v-theme-provider
+                dark
+              >
+                <div
+                  class="pa-7"
+                >
+                  <v-icon
+                    large
+                  >
+                    mdi-wifi-off
+                  </v-icon>
+                </div>
+
+                <div
+                  class="text-h4 white--text pa-7 v-card--material__title"
+                >
+                  header
+                </div>
+              </v-theme-provider>
+            </v-sheet>
+
+            <div
+              class="text-h4 pl-4 v-card--material__title"
+            >
+              <template>
+                Geräte Offline
+              </template>
+
+              <div class="text-subtitle-1 mb-n2">
+                <template>
+                  <div
+                    class="text-right text-h3 v-card__subtitle--material-stats"
+                  >
+                    {{ offlineDevices }}
+                  </div>
+                </template>
+              </div>
+            </div>
+          </v-card-title>
+          <template>
+            <v-divider class="mt-2 mx-4" />
+
+            <v-card-actions class="px-4 text-caption grey--text">
+              <div class="mr-2 mt-5" />
+              <div class="text-truncate" />
+            </v-card-actions>
+          </template>
+        </v-card>
+      </v-col>
+
+<!----------------------------------------->
+
+      <v-col
+        cols="12"
+        md="6"
+        lg="3"
+      >
+        <v-card
+          class="v-card--material mt-4"
+        >
+          <v-card-title class="align-start">
+            <v-sheet
+              color="#254AA5"
+              class="overflow-hidden mt-n9 transition-swing v-card--material__sheet"
+              elevation="6"
+              max-width="100%"
+              rounded
+            >
+              <v-theme-provider
+                dark
+              >
+                <div
+                  class="pa-7"
+                >
+                  <v-icon
+                    large
+                  >
+                    mdi-monitor-clean
+                  </v-icon>
+                </div>
+
+                <div
+                  class="text-h4 white--text pa-7 v-card--material__title"
+                >
+                  header
+                </div>
+              </v-theme-provider>
+            </v-sheet>
+
+            <div
+              class="text-h4 pl-4 v-card--material__title"
+            >
+              <template>
+                Neue Geräte
+              </template>
+
+              <div class="text-subtitle-1 mb-n2">
+                <template>
+                  <div
+                    class="text-right text-h3 v-card__subtitle--material-stats"
+                  >
+                    {{ devicesToday }}
+                  </div>
+                </template>
+              </div>
+            </div>
+          </v-card-title>
+          <template>
+            <v-divider class="mt-2 mx-4" />
+
+            <v-card-actions class="px-4 text-caption grey--text">
+              <v-icon
+                class="mr-2"
+                small
+              >
+                mdi-calendar-range
+              </v-icon>
+              <div
+                class="text-truncate"
+              >
+                Heute dazugekommen - {{ today }}
+              </div>
+            </v-card-actions>
+          </template>
+        </v-card>
+      </v-col>
+
+      <!----------------------------------------->
+
+      <!--      Spacer-->
       <v-col cols="12" />
 
-<!--      new videos-->
+      <!--      new videos-->
       <v-col
         cols="12"
         md="6"
@@ -118,7 +333,7 @@
         </material-card>
       </v-col>
 
-<!--      new devices-->
+      <!--      new devices-->
       <v-col
         cols="12"
         md="6"
@@ -263,6 +478,25 @@
     computed: {
       videos: get('app/videos'),
       devices: get('app/devices'),
+      today: function () {
+        return moment(new Date()).format('DD.MM.YYYY')
+      },
+      onlineDevices: function () {
+        const result = this.devices.filter(device => device.lastRequest > (new Date()).valueOf() - 300000)
+        return result.length
+      },
+      offlineDevices: function () {
+        const result = this.devices.filter(device => device.lastRequest < (new Date()).valueOf() - 300000)
+        return result.length
+      },
+      devicesToday: function () {
+        const result = this.devices.filter(device => moment().diff(device.createdAt, 'days') === 0)
+        return result.length
+      },
+      videosToday: function () {
+        const result = this.videos.filter(video => moment().diff(video.createdAt, 'days') === 0)
+        return result.length
+      },
     },
     methods: {
       formatTime: function (time, format) {
