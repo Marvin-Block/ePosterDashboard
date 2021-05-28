@@ -74,14 +74,14 @@
           this.client.send('video')
           this.client.send('link')
         }
-      }, 2000)
+      }, 1000)
     },
     methods: {
       createWebsocket: function () {
         this.client = new WebSocket('ws://kodizabbix:3331')
         this.client.addEventListener('error', () => {
           this.networkStatus = this.statusList[1]
-          setTimeout(() => { this.createWebsocket() }, 5000)
+          setTimeout(() => { this.createWebsocket() }, 2000)
         })
         this.client.addEventListener('message', (e) => {
           const response = JSON.parse(e.data)
@@ -97,7 +97,7 @@
         })
         this.client.addEventListener('close', () => {
           this.networkStatus = this.statusList[1]
-          setTimeout(() => { this.createWebsocket() }, 5000)
+          setTimeout(() => { this.createWebsocket() }, 2000)
         })
         this.client.addEventListener('open', () => {
           this.networkStatus = this.statusList[0]
