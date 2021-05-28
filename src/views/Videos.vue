@@ -283,6 +283,64 @@
                         {{ action.info }}
                       </div>
                     </div>
+                    <div v-else-if="action.action === 'info'">
+                      <div class="text-h3 pa-3">
+                        {{ action.text }}
+                      </div>
+                      <v-row
+                        justify="center"
+                        class="mx-3"
+                      >
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
+                          <div
+                            v-for="(item, i) in selectedItem"
+                            :key="i"
+                          >
+                            <v-text-field
+                              v-if="typeof item !== 'object'"
+                              :label="i"
+                              :value="item"
+                            />
+                          </div>
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          md="6"
+                        >
+                          <v-expansion-panels
+                            accordion
+                          >
+                            <v-expansion-panel
+                              class="elevation-6"
+                              v-for="(link,j) in selectedItem.link"
+                              :key="j"
+                            >
+                              <v-expansion-panel-header>
+                                Item
+                              </v-expansion-panel-header>
+                              <v-expansion-panel-content>
+                                <div
+                                  v-for="(entry, k) in link"
+                                  :key="k"
+                                >
+                                  <v-text-field
+                                    :label="k"
+                                    :value="entry"
+                                  />
+                                </div>
+                              </v-expansion-panel-content>
+                            </v-expansion-panel>
+                          </v-expansion-panels>
+                        </v-col>
+                      </v-row>
+                      <v-divider class="mx-3 mb-2 mt-4" />
+                      <div class="mx-3 mb-2">
+                        {{ action.info }}
+                      </div>
+                    </div>
                   </v-card-text>
                   <v-card-actions class="justify-end">
                     <v-btn
@@ -371,18 +429,28 @@
           text: 'Die Vorschau wurde in einem neuen Fenster geöffnet.',
           info: 'Sollte kein Video angezeigt werden, melden Sie sich bitte bei der IT.',
         },
+        // {
+        //   color: 'black',
+        //   icon: 'mdi-auto-fix',
+        //   action: 'link',
+        //   disabled: true,
+        //   width: null,
+        //   title: 'Links',
+        //   text: '',
+        //   info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
+        // },
         {
           color: 'black',
-          icon: 'mdi-auto-fix',
-          action: 'link',
-          disabled: true,
+          icon: 'mdi-eye',
+          action: 'info',
+          disabled: false,
           width: null,
-          title: 'Links',
+          title: 'Test',
           text: '',
           info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
         },
         {
-          color: 'info',
+          color: 'blue',
           icon: 'mdi-pencil',
           action: 'edit',
           disabled: false,
@@ -745,6 +813,10 @@
         // todo: add link dialog
         this.selectedItem = Object.assign(this.selectedItem, item)
       },
+      info: function (item) {
+        // todo: add info stuff
+        this.selectedItem = Object.assign(this.selectedItem, item)
+      },
       edit: function (item) {
         this.selectedItem = Object.assign(this.selectedItem, item)
       },
@@ -805,10 +877,10 @@
         const vid = document.createElement('video')
         vid.src = URL.createObjectURL(this.video)
         vid.addEventListener('loadedmetadata', e => {
-          this.newItem[4].data = e.path[0].videoHeight
-          this.newItem[5].data = e.path[0].videoWidth
-          this.newItem[6].data = e.path[0].duration
-          this.newItem[2].data = e.path[0].videoWidth > e.path[0].videoHeight ? 'Breit' : 'Hoch'
+          this.newItem[3].data = e.path[0].videoHeight
+          this.newItem[4].data = e.path[0].videoWidth
+          this.newItem[5].data = e.path[0].duration
+          this.newItem[1].data = e.path[0].videoWidth > e.path[0].videoHeight ? 'Breit' : 'Hoch'
         })
       },
       upload: function () {

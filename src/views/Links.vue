@@ -4,7 +4,7 @@
     fluid
     tag="section"
   >
-<!--    todo: add validation -->
+    <!--    todo: add validation -->
     <validation-observer v-slot="{ valid }">
       <material-wizard
         v-model="tab"
@@ -15,45 +15,55 @@
         @click:prev="tab--"
       >
         <v-tab-item class="pb-12">
-          <div class="text-center text-h4 font-weight-light mb-6">
-            Bitte wählen Sie mindestens ein (1) Video aus.
-          </div>
-          <v-data-table
-            v-model="videoSelected"
-            :headers="videoHeaders"
-            :items="videos"
-            item-key="id"
-            show-select
-            :search.sync="videoSearch"
-            class="elevation-0"
-            multi-sort
-            no-results-text="Es wurde leider nichts gefunden"
-            no-data-text="Es scheint keine Videos zu geben"
-            loading-text="Videos werden geladen..."
-            :loading="videos.length < 1"
-          >
-            <template v-slot:top>
-              <v-toolbar
-                flat
+          <v-row>
+            <v-col
+              cols="12"
+              md="6"
+            >
+              <v-chip
+                v-if="deviceSelected.length < 1"
+                class="ma-2 text-h5"
+                color="error"
+                outlined
               >
-                <v-text-field
-                  v-model="videoSearch"
-                  prepend-inner-icon="mdi-magnify"
-                  class="ml-auto"
-                  hide-details
-                  label="Suchen.."
-                  single-line
-                  style="max-width: 150px;"
-                />
-              </v-toolbar>
-            </template>
-          </v-data-table>
-        </v-tab-item>
-
-        <v-tab-item class="pb-12">
-          <div class="text-center text-h4 font-weight-light mb-6">
-            Bitte wählen Sie mindestens ein (1) Gerät aus.
-          </div>
+                <v-icon left>
+                  mdi-exclamation
+                </v-icon>
+                Bitte wählen Sie mindestens ein (1) Gerät aus
+              </v-chip>
+              <v-chip
+                v-else
+                class="ma-2 text-h5"
+                color="success"
+                outlined
+              >
+                Aktuelle auswahl: {{ deviceSelected.length }}
+              </v-chip>
+            </v-col>
+            <v-col
+              cols="12"
+              md="6"
+            >
+              <div
+                class="float-right"
+              >
+<!--                <v-btn-->
+<!--                  class="hidden-sm-and-down"-->
+<!--                  color="blue"-->
+<!--                  dark-->
+<!--                  tile-->
+<!--                  @click="deviceHelpDialog = !deviceHelpDialog"-->
+<!--                >-->
+<!--                  <v-icon-->
+<!--                    left-->
+<!--                  >-->
+<!--                    mdi-help-->
+<!--                  </v-icon>-->
+<!--                  Hilfe-->
+<!--                </v-btn>-->
+              </div>
+            </v-col>
+          </v-row>
           <v-data-table
             v-model="deviceSelected"
             :headers="deviceHeaders"
@@ -87,10 +97,147 @@
         </v-tab-item>
 
         <v-tab-item class="pb-12">
-          <div class="text-center text-h4 grey--text font-weight-light mb-6">
-            In welchem Zeitraum sollen die Inhalte angezeigt werden ?
-          </div>
+          <v-row>
+            <v-col
+              cols="12"
+              md="6"
+            >
+              <v-chip
+                v-if="videoSelected.length < 1"
+                class="ma-2 text-h5"
+                color="error"
+                outlined
+              >
+                <v-icon left>
+                  mdi-exclamation
+                </v-icon>
+                Bitte wählen Sie mindestens ein (1) Video aus
+              </v-chip>
+              <v-chip
+                v-else
+                class="ma-2 text-h5"
+                color="success"
+                outlined
+              >
+                Aktuelle auswahl: {{ videoSelected.length }}
+              </v-chip>
+            </v-col>
+            <v-col
+              cols="12"
+              md="6"
+            >
+              <div
+                class="float-right"
+              >
+<!--                <v-btn-->
+<!--                  class="hidden-sm-and-down"-->
+<!--                  color="blue"-->
+<!--                  dark-->
+<!--                  tile-->
+<!--                  @click="videoHelpDialog = !videoHelpDialog"-->
+<!--                >-->
+<!--                  <v-icon-->
+<!--                    left-->
+<!--                  >-->
+<!--                    mdi-help-->
+<!--                  </v-icon>-->
+<!--                  Hilfe-->
+<!--                </v-btn>-->
+              </div>
+            </v-col>
+          </v-row>
+          <v-data-table
+            v-model="videoSelected"
+            :headers="videoHeaders"
+            :items="videos"
+            item-key="id"
+            show-select
+            :search.sync="videoSearch"
+            class="elevation-0"
+            multi-sort
+            no-results-text="Es wurde leider nichts gefunden"
+            no-data-text="Es scheint keine Videos zu geben"
+            loading-text="Videos werden geladen..."
+            :loading="videos.length < 1"
+          >
+            <template v-slot:top>
+              <v-toolbar
+                flat
+              >
+                <v-text-field
+                  v-model="videoSearch"
+                  prepend-inner-icon="mdi-magnify"
+                  class="ml-auto"
+                  hide-details
+                  label="Suchen.."
+                  single-line
+                  style="max-width: 150px;"
+                />
+              </v-toolbar>
+            </template>
+          </v-data-table>
+        </v-tab-item>
 
+        <v-tab-item class="pb-12">
+          <v-row>
+            <v-col
+              cols="12"
+              md="6"
+            >
+              <v-chip
+                v-if="dates.length < 2"
+                class="ma-2 text-h5"
+                color="error"
+                outlined
+              >
+                <v-icon left>
+                  mdi-exclamation
+                </v-icon>
+                Bitte wählen Sie einen Zeitraum aus
+              </v-chip>
+              <div
+                v-else
+              >
+                <v-chip
+                  class="ma-2 text-h5"
+                  color="success"
+                  outlined
+                >
+                  Von: {{ dates[0] }} {{ startTime }} Uhr
+                </v-chip>
+                <v-chip
+                  class="ma-2 text-h5"
+                  color="success"
+                  outlined
+                >
+                  Bis: {{ dates[1] }} {{ endTime }} Uhr
+                </v-chip>
+              </div>
+            </v-col>
+            <v-col
+              cols="12"
+              md="6"
+            >
+              <div
+                class="float-right"
+              >
+<!--                <v-btn-->
+<!--                  class="hidden-sm-and-down"-->
+<!--                  color="blue"-->
+<!--                  dark-->
+<!--                  tile-->
+<!--                  @click="timeHelpDialog = !timeHelpDialog"-->
+<!--                >-->
+<!--                  <v-icon-->
+<!--                    left-->
+<!--                  >-->
+<!--                    mdi-help-->
+<!--                  </v-icon>-->
+<!--                  Hilfe-->
+<!--                </v-btn>-->
+              </div>
+            </v-col>
+          </v-row>
           <v-row>
             <v-col
               cols="12"
@@ -101,6 +248,7 @@
                 range
                 scrollable
                 show-week
+                full-width
               />
             </v-col>
             <v-col
@@ -128,7 +276,7 @@
                         readonly
                         v-bind="attrs"
                         v-on="on"
-                      ></v-text-field>
+                      />
                     </template>
                     <v-time-picker
                       v-if="startTimeMenu"
@@ -137,7 +285,7 @@
                       format="24hr"
                       scrollable
                       @click:minute="$refs.startMenu.save(startTime)"
-                    ></v-time-picker>
+                    />
                   </v-menu>
                 </v-col>
               </v-row>
@@ -162,7 +310,7 @@
                         readonly
                         v-bind="attrs"
                         v-on="on"
-                      ></v-text-field>
+                      />
                     </template>
                     <v-time-picker
                       v-if="endTimeMenu"
@@ -171,14 +319,21 @@
                       format="24hr"
                       scrollable
                       @click:minute="$refs.endMenu.save(endTime)"
-                    ></v-time-picker>
+                    />
                   </v-menu>
                 </v-col>
               </v-row>
               <v-divider
                 class="mt-4"
               />
-              <p>von: {{ startTime }} - bis: {{ endTime }} </p>
+<!--              <v-card-->
+<!--                flat-->
+<!--                tile-->
+<!--              >-->
+<!--                <v-card-text class="text-h4 mt-4">-->
+<!--                  <b>Von: {{ dates[0] }} {{ startTime }} Uhr<br><br>Bis: {{ dates[1] }} {{ endTime }} Uhr</b>-->
+<!--                </v-card-text>-->
+<!--              </v-card>-->
             </v-col>
           </v-row>
         </v-tab-item>
@@ -201,6 +356,93 @@
         {{ alert.text }}
       </v-alert>
     </v-snackbar>
+    <v-dialog
+      v-model="deviceHelpDialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <v-card>
+        <v-toolbar
+          dark
+          flat
+          tile
+          color="blue"
+        >
+          <v-toolbar-title>Hilfe zur Auswahl der Geräte</v-toolbar-title>
+          <v-spacer />
+          <v-toolbar-items>
+            <v-btn
+              icon
+              dark
+              @click="deviceHelpDialog = !deviceHelpDialog"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+        <v-row
+          align="center"
+          class="mt-2"
+        >
+          <v-col>
+            <v-window
+              v-model="window"
+              class="elevation-3 ml-10"
+              vertical
+            >
+              <v-window-item
+                v-for="n in length"
+                :key="n"
+              >
+                <v-card flat>
+                  <v-card-text>
+                    <v-row
+                      class="mb-4"
+                      align="center"
+                    >
+                      <strong
+                        class="text-h3 ml-2 mt-2"
+                      >
+                        Title {{ n }}
+                      </strong>
+                    </v-row>
+                    <v-img
+                      contain
+                      src="@/assets/test1.png"
+                      max-height="80vh"
+                    >
+                    </v-img>
+                  </v-card-text>
+                </v-card>
+              </v-window-item>
+            </v-window>
+          </v-col>
+          <v-item-group
+            v-model="window"
+            class="shrink mr-6"
+            mandatory
+            tag="v-flex"
+          >
+            <v-item
+              v-for="n in length"
+              :key="n"
+              v-slot="{ active, toggle }"
+            >
+              <div>
+                <v-btn
+                  :input-value="active"
+                  icon
+                  @click="toggle"
+                >
+                  <v-icon>mdi-record</v-icon>
+                </v-btn>
+              </div>
+            </v-item>
+          </v-item-group>
+        </v-row>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -212,11 +454,16 @@
     name: 'Links',
 
     data: () => ({
+      window: 0,
+      length: 3,
       alert: {
         value: false,
         type: 'error',
         text: 'Oopsie.. :(',
       },
+      deviceHelpDialog: false,
+      videoHelpDialog: false,
+      timeHelpDialog: false,
       dateMenu: false,
       dates: [],
       startTime: null,
@@ -228,7 +475,7 @@
       deviceSearch: '',
       deviceSelected: [],
       tab: 0,
-      tabs: ['Videos', 'Geräte', 'Zeitraum'],
+      tabs: ['Geräte', 'Videos', 'Zeitraum'],
       videoHeaders: [
         {
           text: 'Name',
@@ -253,6 +500,48 @@
           value: 'description',
         },
       ],
+      deviceHelpImages: [
+        {
+          title: 'Test 1',
+          image: '@/assets/test1.png',
+        },
+        {
+          title: 'Test 2',
+          image: '@/assets/test2.png',
+        },
+        {
+          title: 'Test 3',
+          image: '@/assets/test3.png',
+        },
+      ],
+      videoHelpImages: [
+        {
+          title: '',
+          image: '',
+        },
+        {
+          title: '',
+          image: '',
+        },
+        {
+          title: '',
+          image: '',
+        },
+      ],
+      timeHelpImages: [
+        {
+          title: '',
+          image: '',
+        },
+        {
+          title: '',
+          image: '',
+        },
+        {
+          title: '',
+          image: '',
+        },
+      ],
     }),
     computed: {
       videos: get('app/videos'),
@@ -268,9 +557,9 @@
       availableSteps () {
         const steps = [0]
 
-        if (this.videoSelected.length > 0) steps.push(1)
+        if (this.deviceSelected.length > 0) steps.push(1)
 
-        if (this.deviceSelected.length > 0 && steps.includes(1)) steps.push(2)
+        if (this.videoSelected.length > 0 && steps.includes(1)) steps.push(2)
 
         if (
           steps.includes(2)
@@ -283,7 +572,6 @@
         if (!valid) return
 
         if (this.tab === this.tabs.length - 1) {
-          // todo: send link create thingy
           const postData = new FormData()
           const postVideos = []
           const postDevices = []
@@ -334,3 +622,8 @@
     },
   }
 </script>
+
+<style lang="sass">
+  .v-dialog--fullscreen
+    overflow: hidden !important
+</style>

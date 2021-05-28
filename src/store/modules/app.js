@@ -24,14 +24,14 @@ const state = {
       to: '/',
     },
     {
-      title: 'Videos',
-      icon: 'mdi-widgets',
-      to: '/videos/',
-    },
-    {
       title: 'Geräte',
       icon: 'mdi-monitor-cellphone-star',
       to: '/devices/',
+    },
+    {
+      title: 'Videos',
+      icon: 'mdi-widgets',
+      to: '/videos/',
     },
     {
       title: 'Links',
