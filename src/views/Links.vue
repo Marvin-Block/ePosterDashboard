@@ -73,6 +73,7 @@
             :search.sync="deviceSearch"
             class="elevation-0"
             multi-sort
+            sort-by="location"
             no-results-text="Es wurde leider nichts gefunden"
             no-data-text="Es scheint keine Geräte zu geben"
             loading-text="Geräte werden geladen..."
@@ -538,6 +539,14 @@
         {
           text: 'Beschreibung',
           value: 'description',
+        },
+        {
+          text: 'Ausrichtung',
+          value: 'orientation',
+        },
+        {
+          text: 'Rotation',
+          value: 'rotation',
         },
       ],
       deviceHelpImages: [

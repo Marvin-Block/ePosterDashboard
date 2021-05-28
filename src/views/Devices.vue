@@ -107,14 +107,68 @@
                         lazy-validation
                       >
                         <v-text-field
-                          v-for="(field, j) in editFields"
-                          :key="j"
-                          v-model="selectedItem[field.value]"
+                          v-model="selectedItem.location"
                           class="pb-1"
-                          :type="field.type"
-                          :label="field.name"
-                          :rules="field.rules"
+                          type="text"
+                          label="Standort"
+                          :rules="editFields.rules.location"
                         />
+                        <v-text-field
+                          v-model="selectedItem.orientation"
+                          class="pb-1"
+                          type="text"
+                          label="Ausrichtung"
+                          :rules="editFields.rules.orientation"
+                        />
+                        <v-radio-group
+                          v-model="selectedItem.rotation"
+                          row
+                          mandatory
+                        >
+                          <v-radio
+                            label="Ohne Rotation"
+                            value="null"
+                          />
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-radio
+                                value="Rechts"
+                                v-bind="attrs"
+                                v-on="on"
+                              >
+                                <template v-slot:label>
+                                  <v-icon
+                                    left
+                                  >
+                                    mdi-phone-rotate-landscape
+                                  </v-icon>
+                                  Rechts
+                                </template>
+                              </v-radio>
+                            </template>
+                            <span>Nach Rechts rotiert</span>
+                          </v-tooltip>
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-radio
+                                value="Links"
+                                v-bind="attrs"
+                                v-on="on"
+                              >
+                                <template v-slot:label>
+                                  <v-icon
+                                    left
+                                    style="transform: scale(-1, 1)"
+                                  >
+                                    mdi-phone-rotate-landscape
+                                  </v-icon>
+                                  Links
+                                </template>
+                              </v-radio>
+                            </template>
+                            <span>Nach Links rotiert</span>
+                          </v-tooltip>
+                        </v-radio-group>
                         <v-btn
                           :disabled="!valid || loadingButton"
                           :loading="loadingButton"
@@ -327,8 +381,12 @@
           value: 'description',
         },
         {
-          text: 'Typ',
-          value: 'type',
+          text: 'Ausrichtung',
+          value: 'orientation',
+        },
+        {
+          text: 'Rotation',
+          value: 'rotation',
         },
         {
           text: 'Letzte Änderung',
@@ -338,10 +396,10 @@
           text: 'Status',
           value: 'lastRequest',
         },
-        {
-          text: 'Verlinkungen',
-          value: 'link.length',
-        },
+        // {
+        //   text: 'Verlinkungen',
+        //   value: 'link.length',
+        // },
         {
           sortable: false,
           text: '',
@@ -349,33 +407,20 @@
         },
       ],
       items: [],
-      editFields: [
-        {
-          name: 'Standort',
-          value: 'location',
-          type: 'text',
-          rules: [
+      editFields: {
+        rules: {
+          location: [
             v => !!v || 'Der Standort ist ein Pflichtfeld',
             v => /^\d{3}\s-\s.*/.test(v) || 'Bitte auf das Format achten -> 000 - HierDerName',
           ],
-        },
-        {
-          name: 'Typ',
-          value: 'type',
-          type: 'text',
-          rules: [
-            v => /^(?=[\s\S])/.test(v) ? /^(eposter|fernseher)$/i.test(v) || 'ePoster oder Fernseher' : true,
-          ],
-        },
-        {
-          name: 'Ausrichtung',
-          value: 'orientation',
-          type: 'text',
-          rules: [
+          orientation: [
             v => /^(?=[\s\S])/.test(v) ? /^(hoch|breit)$/i.test(v) || 'Hoch oder Breit' : true,
           ],
+          rotation: [
+            v => /^(?=[\s\S])/.test(v) ? /^(rechts|links)$/i.test(v) || 'Rechts oder Links' : true,
+          ],
         },
-      ],
+      },
       selectedItem: {},
       search: undefined,
     }),
@@ -412,7 +457,7 @@
         if (this.validate()) {
           this.loadingButton = true
           axios.put('http://kodizabbix:3330/v2/device',
-                    _.pick(this.selectedItem, 'deviceUUID', 'location', 'type', 'orientation'),
+                    _.pick(this.selectedItem, 'deviceUUID', 'location', 'orientation', 'rotation'),
           ).then((response) => {
             this.loadingButton = false
             Object.assign(item, this.selectedItem)
