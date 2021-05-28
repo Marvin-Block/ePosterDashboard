@@ -213,6 +213,7 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <app-btn
+                  :style="action.disabled ? 'display:none' : ''"
                   v-bind="attrs"
                   :color="action.color"
                   class="px-2 ml-1"

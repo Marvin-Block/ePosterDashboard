@@ -19,6 +19,7 @@
           hide-default-footer
           class="elevation-0"
           multi-sort
+          sort-by="filNr"
           no-results-text="Es wurde leider nichts gefunden"
           no-data-text="Es scheint keine Videos zu geben"
           loading-text="Videos werden geladen..."
@@ -58,6 +59,7 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <app-btn
+                  :style="action.disabled ? 'display:none' : ''"
                   v-bind="attrs"
                   :color="action.color"
                   class="px-2 ml-1"
