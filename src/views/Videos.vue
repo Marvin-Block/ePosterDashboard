@@ -81,14 +81,89 @@
                       lazy-validation
                     >
                       <v-text-field
-                        v-for="(field, i) in newItem"
-                        :key="i"
-                        v-model="field.data"
+                        v-model="uploadItem.values.name"
                         class="pb-1"
-                        :type="field.type"
-                        :label="field.name"
-                        :disabled="field.disabled"
-                        :rules="field.rules"
+                        type="text"
+                        label="Name"
+                        :rules="uploadItem.rules.name"
+                      />
+                      <v-text-field
+                        v-model="uploadItem.values.orientation"
+                        class="pb-1"
+                        type="text"
+                        label="Ausrichtung"
+                        :rules="uploadItem.rules.orientation"
+                      />
+                      <v-radio-group
+                        v-model="uploadItem.values.rotation"
+                        row
+                        mandatory
+                      >
+                        <v-radio
+                          label="Ohne Rotation"
+                        />
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-radio
+                              value="Rechts"
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              <template v-slot:label>
+                                <v-icon
+                                  left
+                                >
+                                  mdi-phone-rotate-landscape
+                                </v-icon>
+                                Rechts
+                              </template>
+                            </v-radio>
+                          </template>
+                          <span>Nach Rechts rotiert</span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-radio
+                              value="Links"
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              <template v-slot:label>
+                                <v-icon
+                                  left
+                                  style="transform: scale(-1, 1)"
+                                >
+                                  mdi-phone-rotate-landscape
+                                </v-icon>
+                                Links
+                              </template>
+                            </v-radio>
+                          </template>
+                          <span>Nach Links rotiert</span>
+                        </v-tooltip>
+                      </v-radio-group>
+                      <v-text-field
+                        v-model="uploadItem.values.width"
+                        :rules="uploadItem.rules.width"
+                        class="pb-1"
+                        type="text"
+                        label="Breite"
+                        disabled
+                      />
+                      <v-text-field
+                        v-model="uploadItem.values.height"
+                        :rules="uploadItem.rules.height"
+                        class="pb-1"
+                        type="text"
+                        label="Höhe"
+                        disabled
+                      />
+                      <v-text-field
+                        v-model="uploadItem.values.length"
+                        class="pb-1"
+                        type="text"
+                        label="Länge (in Sekunden)"
+                        disabled
                       />
                       <v-file-input
                         v-model="video"
@@ -114,7 +189,7 @@
                     <v-btn
                       color="red darken-1"
                       text
-                      @click="dialog = !dialog"
+                      @click="dialog = !dialog;resetUploadForm()"
                     >
                       Abbrechen
                     </v-btn>
@@ -314,9 +389,9 @@
                             accordion
                           >
                             <v-expansion-panel
-                              class="elevation-6"
                               v-for="(link,j) in selectedItem.link"
                               :key="j"
+                              class="elevation-6"
                             >
                               <v-expansion-panel-header>
                                 Item
@@ -388,6 +463,7 @@
   import MaterialCard from '@/components/MaterialCard'
   import axios from 'axios'
   import _ from 'lodash'
+  import { v4 as uuidv4 } from 'uuid'
   import moment from 'moment'
   export default {
     name: 'Videos',
@@ -429,21 +505,21 @@
           text: 'Die Vorschau wurde in einem neuen Fenster geöffnet.',
           info: 'Sollte kein Video angezeigt werden, melden Sie sich bitte bei der IT.',
         },
-        // {
-        //   color: 'black',
-        //   icon: 'mdi-auto-fix',
-        //   action: 'link',
-        //   disabled: true,
-        //   width: null,
-        //   title: 'Links',
-        //   text: '',
-        //   info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
-        // },
+        {
+          color: 'black',
+          icon: 'mdi-auto-fix',
+          action: 'link',
+          disabled: true,
+          width: null,
+          title: 'Links',
+          text: '',
+          info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
+        },
         {
           color: 'black',
           icon: 'mdi-eye',
           action: 'info',
-          disabled: false,
+          disabled: true,
           width: null,
           title: 'Test',
           text: '',
@@ -555,85 +631,39 @@
           ],
         },
       ],
-      newItem: [
-        {
-          name: 'Name',
-          value: 'name',
-          data: null,
-          disabled: false,
-          type: 'text',
-          rules: [
+      uploadItem: {
+        rules: {
+          name: [
             v => !!v || 'Name ist ein Pflichtfeld',
             v => (v && v.length > 4) || 'Der Name muss mindestens 5 Zeichen lang sein',
           ],
-        },
-        // {
-        //   name: 'Kalenderwoche',
-        //   value: 'calendarWeek',
-        //   data: null,
-        //   disabled: false,
-        //   type: 'text',
-        //   rules: [
-        //     v => !v || /^KW\d{2}$/.test(v) || 'Format KW00, KW99, etc',
-        //   ],
-        // },
-        {
-          name: 'Ausrichtung',
-          value: 'orientation_V2',
-          data: null,
-          disabled: false,
-          type: 'text',
-          rules: [
+          orientation: [
             v => !v || /^(hoch|breit)$/i.test(v) || 'Hoch oder Breit',
           ],
-        },
-        {
-          name: 'Rotation',
-          value: 'rotation',
-          data: null,
-          disabled: false,
-          type: 'text',
-          rules: [
-            v => !v || /^(rechts|links)$/i.test(v) || 'Rechts oder Links',
-          ],
-        },
-        {
-          name: 'Höhe',
-          value: 'height',
-          data: null,
-          disabled: true,
-          type: 'number',
-          rules: [
+          height: [
             v => !!v || 'Höhe ist ein Pflichtfeld',
             v => /^\d{3,4}$/.test(v) || 'Die Höhe muss 3-4 stellig sein',
           ],
-        },
-        {
-          name: 'Breite',
-          value: 'width',
-          data: null,
-          disabled: true,
-          type: 'number',
-          rules: [
+          width: [
             v => !!v || 'Breite ist ein Pflichtfeld',
             v => /^\d{3,4}$/.test(v) || 'Die Breite muss 3-4 stellig sein',
           ],
         },
-        {
-          name: 'Länge (in Sek.)',
-          value: 'length',
-          data: null,
-          disabled: true,
-          type: 'number',
-          rules: [],
+        values: {
+          name: null,
+          orientation: null,
+          rotation: null,
+          width: null,
+          height: null,
+          length: null,
         },
-      ],
+      },
       selectedItem: {},
       videoRules: [
         v => !!v || 'Das Video ist ein Pflichtfeld',
       ],
       video: null,
-      search: undefined,
+      search: null,
     }),
     computed: {
       ...sync('app', [
@@ -872,22 +902,56 @@
       },
       resetValidation: function (action) {
         if (action === 'edit') { this.$refs.form[0].resetValidation() }
+        if (action === 'upload') { this.$refs.form.resetValidation() }
+      },
+      resetUploadForm: function () {
+        this.resetValidation('upload')
+        this.video = null
+        for (const key in this.uploadItem.values) {
+          this.uploadItem.values[key] = null
+        }
       },
       inspectVideo: function () {
         const vid = document.createElement('video')
         vid.src = URL.createObjectURL(this.video)
         vid.addEventListener('loadedmetadata', e => {
-          this.newItem[3].data = e.path[0].videoHeight
-          this.newItem[4].data = e.path[0].videoWidth
-          this.newItem[5].data = e.path[0].duration
-          this.newItem[1].data = e.path[0].videoWidth > e.path[0].videoHeight ? 'Breit' : 'Hoch'
+          this.uploadItem.values.name = this.video.name.replace(/.mp4$/, '')
+          this.uploadItem.values.height = e.path[0].videoHeight
+          this.uploadItem.values.width = e.path[0].videoWidth
+          this.uploadItem.values.length = e.path[0].duration
+          this.uploadItem.values.orientation = e.path[0].videoWidth > e.path[0].videoHeight ? 'Breit' : 'Hoch'
         })
       },
       upload: function () {
         if (this.validate()) {
           // todo: add upload
-          this.newItem.forEach(entry => {
-            console.log(entry.name, entry.data)
+          console.log(this.uploadItem.values)
+          const postData = new FormData()
+          postData.append('videoUUID', uuidv4())
+          postData.append('name', this.uploadItem.values.name)
+          postData.append('width', this.uploadItem.values.width)
+          postData.append('height', this.uploadItem.values.height)
+          postData.append('orientation', this.uploadItem.values.orientation)
+          if (this.uploadItem.values.rotation !== 0) {
+            postData.append('rotation', this.uploadItem.values.rotation)
+          }
+          postData.append('uploadedFile', this.video)
+          axios.post('http://kodizabbix:3330/v2/video', postData).then(response => {
+            console.log(this.videos)
+            this.alert = {
+              value: true,
+              type: 'success',
+              text: response.data.message,
+            }
+            console.log(response)
+          }).catch(error => {
+            this.alert = {
+              value: true,
+              type: 'error',
+              text: error.response.data.message,
+            }
+          }).finally(() => {
+            this.resetUploadForm()
           })
         }
       },

@@ -38,11 +38,11 @@ const state = {
       icon: 'mdi-auto-fix',
       to: '/links/',
     },
-    {
-      title: 'Logs',
-      icon: 'mdi-history',
-      to: '/logs/',
-    },
+    // {
+    //   title: 'Logs',
+    //   icon: 'mdi-history',
+    //   to: '/logs/',
+    // },
     // {
     //   title: 'Pages',
     //   icon: 'mdi-image',
@@ -81,82 +81,82 @@ const state = {
     //     },
     //   ],
     // },
-    {
-      title: 'Components',
-      icon: 'mdi-view-comfy',
-      items: [
-        {
-          title: 'Multi Level Collapse',
-          items: [{
-            title: 'Example',
-          }],
-        },
-        {
-          title: 'Buttons',
-          to: '/components/buttons/',
-        },
-        {
-          title: 'Grid System',
-          to: '/components/grid/',
-        },
-        {
-          title: 'Tabs',
-          to: '/components/tabs/',
-        },
-        {
-          title: 'Notifications',
-          to: '/components/notifications/',
-        },
-        {
-          title: 'Icons',
-          to: '/components/icons/',
-        },
-        {
-          title: 'Typography',
-          to: '/components/typography/',
-        },
-      ],
-    },
-    {
-      title: 'Forms',
-      icon: 'mdi-clipboard-outline',
-      items: [
-        {
-          title: 'Regular Forms',
-          to: '/forms/regular/',
-        },
-        {
-          title: 'Extended Forms',
-          to: '/forms/extended/',
-        },
-        {
-          title: 'Validation Forms',
-          to: '/forms/validation/',
-        },
-        {
-          title: 'Wizard',
-          to: '/forms/wizard/',
-        },
-      ],
-    },
-    {
-      title: 'Tables',
-      icon: 'mdi-grid',
-      items: [
-        {
-          title: 'Regular Tables',
-          to: '/tables/regular/',
-        },
-        {
-          title: 'Extended Tables',
-          to: '/tables/extended/',
-        },
-        {
-          title: 'DataTables Tables',
-          to: '/tables/data-tables/',
-        },
-      ],
-    },
+    // {
+    //   title: 'Components',
+    //   icon: 'mdi-view-comfy',
+    //   items: [
+    //     {
+    //       title: 'Multi Level Collapse',
+    //       items: [{
+    //         title: 'Example',
+    //       }],
+    //     },
+    //     {
+    //       title: 'Buttons',
+    //       to: '/components/buttons/',
+    //     },
+    //     {
+    //       title: 'Grid System',
+    //       to: '/components/grid/',
+    //     },
+    //     {
+    //       title: 'Tabs',
+    //       to: '/components/tabs/',
+    //     },
+    //     {
+    //       title: 'Notifications',
+    //       to: '/components/notifications/',
+    //     },
+    //     {
+    //       title: 'Icons',
+    //       to: '/components/icons/',
+    //     },
+    //     {
+    //       title: 'Typography',
+    //       to: '/components/typography/',
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: 'Forms',
+    //   icon: 'mdi-clipboard-outline',
+    //   items: [
+    //     {
+    //       title: 'Regular Forms',
+    //       to: '/forms/regular/',
+    //     },
+    //     {
+    //       title: 'Extended Forms',
+    //       to: '/forms/extended/',
+    //     },
+    //     {
+    //       title: 'Validation Forms',
+    //       to: '/forms/validation/',
+    //     },
+    //     {
+    //       title: 'Wizard',
+    //       to: '/forms/wizard/',
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: 'Tables',
+    //   icon: 'mdi-grid',
+    //   items: [
+    //     {
+    //       title: 'Regular Tables',
+    //       to: '/tables/regular/',
+    //     },
+    //     {
+    //       title: 'Extended Tables',
+    //       to: '/tables/extended/',
+    //     },
+    //     {
+    //       title: 'DataTables Tables',
+    //       to: '/tables/data-tables/',
+    //     },
+    //   ],
+    // },
     // {
     //   title: 'Maps',
     //   icon: 'mdi-map-marker',
