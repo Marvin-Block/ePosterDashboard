@@ -114,6 +114,12 @@
                           :rules="editFields.rules.location"
                         />
                         <v-text-field
+                          v-model="selectedItem.description"
+                          class="pb-1"
+                          type="text"
+                          label="Beschreibung"
+                        />
+                        <v-text-field
                           v-model="selectedItem.orientation"
                           class="pb-1"
                           type="text"
@@ -129,25 +135,6 @@
                             label="Ohne Rotation"
                             value="null"
                           />
-                          <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-radio
-                                value="Rechts"
-                                v-bind="attrs"
-                                v-on="on"
-                              >
-                                <template v-slot:label>
-                                  <v-icon
-                                    left
-                                  >
-                                    mdi-phone-rotate-landscape
-                                  </v-icon>
-                                  Rechts
-                                </template>
-                              </v-radio>
-                            </template>
-                            <span>Nach Rechts rotiert</span>
-                          </v-tooltip>
                           <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
                               <v-radio
@@ -167,6 +154,25 @@
                               </v-radio>
                             </template>
                             <span>Nach Links rotiert</span>
+                          </v-tooltip>
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-radio
+                                value="Rechts"
+                                v-bind="attrs"
+                                v-on="on"
+                              >
+                                <template v-slot:label>
+                                  <v-icon
+                                    left
+                                  >
+                                    mdi-phone-rotate-landscape
+                                  </v-icon>
+                                  Rechts
+                                </template>
+                              </v-radio>
+                            </template>
+                            <span>Nach Rechts rotiert</span>
                           </v-tooltip>
                         </v-radio-group>
                         <v-btn
@@ -371,6 +377,7 @@
         {
           text: 'ID',
           value: 'id',
+          filterable: false,
         },
         {
           text: 'Standort',
@@ -391,10 +398,12 @@
         {
           text: 'Letzte Änderung',
           value: 'updatedAt',
+          filterable: false,
         },
         {
           text: 'Status',
           value: 'lastRequest',
+          filterable: false,
         },
         // {
         //   text: 'Verlinkungen',
@@ -457,7 +466,7 @@
         if (this.validate()) {
           this.loadingButton = true
           axios.put('http://kodizabbix:3330/v2/device',
-                    _.pick(this.selectedItem, 'deviceUUID', 'location', 'orientation', 'rotation'),
+                    _.pick(this.selectedItem, 'deviceUUID', 'location', 'description', 'orientation', 'rotation'),
           ).then((response) => {
             this.loadingButton = false
             Object.assign(item, this.selectedItem)

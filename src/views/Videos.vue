@@ -105,25 +105,6 @@
                         <v-tooltip bottom>
                           <template v-slot:activator="{ on, attrs }">
                             <v-radio
-                              value="Rechts"
-                              v-bind="attrs"
-                              v-on="on"
-                            >
-                              <template v-slot:label>
-                                <v-icon
-                                  left
-                                >
-                                  mdi-phone-rotate-landscape
-                                </v-icon>
-                                Rechts
-                              </template>
-                            </v-radio>
-                          </template>
-                          <span>Nach Rechts rotiert</span>
-                        </v-tooltip>
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-radio
                               value="Links"
                               v-bind="attrs"
                               v-on="on"
@@ -140,6 +121,25 @@
                             </v-radio>
                           </template>
                           <span>Nach Links rotiert</span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-radio
+                              value="Rechts"
+                              v-bind="attrs"
+                              v-on="on"
+                            >
+                              <template v-slot:label>
+                                <v-icon
+                                  left
+                                >
+                                  mdi-phone-rotate-landscape
+                                </v-icon>
+                                Rechts
+                              </template>
+                            </v-radio>
+                          </template>
+                          <span>Nach Rechts rotiert</span>
                         </v-tooltip>
                       </v-radio-group>
                       <v-text-field
@@ -571,15 +571,17 @@
         {
           text: 'Größe',
           value: 'size',
+          filterable: false,
         },
         {
           text: 'Letzte Änderung',
           value: 'updatedAt',
+          filterable: false,
         },
-        {
-          text: 'Verlinkungen',
-          value: 'link.length',
-        },
+        // {
+        //   text: 'Verlinkungen',
+        //   value: 'link.length',
+        // },
         {
           sortable: false,
           text: '',
@@ -858,7 +860,6 @@
                     _.pick(this.selectedItem, 'videoUUID', 'name', 'calendarWeek', 'orientation_V2', 'rotation'),
           ).then((response) => {
             this.loadingButton = false
-            Object.assign(item, this.selectedItem)
             this.alert = {
               value: true,
               type: 'success',
