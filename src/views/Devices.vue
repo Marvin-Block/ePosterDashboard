@@ -216,37 +216,371 @@
                           cols="12"
                           md="6"
                         >
-                          <v-expansion-panels
-                            accordion
+                          <v-row
+                            justify="center"
+                            class="text-h3"
                           >
-                            <v-expansion-panel
-                              v-for="(item, i) in videos"
-                              :key="i"
+                            <v-col>
+                              <strong>{{selectedItem.location}}</strong>
+                            </v-col>
+                            <v-col>
+                              <p>
+                                {{selectedItem.lastRequest > (new Date).valueOf() - 300000 ? 'Online' : 'Offline'}}
+                                <v-icon :color="selectedItem.lastRequest > (new Date).valueOf() - 300000 ? 'success' : 'error'">
+                                  mdi-{{ selectedItem.lastRequest > (new Date).valueOf() - 300000 ? 'wifi' : 'wifi-off' }}
+                                </v-icon>
+                              </p>
+                            </v-col>
+                          </v-row>
+                          <v-row
+                            justify="center"
+                            class="text-h3"
+                          >
+                            <v-col
+                              cols="12"
+                              md="6"
                             >
-                              <v-expansion-panel-header> {{ item.name }} </v-expansion-panel-header>
-                              <v-expansion-panel-content>
-                                {{ item }}
-                              </v-expansion-panel-content>
-                            </v-expansion-panel>
-                          </v-expansion-panels>
+                              <v-text-field
+                                prepend-icon="mdi-cellphone"
+                                placeholder="Ausrichtung"
+                                label="Ausrichtung"
+                                type="text"
+                                v-model="selectedItem.orientation"
+                                disabled
+                              />
+                            </v-col>
+                            <v-col
+                              cols="12"
+                              md="6"
+                            >
+                              <v-text-field
+                                prepend-icon="mdi-phone-rotate-landscape"
+                                placeholder="Rotation"
+                                label="Rotation"
+                                type="text"
+                                v-model="selectedItem.rotation"
+                                disabled
+                              />
+                            </v-col>
+                          </v-row>
+                          <v-row
+                            justify="center"
+                            class="text-h3"
+                          >
+                            <v-col
+                              cols="12"
+                              md="6"
+                            >
+                              <v-text-field
+                                prepend-icon="mdi-monitor-multiple"
+                                placeholder="Typ"
+                                label="Typ"
+                                type="text"
+                                v-model="selectedItem.type"
+                                disabled
+                              />
+                            </v-col>
+                            <v-col
+                              cols="12"
+                              md="6"
+                            >
+                              <v-text-field
+                                prepend-icon="mdi-earth"
+                                placeholder="IP-Adresse"
+                                label="IP-Adresse"
+                                type="text"
+                                :value="selectedItem.ip"
+                                readonly
+                                v-on:click="openPiDashboard(selectedItem.ip)"
+                              >
+                                a
+                                </v-text-field>
+                            </v-col>
+                          </v-row>
+                          <v-row
+                            justify="center"
+                            class="text-h3"
+                          >
+                            <v-col
+                              cols="12"
+                              md="6"
+                            >
+                              <v-text-field
+                                prepend-icon="mdi-calendar-plus"
+                                placeholder="Erstellt"
+                                label="Erstellt"
+                                type="text"
+                                :value="formatTime(selectedItem.createdAt, 'DD.MM.YYYY kk:mm' )"
+                                disabled
+                              />
+                            </v-col>
+                            <v-col
+                              cols="12"
+                              md="6"
+                            >
+                              <v-text-field
+                                prepend-icon="mdi-calendar-edit"
+                                placeholder="Letzte Änderung"
+                                label="Letzte Änderung"
+                                type="text"
+                                :value="formatTime(selectedItem.updatedAt, 'DD.MM.YYYY kk:mm' )"
+                                disabled
+                              />
+                            </v-col>
+                          </v-row>
+                          <v-row
+                            justify="center"
+                          >
+                            <v-textarea
+                              prepend-icon="mdi-card-text-outline"
+                              :value="selectedItem.description"
+                              outlined
+                              disabled
+                            ></v-textarea>
+                          </v-row>
+                          <v-row
+                            justify="center"
+                          >
+                            <v-col
+                              cols="12"
+                              md="6"
+                            >
+                              <v-row
+                                justify="center"
+                                class="text-h5"
+                              >
+                                <p>Freier Speicher</p>
+                              </v-row>
+                              <v-row
+                                justify="center"
+                              >
+                                <v-progress-circular
+                                  :value="selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100"
+                                  color="success"
+                                  size="150"
+                                  width="25"
+                                  rotate="360"
+                                >
+                                  <strong>{{Math.floor(selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100)}} %</strong>
+                                </v-progress-circular>
+                              </v-row>
+                            </v-col>
+                            <v-col
+                              cols="12"
+                              md="6"
+                            >
+                              <v-row>
+                                <v-text-field
+                                  prepend-icon="mdi-temperature-celsius"
+                                  placeholder="Temperatur"
+                                  label="Temperatur"
+                                  type="text"
+                                  :value="selectedItem.temp"
+                                  disabled
+                                />
+                              </v-row>
+                              <v-row>
+                                <v-text-field
+                                  prepend-icon="mdi-arrow-up-down"
+                                  placeholder="Höhe"
+                                  label="Höhe"
+                                  type="text"
+                                  :value="selectedItem.height"
+                                  disabled
+                                />
+                              </v-row>
+                              <v-row>
+                                <v-text-field
+                                  prepend-icon="mdi-arrow-left-right"
+                                  placeholder="Breite"
+                                  label="Breite"
+                                  type="text"
+                                  :value="selectedItem.width"
+                                  disabled
+                                />
+                              </v-row>
+                            </v-col>
+                          </v-row>
                         </v-col>
                         <v-col
                           cols="12"
                           md="6"
                         >
-                          <v-expansion-panels
-                            accordion
+                          <v-data-table
+                            :sort-by="['active', 'start', 'end']"
+                            :sort-desc="['true', 'true', 'true']"
+                            :headers="linkHeader"
+                            :items="selectedItem.link"
+                            :item-class="rowClass"
+                            item-key="linkUUID"
+                            hide-default-footer
+                            must-sort
+                            multi-sort
                           >
-                            <v-expansion-panel
-                              v-for="(item, i) in devices"
-                              :key="i"
-                            >
-                              <v-expansion-panel-header> {{ item.location }} </v-expansion-panel-header>
-                              <v-expansion-panel-content>
-                                {{ item }}
-                              </v-expansion-panel-content>
-                            </v-expansion-panel>
-                          </v-expansion-panels>
+                            <template v-slot:item.start="{ item }">
+                              {{ unixToReadable(item.start, "DD.MM.YYYY kk:mm" ) }}
+                            </template>
+                            <template v-slot:item.end="{ item }">
+                              {{ unixToReadable(item.end, "DD.MM.YYYY kk:mm" ) }}
+                            </template>
+                            <template v-slot:item.actions="{ item }">
+                              <v-dialog
+                                v-for="(linkAction, i) in linkActions"
+                                :key="i"
+                                transition="dialog-bottom-transition"
+                                :max-width="linkAction.width"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <app-btn
+                                    :style="linkAction.disabled ? 'display:none' : ''"
+                                    v-bind="attrs"
+                                    :color="linkAction.color"
+                                    class="px-2 ml-1"
+                                    elevation="0"
+                                    min-width="0"
+                                    :disabled="linkAction.disabled"
+                                    small
+                                    text
+                                    v-on="on"
+                                    @click="actionHandle(linkAction, item)"
+                                  >
+                                    <v-icon v-text="linkAction.icon" />
+                                  </app-btn>
+                                </template>
+                                <template
+                                  v-slot:default="dialog"
+                                >
+                                  <v-card>
+                                    <v-toolbar
+                                      :color="linkAction.color"
+                                      dark
+                                    >
+                                      <v-toolbar-title>
+                                        <v-icon
+                                          v-text="linkAction.icon"
+                                        />
+                                        {{ linkAction.title }}
+                                      </v-toolbar-title>
+                                    </v-toolbar>
+                                    <v-card-text>
+                                      <div v-if="linkAction.action === 'linkDelete'">
+                                        <div class="text-h3 pa-3">
+                                          {{ linkAction.text }}
+                                        </div>
+                                        <v-btn
+                                          block
+                                          color="error"
+                                          @click="sendLinkDelete(); dialog.value = false"
+                                        >
+                                          Löschen
+                                        </v-btn>
+                                        <v-divider class="mx-3 mb-2 mt-4" />
+                                        <div class="mx-3 mb-2">
+                                          {{ action.info }}
+                                        </div>
+                                      </div>
+                                      <div v-else>
+                                        <div class="text-h3 pa-3">
+                                          {{ linkAction.text }}
+                                        </div>
+                                        <v-divider class="mx-3 mb-2" />
+                                        <div class="mx-3 mb-2">
+                                          {{ linkAction.info }}
+                                        </div>
+                                      </div>
+                                    </v-card-text>
+                                    <v-card-actions class="justify-end">
+                                      <v-btn
+                                        text
+                                        @click="dialog.value = false; resetValidation(linkAction.action)"
+                                      >
+                                        Schließen
+                                      </v-btn>
+                                    </v-card-actions>
+                                  </v-card>
+                                </template>
+                              </v-dialog>
+                            </template>
+                            <template v-slot:no-data>
+                              <v-row
+                                justify="center"
+                                align-content="center"
+                                style="height: 350px"
+                              >
+                                <v-icon
+                                  large
+                                  color="red lighten-2"
+                                >
+                                  mdi-cancel
+                                </v-icon>
+                                <div
+                                  class="text-h3"
+                                >
+                                  Für dieses Gerät existieren keine Einträge
+                                </div>
+                              </v-row>
+                            </template>
+                          </v-data-table>
+                          <div class="text-center pt-2 float-right">
+                            <div class="text-center">
+                              <v-menu
+                                :close-on-content-click="false"
+                                left
+                                nudge-bottom="40"
+                                nudge-left="40"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn
+                                    color="black"
+                                    icon
+                                    v-bind="attrs"
+                                    v-on="on"
+                                  >
+                                    <v-icon>
+                                      mdi-help-circle-outline
+                                    </v-icon>
+                                  </v-btn>
+                                </template>
+
+                                <v-card>
+                                  <v-list>
+                                    <v-list-item>
+                                      <v-list-item-action>
+                                        <v-icon
+                                          color="grey lighten-1"
+                                        >
+                                          mdi-checkbox-blank-circle
+                                        </v-icon>
+                                      </v-list-item-action>
+                                      <v-list-item-title>Nicht Aktiv</v-list-item-title>
+                                    </v-list-item>
+
+                                    <v-list-item>
+                                      <v-list-item-action>
+                                        <v-icon
+                                          color="red lighten-4"
+                                        >
+                                          mdi-checkbox-blank-circle
+                                        </v-icon>
+                                      </v-list-item-action>
+                                      <v-list-item-title>Der Endzeitpunkt wurde erreicht</v-list-item-title>
+                                    </v-list-item>
+
+                                    <v-list-item>
+                                      <v-list-item-action>
+                                        <v-icon
+                                          color="orange lighten-4"
+                                        >
+                                          mdi-checkbox-blank-circle
+                                        </v-icon>
+                                      </v-list-item-action>
+                                      <v-list-item-title>Der Startzeitpunk ist noch nicht erreicht</v-list-item-title>
+                                    </v-list-item>
+                                  </v-list>
+                                </v-card>
+                              </v-menu>
+                            </div>
+                          </div>
                         </v-col>
                       </v-row>
                       <v-divider class="mx-3 mb-2 mt-4" />
@@ -344,16 +678,16 @@
         },
         {
           color: 'black',
-          icon: 'mdi-auto-fix',
+          icon: 'mdi-information-outline',
           action: 'link',
-          disabled: true,
+          disabled: false,
           width: null,
           title: 'Links',
           text: '',
-          info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
+          info: '',
         },
         {
-          color: 'info',
+          color: 'blue',
           icon: 'mdi-pencil',
           action: 'edit',
           disabled: false,
@@ -415,6 +749,57 @@
           value: 'actions',
         },
       ],
+      linkActions: [
+        {
+          color: 'success',
+          icon: 'mdi-play',
+          action: 'linkPreview',
+          disabled: false,
+          width: 600,
+          title: 'Vorschau',
+          text: 'Die Vorschau wurde in einem neuen Fenster geöffnet.',
+          info: 'Sollte kein Video angezeigt werden, melden Sie sich bitte bei der IT.',
+        },
+        {
+          // todo
+          color: 'blue',
+          icon: 'mdi-pencil',
+          action: 'linkEdit',
+          disabled: true,
+          width: 600,
+          title: 'Ändern',
+          text: '',
+          info: '',
+        },
+        {
+          color: 'error',
+          icon: 'mdi-close',
+          action: 'linkDelete',
+          disabled: false,
+          width: 600,
+          title: 'Löschen',
+          text: 'Sind Sie sich sicher, dass dieser Link gelöscht werden soll ?',
+          info: 'Gelöschte Links sind nicht wiederherstellbar.',
+        },
+      ],
+      linkHeader: [
+        {
+          text: 'Name',
+          value: 'video.name',
+        },
+        {
+          text: 'Start',
+          value: 'start',
+        },
+        {
+          text: 'Ende',
+          value: 'end',
+        },
+        {
+          text: '',
+          value: 'actions',
+        },
+      ],
       items: [],
       editFields: {
         rules: {
@@ -431,6 +816,7 @@
         },
       },
       selectedItem: {},
+      selectedLink: {},
       search: undefined,
     }),
     computed: {
@@ -440,6 +826,31 @@
       ]),
     },
     methods: {
+      rowClass: function (link) {
+        if (!link.active) return 'grey lighten-1'
+        if (link.end < new Date().valueOf()) return 'red lighten-4'
+        if (link.start > new Date().valueOf()) return 'orange lighten-4'
+        // if (link.start < new Date().valueOf() && link.end > new Date().valueOf()) return 'green lighten-4'
+        // return 'green lighten-4'
+      },
+      linkPreview: function (item) {
+        axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`)
+          .then(response => {
+            if (response.status === 200) {
+              window.open(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, 's', `width= ${item.video.height > item.video.width ? '576' : '1024'}, height= ${item.video.height > item.video.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
+            }
+          })
+          .catch((error) => {
+            this.alert = {
+              value: true,
+              type: 'error',
+              text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message,
+            }
+          })
+      },
+      openPiDashboard: function (ip) {
+        window.open('http://' + ip, 's', 'resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no')
+      },
       formatTime: function (time, format) {
         return moment(time).format(format)
       },
@@ -456,8 +867,13 @@
         // todo: add restart at some point
       },
       link: function (item) {
-        // todo: add link dialog
         this.selectedItem = Object.assign(this.selectedItem, item)
+        const videoList = this.selectedItem.link.map((link) => link.videoUUID)
+        this.selectedItem.link.forEach(link => {
+          const videoObj = this.videos.filter(video => videoList.includes(video.videoUUID)).find(video => link.videoUUID === video.videoUUID)
+          delete videoObj.link
+          link.video = videoObj
+        })
       },
       edit: function (item) {
         this.selectedItem = Object.assign(this.selectedItem, item)
@@ -487,15 +903,43 @@
           })
         }
       },
+      linkEdit: function (item) {
+        this.selectedLink = Object.assign(this.selectedLink, item)
+      },
+      sendLinkEdit: function (item) {
+        // todo
+        alert('Send Link Edit')
+      },
       delete: function (item) {
         this.selectedItem = item
       },
       sendDelete: function () {
-        console.log('???')
         axios.delete(`http://kodizabbix:3330/v2/device/${this.selectedItem.deviceUUID}`)
           .then((response) => {
             const itemPos = this.devices.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
             this.devices.splice(itemPos, 1)
+            this.alert = {
+              value: true,
+              type: 'success',
+              text: response.data.message,
+            }
+          })
+          .catch(error => {
+            this.alert = {
+              value: true,
+              type: 'error',
+              text: error.response.data.message,
+            }
+          })
+      },
+      linkDelete: function (item) {
+        this.selectedLink = item
+      },
+      sendLinkDelete: function () {
+        axios.delete(`http://kodizabbix:3330/v2/link/${this.selectedLink.linkUUID}`)
+          .then((response) => {
+            const linkPos = this.selectedItem.link.map(link => link.linkUUID).indexOf(this.selectedLink.linkUUID)
+            this.selectedItem.link.splice(linkPos, 1)
             this.alert = {
               value: true,
               type: 'success',
@@ -515,6 +959,7 @@
       },
       resetValidation: function (action) {
         if (action === 'edit') { this.$refs.form[0].resetValidation() }
+        this.linkVideos = []
       },
     },
   }
