@@ -320,10 +320,10 @@
                             >
                               <v-text-field
                                 prepend-icon="mdi-calendar-edit"
-                                placeholder="Letzte Änderung"
-                                label="Letzte Änderung"
+                                placeholder="Letzte erfolgreiche Verbindung"
+                                label="Letzte erfolgreiche Verbindung"
                                 type="text"
-                                :value="formatTime(selectedItem.updatedAt, 'DD.MM.YYYY kk:mm' )"
+                                :value="unixToReadable(selectedItem.lastRequest, 'DD.MM.YYYY kk:mm' )"
                                 disabled
                               />
                             </v-col>
@@ -354,15 +354,15 @@
                               <v-row
                                 justify="center"
                               >
-                                <v-progress-circular
-                                  :value="selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100"
-                                  color="success"
-                                  size="150"
-                                  width="25"
-                                  rotate="360"
-                                >
-                                  <strong>{{Math.floor(selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100)}} %</strong>
-                                </v-progress-circular>
+<!--                                <v-progress-circular-->
+<!--                                  :value="selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100"-->
+<!--                                  color="success"-->
+<!--                                  size="150"-->
+<!--                                  width="25"-->
+<!--                                  rotate="360"-->
+<!--                                >-->
+<!--                                  <strong>{{Math.floor(selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100)}} %</strong>-->
+<!--                                </v-progress-circular>-->
                               </v-row>
                             </v-col>
                             <v-col
@@ -613,7 +613,7 @@
     <v-snackbar
       v-model="alert.value"
       class="v-snackbar--material"
-      timeout="-1"
+      timeout="5000"
       bottom
       right
       color="transparent"
