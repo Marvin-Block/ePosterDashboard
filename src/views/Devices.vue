@@ -221,11 +221,11 @@
                             class="text-h3"
                           >
                             <v-col>
-                              <strong>{{selectedItem.location}}</strong>
+                              <strong>{{ selectedItem.location }}</strong>
                             </v-col>
                             <v-col>
                               <p>
-                                {{selectedItem.lastRequest > (new Date).valueOf() - 300000 ? 'Online' : 'Offline'}}
+                                {{ selectedItem.lastRequest > (new Date).valueOf() - 300000 ? 'Online' : 'Offline' }}
                                 <v-icon :color="selectedItem.lastRequest > (new Date).valueOf() - 300000 ? 'success' : 'error'">
                                   mdi-{{ selectedItem.lastRequest > (new Date).valueOf() - 300000 ? 'wifi' : 'wifi-off' }}
                                 </v-icon>
@@ -241,11 +241,11 @@
                               md="6"
                             >
                               <v-text-field
+                                v-model="selectedItem.orientation"
                                 prepend-icon="mdi-cellphone"
                                 placeholder="Ausrichtung"
                                 label="Ausrichtung"
                                 type="text"
-                                v-model="selectedItem.orientation"
                                 disabled
                               />
                             </v-col>
@@ -254,11 +254,11 @@
                               md="6"
                             >
                               <v-text-field
+                                v-model="selectedItem.rotation"
                                 prepend-icon="mdi-phone-rotate-landscape"
                                 placeholder="Rotation"
                                 label="Rotation"
                                 type="text"
-                                v-model="selectedItem.rotation"
                                 disabled
                               />
                             </v-col>
@@ -272,11 +272,11 @@
                               md="6"
                             >
                               <v-text-field
+                                v-model="selectedItem.type"
                                 prepend-icon="mdi-monitor-multiple"
                                 placeholder="Typ"
                                 label="Typ"
                                 type="text"
-                                v-model="selectedItem.type"
                                 disabled
                               />
                             </v-col>
@@ -291,10 +291,10 @@
                                 type="text"
                                 :value="selectedItem.ip"
                                 readonly
-                                v-on:click="openPiDashboard(selectedItem.ip)"
+                                @click="openPiDashboard(selectedItem.ip)"
                               >
                                 a
-                                </v-text-field>
+                              </v-text-field>
                             </v-col>
                           </v-row>
                           <v-row
@@ -336,7 +336,7 @@
                               :value="selectedItem.description"
                               outlined
                               disabled
-                            ></v-textarea>
+                            />
                           </v-row>
                           <v-row
                             justify="center"
@@ -354,15 +354,15 @@
                               <v-row
                                 justify="center"
                               >
-<!--                                <v-progress-circular-->
-<!--                                  :value="selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100"-->
-<!--                                  color="success"-->
-<!--                                  size="150"-->
-<!--                                  width="25"-->
-<!--                                  rotate="360"-->
-<!--                                >-->
-<!--                                  <strong>{{Math.floor(selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100)}} %</strong>-->
-<!--                                </v-progress-circular>-->
+                                <!--                                <v-progress-circular-->
+                                <!--                                  :value="selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100"-->
+                                <!--                                  color="success"-->
+                                <!--                                  size="150"-->
+                                <!--                                  width="25"-->
+                                <!--                                  rotate="360"-->
+                                <!--                                >-->
+                                <!--                                  <strong>{{Math.floor(selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100)}} %</strong>-->
+                                <!--                                </v-progress-circular>-->
                               </v-row>
                             </v-col>
                             <v-col
