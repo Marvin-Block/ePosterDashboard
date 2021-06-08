@@ -10,7 +10,7 @@
     >
       <v-card-text>
         <v-data-table
-          item-key="videoUUID"
+          item-key="deviceUUID"
           :headers="headers"
           :items="this.devices"
           :search.sync="search"
@@ -21,8 +21,8 @@
           multi-sort
           sort-by="location"
           no-results-text="Es wurde leider nichts gefunden"
-          no-data-text="Es scheint keine Videos zu geben"
-          loading-text="Videos werden geladen..."
+          no-data-text="Es scheint keine Geräte zu geben"
+          loading-text="Geräte werden geladen..."
           :loading="this.devices.length < 1"
           @page-count="pageCount = $event"
         >
@@ -43,7 +43,7 @@
             </v-toolbar>
           </template>
           <template v-slot:item.updatedAt="{ item }">
-            <p>{{ formatTime(item.updatedAt, "DD.MM.YYYY kk:mm" ) }}</p>
+            {{ unixToReadable(item.lastRequest, "DD.MM.YYYY kk:mm" ) }}
           </template>
           <template v-slot:item.lastRequest="{ item }">
             <v-icon :color="item.lastRequest > (new Date).valueOf() - 300000 ? 'success' : 'error'">
@@ -749,7 +749,7 @@
           value: 'rotation',
         },
         {
-          text: 'Letzte Änderung',
+          text: 'Letzte Kommunikation',
           value: 'updatedAt',
           filterable: false,
         },
