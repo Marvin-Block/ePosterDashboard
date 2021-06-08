@@ -19,7 +19,7 @@
           hide-default-footer
           class="elevation-0"
           multi-sort
-          sort-by="filNr"
+          sort-by="location"
           no-results-text="Es wurde leider nichts gefunden"
           no-data-text="Es scheint keine Videos zu geben"
           loading-text="Videos werden geladen..."
@@ -78,6 +78,15 @@
                 v-slot:default="dialog"
               >
                 <v-card>
+                  <v-overlay
+                    :value="loader"
+                    absolute
+                  >
+                    <v-progress-circular
+                      indeterminate
+                      size="128"
+                    />
+                  </v-overlay>
                   <v-toolbar
                     :color="action.color"
                     dark
@@ -180,7 +189,7 @@
                           :loading="loadingButton"
                           color="success"
                           class="mr-4"
-                          @click="sendEdit(item);dialog.value = false; resetValidation(action.action)"
+                          @click="sendEdit(item)"
                         >
                           Speichern
                         </v-btn>
@@ -354,15 +363,15 @@
                               <v-row
                                 justify="center"
                               >
-                                <!--                                <v-progress-circular-->
-                                <!--                                  :value="selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100"-->
-                                <!--                                  color="success"-->
-                                <!--                                  size="150"-->
-                                <!--                                  width="25"-->
-                                <!--                                  rotate="360"-->
-                                <!--                                >-->
-                                <!--                                  <strong>{{Math.floor(selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100)}} %</strong>-->
-                                <!--                                </v-progress-circular>-->
+                                <v-progress-circular
+                                  :value="selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100"
+                                  color="success"
+                                  size="150"
+                                  width="25"
+                                  rotate="360"
+                                >
+                                  <strong>{{ Math.floor(selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100) }} %</strong>
+                                </v-progress-circular>
                               </v-row>
                             </v-col>
                             <v-col
@@ -451,6 +460,15 @@
                                   v-slot:default="dialog"
                                 >
                                   <v-card>
+                                    <v-overlay
+                                      :value="loader"
+                                      absolute
+                                    >
+                                      <v-progress-circular
+                                        indeterminate
+                                        size="128"
+                                      />
+                                    </v-overlay>
                                     <v-toolbar
                                       :color="linkAction.color"
                                       dark
@@ -649,6 +667,7 @@
         type: 'error',
         text: 'Oopsie.. :(',
       },
+      loader: false,
       valid: true,
       page: 1,
       pageCount: 0,
@@ -830,17 +849,18 @@
         if (!link.active) return 'grey lighten-1'
         if (link.end < new Date().valueOf()) return 'red lighten-4'
         if (link.start > new Date().valueOf()) return 'orange lighten-4'
-        // if (link.start < new Date().valueOf() && link.end > new Date().valueOf()) return 'green lighten-4'
-        // return 'green lighten-4'
       },
       linkPreview: function (item) {
+        this.loader = true
         axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`)
           .then(response => {
+            this.loader = false
             if (response.status === 200) {
               window.open(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, 's', `width= ${item.video.height > item.video.width ? '576' : '1024'}, height= ${item.video.height > item.video.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
             }
           })
           .catch((error) => {
+            this.loader = false
             this.alert = {
               value: true,
               type: 'error',
@@ -880,11 +900,11 @@
       },
       sendEdit: function (item) {
         if (this.validate()) {
-          this.loadingButton = true
+          this.loader = true
           axios.put('http://kodizabbix:3330/v2/device',
                     _.pick(this.selectedItem, 'deviceUUID', 'location', 'description', 'orientation', 'rotation'),
           ).then((response) => {
-            this.loadingButton = false
+            this.loader = false
             Object.assign(item, this.selectedItem)
             this.alert = {
               value: true,
@@ -892,14 +912,12 @@
               text: response.data.message,
             }
           }).catch((error) => {
-            this.loadingButton = false
+            this.loader = false
             this.alert = {
               value: true,
               type: 'error',
               text: error.response.data.message,
             }
-          }).finally(() => {
-            this.selectedItem = {}
           })
         }
       },
@@ -914,10 +932,12 @@
         this.selectedItem = item
       },
       sendDelete: function () {
+        this.loader = true
         axios.delete(`http://kodizabbix:3330/v2/device/${this.selectedItem.deviceUUID}`)
           .then((response) => {
             const itemPos = this.devices.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
             this.devices.splice(itemPos, 1)
+            this.loader = false
             this.alert = {
               value: true,
               type: 'success',
@@ -925,6 +945,7 @@
             }
           })
           .catch(error => {
+            this.loader = false
             this.alert = {
               value: true,
               type: 'error',
@@ -936,10 +957,12 @@
         this.selectedLink = item
       },
       sendLinkDelete: function () {
+        this.loader = true
         axios.delete(`http://kodizabbix:3330/v2/link/${this.selectedLink.linkUUID}`)
           .then((response) => {
             const linkPos = this.selectedItem.link.map(link => link.linkUUID).indexOf(this.selectedLink.linkUUID)
             this.selectedItem.link.splice(linkPos, 1)
+            this.loader = false
             this.alert = {
               value: true,
               type: 'success',
@@ -947,6 +970,7 @@
             }
           })
           .catch(error => {
+            this.loader = false
             this.alert = {
               value: true,
               type: 'error',

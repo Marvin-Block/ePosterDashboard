@@ -9,6 +9,7 @@
   // Styles
   import '@/styles/overrides.sass'
   import { sync } from 'vuex-pathify'
+  import axios from 'axios'
 
   export default {
     name: 'App',
@@ -66,6 +67,7 @@
     },
     created: function () {
       this.networkStatus = this.statusList[3]
+      this.getData()
       this.createWebsocket()
       setInterval(() => {
         if (this.client.readyState === 1) {
@@ -136,6 +138,53 @@
         }
         // allows x[ p ] to be set to undefined
         return true
+      },
+      getData: function () {
+        axios({
+          method: 'get',
+          url: 'http://kodizabbix:3330/v2/video/all',
+        }).then((response) => {
+          this.videos = response.data.data.rows
+        }).catch(error => {
+          console.error(error)
+          this.getVideoError = true
+        }).finally(() => {
+          axios({
+            method: 'get',
+            url: 'http://kodizabbix:3330/v2/device/all',
+          }).then((response) => {
+            this.devices = response.data.data.rows
+          }).catch(error => {
+            console.error(error)
+            this.getDeviceError = true
+          }).finally(() => {
+            axios({
+              method: 'get',
+              url: 'http://kodizabbix:3330/v2/link/all',
+            }).then((response) => {
+              this.links = response.data.data.rows
+            }).catch(error => {
+              console.error(error)
+              this.getLinkError = true
+            }).finally(() => {
+              axios({
+                method: 'get',
+                url: 'http://kodizabbix:3330/v2/log/all',
+              }).then((response) => {
+                this.logs = response.data.data.rows
+              }).catch(error => {
+                console.error(error)
+                this.getLogError = true
+              }).finally(() => {
+                if (this.getDeviceError && this.getVideoError && this.getLinkError && this.getLogError) {
+                  this.networkStatus = this.statusList[1]
+                } else {
+                  this.networkStatus = this.statusList[0]
+                }
+              })
+            })
+          })
+        })
       },
     },
   }
