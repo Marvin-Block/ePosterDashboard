@@ -8,7 +8,6 @@
   // Styles
   import '@/styles/overrides.sass'
   import { sync } from 'vuex-pathify'
-  import axios from 'axios'
 
   export default {
     name: 'App',
@@ -66,7 +65,6 @@
     },
     created: function () {
       this.networkStatus = this.statusList[3]
-      this.getData()
       this.createWebsocket()
       setInterval(() => {
         if (this.client.readyState === 1) {
@@ -74,7 +72,7 @@
           this.client.send('video')
           this.client.send('link')
         }
-      }, 1000)
+      }, 2000)
     },
     methods: {
       createWebsocket: function () {
@@ -86,13 +84,13 @@
         this.client.addEventListener('message', (e) => {
           const response = JSON.parse(e.data)
           if (response.type === 'device') {
-            this.devices = response.rows
+            if (response.rows.length !== this.devices.length) { this.devices = response.rows }
           }
           if (response.type === 'video') {
-            this.videos = response.rows
+            if (response.rows.length !== this.videos.length) { this.videos = response.rows }
           }
           if (response.type === 'link') {
-            this.links = response.rows
+            // this.links = response.rows
           }
         })
         this.client.addEventListener('close', () => {
@@ -101,55 +99,6 @@
         })
         this.client.addEventListener('open', () => {
           this.networkStatus = this.statusList[0]
-        })
-      },
-      // we do not talk about this code :)
-      // i might make this fancy at some point
-      getData: function () {
-        axios({
-          method: 'get',
-          url: 'http://kodizabbix:3330/v2/video/all',
-        }).then((response) => {
-          this.videos = response.data.data.rows
-        }).catch(error => {
-          console.error(error)
-          this.getVideoError = true
-        }).finally(() => {
-          axios({
-            method: 'get',
-            url: 'http://kodizabbix:3330/v2/device/all',
-          }).then((response) => {
-            this.devices = response.data.data.rows
-          }).catch(error => {
-            console.error(error)
-            this.getDeviceError = true
-          }).finally(() => {
-            axios({
-              method: 'get',
-              url: 'http://kodizabbix:3330/v2/link/all',
-            }).then((response) => {
-              this.links = response.data.data.rows
-            }).catch(error => {
-              console.error(error)
-              this.getLinkError = true
-            }).finally(() => {
-              axios({
-                method: 'get',
-                url: 'http://kodizabbix:3330/v2/log/all',
-              }).then((response) => {
-                this.logs = response.data.data.rows
-              }).catch(error => {
-                console.error(error)
-                this.getLogError = true
-              }).finally(() => {
-                if (this.getDeviceError && this.getVideoError && this.getLinkError && this.getLogError) {
-                  this.networkStatus = this.statusList[1]
-                } else {
-                  this.networkStatus = this.statusList[0]
-                }
-              })
-            })
-          })
         })
       },
     },
