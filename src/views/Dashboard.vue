@@ -4,6 +4,9 @@
     fluid
     tag="section"
   >
+    <view-intro
+      heading="ePoster Administration"
+    />
     <v-row>
       <!--      stat cards below-->
       <v-col

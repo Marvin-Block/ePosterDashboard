@@ -771,7 +771,7 @@
        * @param {Video} item - Video Object
        */
       download: function (item) {
-        axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, { responseType: 'blob' })
+        axios.get(`http://kodizabbix:3333/v2/video/file/${item.videoUUID}`, { responseType: 'blob' })
           .then(resp => {
             if (resp.data.type !== 'video/mp4') return
             const url = window.URL.createObjectURL(resp.data)
@@ -828,10 +828,10 @@
        * @param {Video} item - Video Object
        */
       preview: function (item) {
-        axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`)
+        axios.get(`http://kodizabbix:3333/v2/video/file/${item.videoUUID}`)
           .then(response => {
             if (response.status === 200) {
-              window.open(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, 's', `width= ${item.height > item.width ? '576' : '1024'}, height= ${item.height > item.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
+              window.open(`http://kodizabbix:3333/v2/video/file/${item.videoUUID}`, 's', `width= ${item.height > item.width ? '576' : '1024'}, height= ${item.height > item.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
             }
           })
           .catch((error) => {
@@ -856,7 +856,7 @@
       sendEdit: function (item) {
         if (this.validate()) {
           this.loadingButton = true
-          axios.put('http://kodizabbix:3330/v2/video',
+          axios.put('http://kodizabbix:3333/v2/video',
                     _.pick(this.selectedItem, 'videoUUID', 'name', 'calendarWeek', 'orientation_V2', 'rotation'),
           ).then((response) => {
             this.loadingButton = false
@@ -881,7 +881,7 @@
         this.selectedItem = item
       },
       sendDelete: function () {
-        axios.delete(`http://kodizabbix:3330/v2/video/${this.selectedItem.videoUUID}`)
+        axios.delete(`http://kodizabbix:3333/v2/video/${this.selectedItem.videoUUID}`)
           .then((response) => {
             const itemPos = this.videos.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
             this.videos.splice(itemPos, 1)
@@ -938,7 +938,7 @@
             postData.append('rotation', this.uploadItem.values.rotation)
           }
           postData.append('uploadedFile', this.video)
-          axios.post('http://kodizabbix:3330/v2/video', postData).then(response => {
+          axios.post('http://kodizabbix:3333/v2/video', postData).then(response => {
             console.log(this.videos)
             this.alert = {
               value: true,

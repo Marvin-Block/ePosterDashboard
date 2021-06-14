@@ -852,11 +852,11 @@
       },
       linkPreview: function (item) {
         this.loader = true
-        axios.get(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`)
+        axios.get(`http://kodizabbix:3333/v2/video/file/${item.videoUUID}`)
           .then(response => {
             this.loader = false
             if (response.status === 200) {
-              window.open(`http://kodizabbix:3330/v2/video/file/${item.videoUUID}`, 's', `width= ${item.video.height > item.video.width ? '576' : '1024'}, height= ${item.video.height > item.video.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
+              window.open(`http://kodizabbix:3333/v2/video/file/${item.videoUUID}`, 's', `width= ${item.video.height > item.video.width ? '576' : '1024'}, height= ${item.video.height > item.video.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
             }
           })
           .catch((error) => {
@@ -901,7 +901,7 @@
       sendEdit: function (item) {
         if (this.validate()) {
           this.loader = true
-          axios.put('http://kodizabbix:3330/v2/device',
+          axios.put('http://kodizabbix:3333/v2/device',
                     _.pick(this.selectedItem, 'deviceUUID', 'location', 'description', 'orientation', 'rotation'),
           ).then((response) => {
             this.loader = false
@@ -933,7 +933,7 @@
       },
       sendDelete: function () {
         this.loader = true
-        axios.delete(`http://kodizabbix:3330/v2/device/${this.selectedItem.deviceUUID}`)
+        axios.delete(`http://kodizabbix:3333/v2/device/${this.selectedItem.deviceUUID}`)
           .then((response) => {
             const itemPos = this.devices.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
             this.devices.splice(itemPos, 1)
@@ -958,7 +958,7 @@
       },
       sendLinkDelete: function () {
         this.loader = true
-        axios.delete(`http://kodizabbix:3330/v2/link/${this.selectedLink.linkUUID}`)
+        axios.delete(`http://kodizabbix:3333/v2/link/${this.selectedLink.linkUUID}`)
           .then((response) => {
             const linkPos = this.selectedItem.link.map(link => link.linkUUID).indexOf(this.selectedLink.linkUUID)
             this.selectedItem.link.splice(linkPos, 1)

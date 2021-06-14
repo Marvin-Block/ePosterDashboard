@@ -75,7 +75,7 @@
           this.client.send('video')
           this.client.send('link')
         }
-      }, 1000)
+      }, 5000)
     },
     methods: {
       createWebsocket: function () {
@@ -142,7 +142,7 @@
       getData: function () {
         axios({
           method: 'get',
-          url: 'http://kodizabbix:3330/v2/video/all',
+          url: 'http://kodizabbix:3333/v2/video/all',
         }).then((response) => {
           this.videos = response.data.data.rows
         }).catch(error => {
@@ -151,7 +151,7 @@
         }).finally(() => {
           axios({
             method: 'get',
-            url: 'http://kodizabbix:3330/v2/device/all',
+            url: 'http://kodizabbix:3333/v2/device/all',
           }).then((response) => {
             this.devices = response.data.data.rows
           }).catch(error => {
@@ -160,28 +160,34 @@
           }).finally(() => {
             axios({
               method: 'get',
-              url: 'http://kodizabbix:3330/v2/link/all',
+              url: 'http://kodizabbix:3333/v2/link/all',
             }).then((response) => {
               this.links = response.data.data.rows
             }).catch(error => {
               console.error(error)
               this.getLinkError = true
             }).finally(() => {
-              axios({
-                method: 'get',
-                url: 'http://kodizabbix:3330/v2/log/all',
-              }).then((response) => {
-                this.logs = response.data.data.rows
-              }).catch(error => {
-                console.error(error)
-                this.getLogError = true
-              }).finally(() => {
-                if (this.getDeviceError && this.getVideoError && this.getLinkError && this.getLogError) {
-                  this.networkStatus = this.statusList[1]
-                } else {
-                  this.networkStatus = this.statusList[0]
-                }
-              })
+              if (this.getDeviceError && this.getVideoError && this.getLinkError) {
+                this.networkStatus = this.statusList[1]
+              } else {
+                this.networkStatus = this.statusList[0]
+              }
+              // memory leak da logs zu groß
+              // axios({
+              //   method: 'get',
+              //   url: 'http://kodizabbix:3333/v2/log/all',
+              // }).then((response) => {
+              //   this.logs = response.data.data.rows
+              // }).catch(error => {
+              //   console.error(error)
+              //   this.getLogError = true
+              // }).finally(() => {
+              //   if (this.getDeviceError && this.getVideoError && this.getLinkError && this.getLogError) {
+              //     this.networkStatus = this.statusList[1]
+              //   } else {
+              //     this.networkStatus = this.statusList[0]
+              //   }
+              // })
             })
           })
         })
