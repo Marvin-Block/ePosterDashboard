@@ -75,7 +75,7 @@
           this.client.send('video')
           this.client.send('link')
         }
-      }, 5000)
+      }, 60000)
     },
     methods: {
       createWebsocket: function () {
@@ -87,13 +87,16 @@
         this.client.addEventListener('message', (e) => {
           const response = JSON.parse(e.data)
           if (response.type === 'device') {
-            if (!this.object_equals(this.devices, response.rows)) { this.devices = response.rows }
+            this.devices = response.rows
+            // if (!this.object_equals(this.devices, response.rows)) { this.devices = response.rows }
           }
           if (response.type === 'video') {
-            if (!this.object_equals(this.videos, response.rows)) { this.videos = response.rows }
+            this.videos = response.rows
+            // if (!this.object_equals(this.videos, response.rows)) { this.videos = response.rows }
           }
           if (response.type === 'link') {
-            if (!this.object_equals(this.links, response.rows)) { this.links = response.rows }
+            this.links = response.rows
+            // if (!this.object_equals(this.links, response.rows)) { this.links = response.rows }
           }
         })
         this.client.addEventListener('close', () => {
