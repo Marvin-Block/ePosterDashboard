@@ -126,6 +126,12 @@
                           :rules="editFields.rules.location"
                         />
                         <v-text-field
+                          v-model="selectedItem.type"
+                          class="pb-1"
+                          type="text"
+                          label="Geräte Typ"
+                        />
+                        <v-text-field
                           v-model="selectedItem.description"
                           class="pb-1"
                           type="text"
@@ -905,7 +911,7 @@
         if (this.validate()) {
           this.loader = true
           axios.put('http://kodizabbix:3333/v2/device',
-                    _.pick(this.selectedItem, 'deviceUUID', 'location', 'description', 'orientation', 'rotation'),
+                    _.pick(this.selectedItem, 'deviceUUID', 'location', 'type', 'description', 'orientation', 'rotation'),
           ).then((response) => {
             this.loader = false
             Object.assign(item, this.selectedItem)
