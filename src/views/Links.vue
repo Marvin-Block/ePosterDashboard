@@ -15,55 +15,6 @@
         @click:prev="tab--"
       >
         <v-tab-item class="pb-12">
-          <!--          <v-row>-->
-          <!--            <v-col-->
-          <!--              cols="12"-->
-          <!--              md="6"-->
-          <!--            >-->
-          <!--              <v-chip-->
-          <!--                v-if="deviceSelected.length < 1"-->
-          <!--                class="ma-2 text-h5"-->
-          <!--                color="error"-->
-          <!--                outlined-->
-          <!--              >-->
-          <!--                <v-icon left>-->
-          <!--                  mdi-exclamation-->
-          <!--                </v-icon>-->
-          <!--                Bitte wählen Sie mindestens ein (1) Gerät aus-->
-          <!--              </v-chip>-->
-          <!--              <v-chip-->
-          <!--                v-else-->
-          <!--                class="ma-2 text-h5"-->
-          <!--                color="success"-->
-          <!--                outlined-->
-          <!--              >-->
-          <!--                Aktuelle auswahl: {{ deviceSelected.length }}-->
-          <!--              </v-chip>-->
-          <!--            </v-col>-->
-          <!--            <v-col-->
-          <!--              cols="12"-->
-          <!--              md="6"-->
-          <!--            >-->
-          <!--              <div-->
-          <!--                class="float-right"-->
-          <!--              >-->
-          <!--                <v-btn-->
-          <!--                  class="hidden-sm-and-down"-->
-          <!--                  color="blue"-->
-          <!--                  dark-->
-          <!--                  tile-->
-          <!--                  @click="deviceHelpDialog = !deviceHelpDialog"-->
-          <!--                >-->
-          <!--                  <v-icon-->
-          <!--                    left-->
-          <!--                  >-->
-          <!--                    mdi-help-->
-          <!--                  </v-icon>-->
-          <!--                  Hilfe-->
-          <!--                </v-btn>-->
-          <!--              </div>-->
-          <!--            </v-col>-->
-          <!--          </v-row>-->
           <v-data-table
             v-model="deviceSelected"
             :headers="deviceHeaders"
@@ -114,59 +65,13 @@
                 </v-chip>
               </v-toolbar>
             </template>
+            <template v-slot:item.rotation="{ item }">
+              {{ item.rotation === 'null' ? '' : item.rotation }}
+            </template>
           </v-data-table>
         </v-tab-item>
 
         <v-tab-item class="pb-12">
-          <!--          <v-row>-->
-          <!--            <v-col-->
-          <!--              cols="12"-->
-          <!--              md="6"-->
-          <!--            >-->
-          <!--              <v-chip-->
-          <!--                v-if="videoSelected.length < 1"-->
-          <!--                class="ma-2 text-h5"-->
-          <!--                color="error"-->
-          <!--                outlined-->
-          <!--              >-->
-          <!--                <v-icon left>-->
-          <!--                  mdi-exclamation-->
-          <!--                </v-icon>-->
-          <!--                Bitte wählen Sie mindestens ein (1) Video aus-->
-          <!--              </v-chip>-->
-          <!--              <v-chip-->
-          <!--                v-else-->
-          <!--                class="ma-2 text-h5"-->
-          <!--                color="success"-->
-          <!--                outlined-->
-          <!--              >-->
-          <!--                Aktuelle auswahl: {{ videoSelected.length }}-->
-          <!--              </v-chip>-->
-          <!--            </v-col>-->
-          <!--            <v-col-->
-          <!--              cols="12"-->
-          <!--              md="6"-->
-          <!--            >-->
-          <!--              <div-->
-          <!--                class="float-right"-->
-          <!--              >-->
-          <!--                <v-btn-->
-          <!--                  class="hidden-sm-and-down"-->
-          <!--                  color="blue"-->
-          <!--                  dark-->
-          <!--                  tile-->
-          <!--                  @click="videoHelpDialog = !videoHelpDialog"-->
-          <!--                >-->
-          <!--                  <v-icon-->
-          <!--                    left-->
-          <!--                  >-->
-          <!--                    mdi-help-->
-          <!--                  </v-icon>-->
-          <!--                  Hilfe-->
-          <!--                </v-btn>-->
-          <!--              </div>-->
-          <!--            </v-col>-->
-          <!--          </v-row>-->
           <v-data-table
             v-model="videoSelected"
             :headers="videoHeaders"
@@ -255,29 +160,6 @@
                 </v-chip>
               </div>
             </v-col>
-            <!--            <v-col-->
-            <!--              cols="12"-->
-            <!--              md="6"-->
-            <!--            >-->
-            <!--              <div-->
-            <!--                class="float-right"-->
-            <!--              >-->
-            <!--                <v-btn-->
-            <!--                  class="hidden-sm-and-down"-->
-            <!--                  color="blue"-->
-            <!--                  dark-->
-            <!--                  tile-->
-            <!--                  @click="timeHelpDialog = !timeHelpDialog"-->
-            <!--                >-->
-            <!--                  <v-icon-->
-            <!--                    left-->
-            <!--                  >-->
-            <!--                    mdi-help-->
-            <!--                  </v-icon>-->
-            <!--                  Hilfe-->
-            <!--                </v-btn>-->
-            <!--              </div>-->
-            <!--            </v-col>-->
           </v-row>
           <v-row>
             <v-col
@@ -367,14 +249,6 @@
               <v-divider
                 class="mt-4"
               />
-              <!--              <v-card-->
-              <!--                flat-->
-              <!--                tile-->
-              <!--              >-->
-              <!--                <v-card-text class="text-h4 mt-4">-->
-              <!--                  <b>Von: {{ dates[0] }} {{ startTime }} Uhr<br><br>Bis: {{ dates[1] }} {{ endTime }} Uhr</b>-->
-              <!--                </v-card-text>-->
-              <!--              </v-card>-->
             </v-col>
           </v-row>
         </v-tab-item>
@@ -546,6 +420,10 @@
         {
           text: 'Rotation',
           value: 'rotation',
+        },
+        {
+          text: 'Inhalte',
+          value: 'link.length',
         },
       ],
       deviceHelpImages: [

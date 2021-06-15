@@ -42,6 +42,9 @@
               <v-spacer />
             </v-toolbar>
           </template>
+          <template v-slot:item.rotation="{ item }">
+            {{ item.rotation === 'null' ? '' : item.rotation }}
+          </template>
           <template v-slot:item.updatedAt="{ item }">
             {{ unixToReadable(item.lastRequest, "DD.MM.YYYY kk:mm" ) }}
           </template>
@@ -754,14 +757,14 @@
           filterable: false,
         },
         {
+          text: 'Inhalte',
+          value: 'link.length',
+        },
+        {
           text: 'Status',
           value: 'lastRequest',
           filterable: false,
         },
-        // {
-        //   text: 'Verlinkungen',
-        //   value: 'link.length',
-        // },
         {
           sortable: false,
           text: '',
