@@ -65,8 +65,21 @@
                 </v-chip>
               </v-toolbar>
             </template>
+            <template v-slot:item.orientation="{ item }">
+              <v-icon left>
+                mdi-cellphone {{ item.orientation === 'Hoch' ? '' : 'mdi-rotate-90' }}
+              </v-icon>
+              {{ item.orientation }}
+            </template>
             <template v-slot:item.rotation="{ item }">
-              {{ item.rotation === 'null' ? '' : item.rotation }}
+              <div
+                v-if="item.rotation"
+              >
+                <v-icon left>
+                  mdi-phone-rotate-landscape {{ rotationClass(item) }}
+                </v-icon>
+                {{ item.rotation }}
+              </div>
             </template>
           </v-data-table>
         </v-tab-item>
@@ -121,6 +134,22 @@
                 </v-chip>
               </v-toolbar>
             </template>
+            <template v-slot:item.orientation_V2="{ item }">
+              <v-icon left>
+                mdi-cellphone {{ item.orientation_V2 === 'Hoch' ? '' : 'mdi-rotate-90' }}
+              </v-icon>
+              {{ item.orientation_V2 }}
+            </template>
+            <template v-slot:item.rotation="{ item }">
+              <div
+                v-if="item.rotation"
+              >
+                <v-icon left>
+                  mdi-phone-rotate-landscape {{ rotationClass(item) }}
+                </v-icon>
+                {{ item.rotation }}
+              </div>
+            </template>
           </v-data-table>
         </v-tab-item>
 
@@ -149,14 +178,14 @@
                   color="success"
                   outlined
                 >
-                  Bis: {{ dates[1] }} {{ endTime ? endTime + ' Uhr' : '' }}
+                  Bis: {{ fancyDate(dates[1]) }} {{ endTime ? endTime + ' Uhr' : '' }}
                 </v-chip>
                 <v-chip
                   class="ma-2 text-h5 float-right"
                   color="success"
                   outlined
                 >
-                  Von: {{ dates[0] }} {{ startTime ? startTime + ' Uhr' : '' }}
+                  Von: {{ fancyDate(dates[0]) }} {{ startTime ? startTime + ' Uhr' : '' }}
                 </v-chip>
               </div>
             </v-col>
@@ -168,10 +197,13 @@
             >
               <v-date-picker
                 v-model="dates"
+                locale="de-DE"
+                :selected-items-text="fancyDate(dates[0]) + ' - ' + fancyDate(dates[1])"
                 range
                 scrollable
                 show-week
                 full-width
+                @change="checkDateOrder"
               />
             </v-col>
             <v-col
@@ -363,7 +395,7 @@
 <script>
   import { get } from 'vuex-pathify'
   import axios from 'axios'
-  import _ from 'lodash'
+  import moment from 'moment'
   export default {
     name: 'Links',
 
@@ -494,6 +526,26 @@
       },
     },
     methods: {
+      checkDateOrder: function () {
+        if (this.dates[0] > this.dates[1]) this.arrayMove(this.dates, 0, 1)
+      },
+      fancyDate: function (date) {
+        return moment(date).format('DD.MM.YYYY')
+      },
+      arrayMove: function (array, oldIndex, newIndex) {
+        if (newIndex >= array.length) {
+          let k = newIndex - array.length + 1
+          while (k--) {
+            array.push(undefined)
+          }
+        }
+        array.splice(newIndex, 0, array.splice(oldIndex, 1)[0])
+        return array
+      },
+      rotationClass: function (item) {
+        if (item.orientation_V2 === 'Breit' && item.rotation === 'Rechts') return 'mdi-rotate-270'
+        if (item.orientation_V2 === 'Hoch' && item.rotation === 'Links') return 'mdi-flip-h'
+      },
       next (valid) {
         if (!valid) return
 

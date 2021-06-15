@@ -198,11 +198,27 @@
               </v-dialog>
             </v-toolbar>
           </template>
+          <template v-slot:item.orientation_V2="{ item }">
+            <v-icon left>
+              mdi-cellphone {{ item.orientation_V2 === 'Hoch' ? '' : 'mdi-rotate-90' }}
+            </v-icon>
+            {{ item.orientation_V2 }}
+          </template>
+          <template v-slot:item.rotation="{ item }">
+            <div
+              v-if="item.rotation"
+            >
+              <v-icon left>
+                mdi-phone-rotate-landscape {{ rotationClass(item) }}
+              </v-icon>
+              {{ item.rotation }}
+            </div>
+          </template>
           <template v-slot:item.updatedAt="{ item }">
-            <p>{{ formatTime(item.updatedAt, "DD.MM.YYYY kk:mm" ) }}</p>
+            {{ formatTime(item.updatedAt, "DD.MM.YYYY kk:mm" ) }}
           </template>
           <template v-slot:item.size="{ item }">
-            <p>{{ bytesToSize(item.size) }}</p>
+            {{ bytesToSize(item.size) }}
           </template>
           <template v-slot:item.actions="{ item }">
             <v-dialog
@@ -674,6 +690,10 @@
       ]),
     },
     methods: {
+      rotationClass: function (item) {
+        if (item.orientation_V2 === 'Breit' && item.rotation === 'Rechts') return 'mdi-rotate-270'
+        if (item.orientation_V2 === 'Hoch' && item.rotation === 'Links') return 'mdi-flip-h'
+      },
       formatTime: function (time, format) {
         return moment(time).format(format)
       },
@@ -859,6 +879,7 @@
           axios.put('http://kodizabbix:3333/v2/video',
                     _.pick(this.selectedItem, 'videoUUID', 'name', 'calendarWeek', 'orientation_V2', 'rotation'),
           ).then((response) => {
+            Object.assign(item, this.selectedItem)
             this.loadingButton = false
             this.alert = {
               value: true,

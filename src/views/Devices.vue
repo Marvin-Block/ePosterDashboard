@@ -42,16 +42,31 @@
               <v-spacer />
             </v-toolbar>
           </template>
+          <template v-slot:item.orientation="{ item }">
+            <v-icon left>
+              mdi-cellphone {{ item.orientation === 'Hoch' ? '' : 'mdi-rotate-90' }}
+            </v-icon>
+            {{ item.orientation }}
+          </template>
           <template v-slot:item.rotation="{ item }">
-            {{ item.rotation === 'null' ? '' : item.rotation }}
+            <div
+              v-if="item.rotation"
+            >
+              <v-icon left>
+                mdi-phone-rotate-landscape {{ rotationClass(item) }}
+              </v-icon>
+              {{ item.rotation }}
+            </div>
           </template>
           <template v-slot:item.updatedAt="{ item }">
             {{ unixToReadable(item.lastRequest, "DD.MM.YYYY kk:mm" ) }}
           </template>
           <template v-slot:item.lastRequest="{ item }">
-            <v-icon :color="item.lastRequest > (new Date).valueOf() - 300000 ? 'success' : 'error'">
-              mdi-{{ item.lastRequest > (new Date).valueOf() - 300000 ? 'wifi' : 'wifi-off' }}
-            </v-icon>
+            <div style="margin:auto; width:50%">
+              <v-icon :color="item.lastRequest > (new Date).valueOf() - 300000 ? 'success' : 'error'">
+                mdi-{{ item.lastRequest > (new Date).valueOf() - 300000 ? 'wifi' : 'wifi-off' }}
+              </v-icon>
+            </div>
           </template>
           <template v-slot:item.actions="{ item }">
             <v-dialog
@@ -854,6 +869,10 @@
       ]),
     },
     methods: {
+      rotationClass: function (item) {
+        if (item.orientation === 'Breit' && item.rotation === 'Rechts') return 'mdi-rotate-270'
+        if (item.orientation === 'Hoch' && item.rotation === 'Links') return 'mdi-flip-h'
+      },
       rowClass: function (link) {
         if (!link.active) return 'grey lighten-1'
         if (link.end < new Date().valueOf()) return 'red lighten-4'
@@ -1015,4 +1034,5 @@
 
   .v-snack__action
     display: none
+
 </style>
