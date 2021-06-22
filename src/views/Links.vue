@@ -198,6 +198,7 @@
               <v-date-picker
                 v-model="dates"
                 locale="de-DE"
+                first-day-of-week="1"
                 :selected-items-text="fancyDate(dates[0]) + ' - ' + fancyDate(dates[1])"
                 range
                 scrollable

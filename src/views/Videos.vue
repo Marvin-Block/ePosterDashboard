@@ -61,6 +61,103 @@
                   </v-btn>
                 </template>
                 <v-card>
+                  <v-overlay
+                    :value="loader"
+                    class="d-flex flex-column justify-center"
+                    absolute
+                  >
+                    <div
+                      class="d-flex flex-column justify-center"
+                    >
+                      <v-progress-circular
+                        :value="uploadProgress"
+                        rotate="90"
+                        size="256"
+                        width="40"
+                        color="green lighten-1"
+                      >
+                        <span class="white--text text-h3">{{ uploadProgress }}%</span>
+                      </v-progress-circular>
+                      <br>
+                      <br>
+                      <span class="white--text text-center text-h4 d-flex align-center">
+                        {{ uploadText }}
+                        <div
+                          v-if="uploadText !== 'Die Datei wird Hochgeladen'"
+                          id="cogs"
+                          class="ml-1"
+                        >
+                          <svg
+                            id="bigCog"
+                            xmlns="http://www.w3.org/2000/svg"
+                            x="0px"
+                            y="0px"
+                            width="25px"
+                            height="25px"
+                            viewBox="0 0 25 25.001"
+                            fill="white"
+                          >
+                            <g>
+                              <path d="M24.38,10.175l-2.231-0.268c-0.228-0.851-0.562-1.655-0.992-2.401l1.387-1.763c0.212-0.271,0.188-0.69-0.057-0.934l-2.299-2.3c-0.242-0.243-0.662-0.269-0.934-0.057l-1.766,1.389c-0.743-0.43-1.547-0.764-2.396-0.99L14.825,0.62C14.784,0.279,14.469,0,14.125,0h-3.252c-0.344,0-0.659,0.279-0.699,0.62L9.906,2.851c-0.85,0.227-1.655,0.562-2.398,0.991L5.743,2.455c-0.27-0.212-0.69-0.187-0.933,0.056L2.51,4.812C2.268,5.054,2.243,5.474,2.456,5.746L3.842,7.51c-0.43,0.744-0.764,1.549-0.991,2.4l-2.23,0.267C0.28,10.217,0,10.532,0,10.877v3.252c0,0.344,0.279,0.657,0.621,0.699l2.231,0.268c0.228,0.848,0.561,1.652,0.991,2.396l-1.386,1.766c-0.211,0.271-0.187,0.69,0.057,0.934l2.296,2.301c0.243,0.242,0.663,0.269,0.933,0.057l1.766-1.39c0.744,0.43,1.548,0.765,2.398,0.991l0.268,2.23c0.041,0.342,0.355,0.62,0.699,0.62h3.252c0.345,0,0.659-0.278,0.699-0.62l0.268-2.23c0.851-0.228,1.655-0.562,2.398-0.991l1.766,1.387c0.271,0.212,0.69,0.187,0.933-0.056l2.299-2.301c0.244-0.242,0.269-0.662,0.056-0.935l-1.388-1.764c0.431-0.744,0.764-1.548,0.992-2.397l2.23-0.268C24.721,14.785,25,14.473,25,14.127v-3.252C25.001,10.529,24.723,10.216,24.38,10.175z M12.501,18.75c-3.452,0-6.25-2.798-6.25-6.25s2.798-6.25,6.25-6.25s6.25,2.798,6.25,6.25S15.954,18.75,12.501,18.75z" />
+                            </g>
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                          </svg>
+                          <svg
+                            id="smallCog"
+                            xmlns="http://www.w3.org/2000/svg"
+                            x="0px"
+                            y="0px"
+                            width="25px"
+                            height="25px"
+                            viewBox="0 0 25 25.001"
+                            fill="white"
+                          >
+                            <g>
+                              <path d="M24.38,10.175l-2.231-0.268c-0.228-0.851-0.562-1.655-0.992-2.401l1.387-1.763c0.212-0.271,0.188-0.69-0.057-0.934l-2.299-2.3c-0.242-0.243-0.662-0.269-0.934-0.057l-1.766,1.389c-0.743-0.43-1.547-0.764-2.396-0.99L14.825,0.62C14.784,0.279,14.469,0,14.125,0h-3.252c-0.344,0-0.659,0.279-0.699,0.62L9.906,2.851c-0.85,0.227-1.655,0.562-2.398,0.991L5.743,2.455c-0.27-0.212-0.69-0.187-0.933,0.056L2.51,4.812C2.268,5.054,2.243,5.474,2.456,5.746L3.842,7.51c-0.43,0.744-0.764,1.549-0.991,2.4l-2.23,0.267C0.28,10.217,0,10.532,0,10.877v3.252c0,0.344,0.279,0.657,0.621,0.699l2.231,0.268c0.228,0.848,0.561,1.652,0.991,2.396l-1.386,1.766c-0.211,0.271-0.187,0.69,0.057,0.934l2.296,2.301c0.243,0.242,0.663,0.269,0.933,0.057l1.766-1.39c0.744,0.43,1.548,0.765,2.398,0.991l0.268,2.23c0.041,0.342,0.355,0.62,0.699,0.62h3.252c0.345,0,0.659-0.278,0.699-0.62l0.268-2.23c0.851-0.228,1.655-0.562,2.398-0.991l1.766,1.387c0.271,0.212,0.69,0.187,0.933-0.056l2.299-2.301c0.244-0.242,0.269-0.662,0.056-0.935l-1.388-1.764c0.431-0.744,0.764-1.548,0.992-2.397l2.23-0.268C24.721,14.785,25,14.473,25,14.127v-3.252C25.001,10.529,24.723,10.216,24.38,10.175z M12.501,18.75c-3.452,0-6.25-2.798-6.25-6.25s2.798-6.25,6.25-6.25s6.25,2.798,6.25,6.25S15.954,18.75,12.501,18.75z" />
+                            </g>
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                            <g />
+                          </svg>
+                        </div>
+                        <div
+                          v-else
+                          id="wave"
+                          class="ml-1"
+                        >
+                          <span class="dot" />
+                          <span class="dot" />
+                          <span class="dot" />
+                        </div>
+                      </span>
+                    </div>
+                  </v-overlay>
                   <v-toolbar
                     color="primary"
                     dark
@@ -163,16 +260,17 @@
                         class="pb-1"
                         type="text"
                         label="Länge (in Sekunden)"
-                        disabled
+                        :disabled="!!file && file.type.startsWith('video/')"
                       />
                       <v-file-input
-                        v-model="video"
-                        :rules="videoRules"
+                        v-model="file"
+                        :rules="fileRules"
                         show-size
-                        label="Video"
-                        accept="video/mp4"
+                        label="Datei"
+                        accept="video/mp4, image/*"
                         placeholder="Wähle ein Video aus"
-                        @change="inspectVideo"
+                        @change="inspectFile"
+                        @click:clear="resetUploadForm"
                       />
                     </v-form>
                   </v-card-text>
@@ -494,6 +592,7 @@
         type: 'error',
         text: 'Oopsie.. :(',
       },
+      loader: false,
       dialog: false,
       valid: true,
       page: 1,
@@ -677,11 +776,13 @@
           length: null,
         },
       },
+      uploadProgress: 0,
+      uploadText: 'Die Datei wird Hochgeladen',
       selectedItem: {},
-      videoRules: [
+      fileRules: [
         v => !!v || 'Das Video ist ein Pflichtfeld',
       ],
-      video: null,
+      file: null,
       search: null,
     }),
     computed: {
@@ -929,26 +1030,49 @@
       },
       resetUploadForm: function () {
         this.resetValidation('upload')
-        this.video = null
+        this.file = null
         for (const key in this.uploadItem.values) {
           this.uploadItem.values[key] = null
         }
       },
-      inspectVideo: function () {
-        const vid = document.createElement('video')
-        vid.src = URL.createObjectURL(this.video)
-        vid.addEventListener('loadedmetadata', e => {
-          this.uploadItem.values.name = this.video.name.replace(/.mp4$/, '')
-          this.uploadItem.values.height = e.path[0].videoHeight
-          this.uploadItem.values.width = e.path[0].videoWidth
-          this.uploadItem.values.length = e.path[0].duration
-          this.uploadItem.values.orientation = e.path[0].videoWidth > e.path[0].videoHeight ? 'Breit' : 'Hoch'
-        })
+      inspectFile: function () {
+        if (!!this.file && this.file.type.startsWith('image/')) {
+          const img = new Image()
+          img.src = URL.createObjectURL(this.file)
+          img.onload = () => {
+            this.uploadItem.values.name = this.file.name.slice(0, -4)
+            this.uploadItem.values.height = img.height
+            this.uploadItem.values.width = img.width
+            this.uploadItem.values.length = 10
+            this.uploadItem.values.orientation = img.width > img.height ? 'Breit' : 'Hoch'
+          }
+        } else if (!!this.file && this.file.type.startsWith('video/')) {
+          const vid = document.createElement('video')
+          vid.src = URL.createObjectURL(this.file)
+          vid.addEventListener('loadedmetadata', e => {
+            this.uploadItem.values.name = this.file.name.replace(/.mp4$/, '')
+            this.uploadItem.values.height = e.path[0].videoHeight
+            this.uploadItem.values.width = e.path[0].videoWidth
+            this.uploadItem.values.length = e.path[0].duration
+            this.uploadItem.values.orientation = e.path[0].videoWidth > e.path[0].videoHeight ? 'Breit' : 'Hoch'
+          })
+        }
       },
       upload: function () {
         if (this.validate()) {
-          // todo: add upload
-          console.log(this.uploadItem.values)
+          this.loader = true
+          const config = {
+            onUploadProgress: (progressEvent) => {
+              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              if (percentCompleted > 95) {
+                this.uploadProgress = 95
+                this.uploadText = 'Die Datei wird verarbeitet'
+              } else {
+                this.uploadProgress = percentCompleted
+              }
+            },
+          }
+          // todo: add upload progress
           const postData = new FormData()
           postData.append('videoUUID', uuidv4())
           postData.append('name', this.uploadItem.values.name)
@@ -958,9 +1082,10 @@
           if (this.uploadItem.values.rotation !== 0) {
             postData.append('rotation', this.uploadItem.values.rotation)
           }
-          postData.append('uploadedFile', this.video)
-          axios.post('http://kodizabbix:3333/v2/video', postData).then(response => {
-            console.log(this.videos)
+          postData.append('length', this.uploadItem.values.length)
+          postData.append('uploadedFile', this.file)
+          axios.post('http://kodizabbix:3333/v2/video', postData, config).then(response => {
+            this.loader = false
             this.alert = {
               value: true,
               type: 'success',
@@ -968,6 +1093,7 @@
             }
             console.log(response)
           }).catch(error => {
+            this.loader = false
             this.alert = {
               value: true,
               type: 'error',
@@ -986,17 +1112,60 @@
   margin-top: 32px
   margin-bottom: 32px
 
-  .v-alert
-    padding: 32px 16px
+.v-alert
+  padding: 32px 16px
 
-  .v-alert--material,
-  .v-snack__wrapper
-    border-radius: 4px
+.v-alert--material,
+.v-snack__wrapper
+  border-radius: 4px
 
-  .v-snack__content
-    overflow: visible
-    padding: 0
+.v-snack__content
+  overflow: visible
+  padding: 0
 
-  .v-snack__action
-    display: none
+.v-snack__action
+  display: none
+
+div#wave
+  position: relative
+  text-align: center
+  .dot
+    display: inline-block
+    width: 4px
+    height: 4px
+    border-radius: 50%
+    margin-right: 3px
+    background: #fff
+    animation: wave 1.3s linear infinite
+    &:nth-child(2)
+      animation-delay: -1.1s
+    &:nth-child(3)
+      animation-delay: -0.9s
+
+@keyframes wave
+  0%, 60%, 100%
+    transform: initial
+  30%
+    transform: translateY(-5px)
+
+#bigCog
+  animation: spinBigCog 2.5s linear infinite
+  transform-origin: 50% 50%
+  display: inline-block
+@keyframes spinBigCog
+  0%
+    transform: rotate(360deg)
+  100%
+    transform: rotate(0deg)
+
+#smallCog
+  animation: spinSmallCog 2.5s linear infinite
+  transform-origin: 50% 50%
+  transform: rotate(22deg)
+  display: inline-block
+@keyframes spinSmallCog
+  0%
+    transform: rotate(22deg)
+  100%
+    transform: rotate(382deg)
 </style>

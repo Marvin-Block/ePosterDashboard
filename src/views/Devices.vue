@@ -92,9 +92,7 @@
                   <v-icon v-text="action.icon" />
                 </app-btn>
               </template>
-              <template
-                v-slot:default="dialog"
-              >
+              <template v-slot:default="dialog">
                 <v-card>
                   <v-overlay
                     :value="loader"
@@ -392,7 +390,7 @@
                                   color="success"
                                   size="150"
                                   width="25"
-                                  rotate="360"
+                                  rotate="90"
                                 >
                                   <strong>{{ Math.floor(selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100) }} %</strong>
                                 </v-progress-circular>
@@ -446,6 +444,7 @@
                             :items="selectedItem.link"
                             :item-class="rowClass"
                             item-key="linkUUID"
+                            items-per-page="100"
                             hide-default-footer
                             must-sort
                             multi-sort
