@@ -21,6 +21,7 @@ module.exports = {
     indent: 'off',
     //
     'no-unused-vars': 'warn',
+    'no-shadow': 'off',
   },
 
   overrides: [

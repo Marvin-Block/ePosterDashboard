@@ -580,6 +580,7 @@
   import _ from 'lodash'
   import { v4 as uuidv4 } from 'uuid'
   import moment from 'moment'
+  import Socket from '@/plugins/socket'
   export default {
     name: 'Videos',
     components:
@@ -790,6 +791,10 @@
         'videos',
       ]),
     },
+    beforeMount () {
+      Socket.send('video')
+      Socket.send('link')
+    },
     methods: {
       rotationClass: function (item) {
         if (item.orientation_V2 === 'Breit' && item.rotation === 'Rechts') return 'mdi-rotate-270'
@@ -995,6 +1000,7 @@
               text: error.response.data.message,
             }
           }).finally(() => {
+            Socket.send('video')
             this.selectedItem = {}
           })
         }
@@ -1019,6 +1025,9 @@
               type: 'error',
               text: error.response.data.message,
             }
+          })
+          .finally(() => {
+            Socket.send('video')
           })
       },
       validate: function () {
@@ -1091,7 +1100,6 @@
               type: 'success',
               text: response.data.message,
             }
-            console.log(response)
           }).catch(error => {
             this.loader = false
             this.alert = {
@@ -1100,6 +1108,7 @@
               text: error.response.data.message,
             }
           }).finally(() => {
+            Socket.send('video')
             this.resetUploadForm()
           })
         }

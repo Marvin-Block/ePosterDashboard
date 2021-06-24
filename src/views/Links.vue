@@ -397,6 +397,7 @@
   import { get } from 'vuex-pathify'
   import axios from 'axios'
   import moment from 'moment'
+  import Socket from '@/plugins/socket'
   export default {
     name: 'Links',
 
@@ -526,6 +527,11 @@
         return steps
       },
     },
+    beforeMount () {
+      Socket.send('video')
+      Socket.send('device')
+      Socket.send('link')
+    },
     methods: {
       checkDateOrder: function () {
         if (this.dates[0] > this.dates[1]) this.arrayMove(this.dates, 0, 1)
@@ -565,24 +571,24 @@
           postData.append('start', new Date(this.dates[0] + ' ' + this.startTime).valueOf())
           postData.append('end', new Date(this.dates[1] + ' ' + this.endTime).valueOf())
           postData.append('active', 1)
-          console.log()
           axios.post('http://kodizabbix:3333/v2/link', postData, {
             'Content-Type': 'multipart/form-data',
           }).then((response) => {
-            console.log(response)
             this.alert = {
               value: true,
               type: 'success',
               text: response.data.message,
             }
           }).catch((error) => {
-            console.log(error.response)
             this.alert = {
               value: true,
               type: 'error',
               text: error.response.data.message,
             }
           }).finally(() => {
+            Socket.send('device')
+            Socket.send('video')
+            Socket.send('link')
             this.videoSelected = []
             this.deviceSelected = []
             this.tab = 0

@@ -379,7 +379,7 @@
   // Utilities
   import { get, sync } from 'vuex-pathify'
   import moment from 'moment'
-
+  import Socket from '@/plugins/socket'
   export default {
     name: 'DashboardView',
 
@@ -500,6 +500,10 @@
         const result = this.videos.filter(video => moment().diff(video.createdAt, 'days') === 0)
         return result.length
       },
+    },
+    beforeMount () {
+      Socket.send('video')
+      Socket.send('device')
     },
     methods: {
       formatTime: function (time, format) {

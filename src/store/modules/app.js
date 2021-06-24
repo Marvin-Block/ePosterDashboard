@@ -191,7 +191,6 @@ const state = {
 
 const mutations = make.mutations(state)
 
-// noinspection JSUnusedLocalSymbols
 const actions = {
   ...make.actions(state),
   init: async ({ dispatch }) => {

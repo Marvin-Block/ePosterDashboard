@@ -444,7 +444,7 @@
                             :items="selectedItem.link"
                             :item-class="rowClass"
                             item-key="linkUUID"
-                            items-per-page="100"
+                            :items-per-page="selectedItem.link.length"
                             hide-default-footer
                             must-sort
                             multi-sort
@@ -678,6 +678,7 @@
   import axios from 'axios'
   import _ from 'lodash'
   import moment from 'moment'
+  import Socket from '@/plugins/socket'
   export default {
     name: 'Devices',
     components:
@@ -866,6 +867,11 @@
         'devices',
         'videos',
       ]),
+    },
+    beforeMount () {
+      Socket.send('device')
+      Socket.send('video')
+      Socket.send('link')
     },
     methods: {
       rotationClass: function (item) {
