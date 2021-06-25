@@ -12,7 +12,7 @@
         <v-data-table
           item-key="deviceUUID"
           :headers="headers"
-          :items="this.devices"
+          :items="devices"
           :search.sync="search"
           :page.sync="page"
           :items-per-page="itemsPerPage"
@@ -23,7 +23,7 @@
           no-results-text="Es wurde leider nichts gefunden"
           no-data-text="Es scheint keine Geräte zu geben"
           loading-text="Geräte werden geladen..."
-          :loading="this.devices.length < 1"
+          :loading="devices.length < 1"
           @page-count="pageCount = $event"
         >
           <template v-slot:top>
@@ -150,13 +150,32 @@
                           type="text"
                           label="Beschreibung"
                         />
-                        <v-text-field
+                        <v-radio-group
                           v-model="selectedItem.orientation"
-                          class="pb-1"
-                          type="text"
-                          label="Ausrichtung"
-                          :rules="editFields.rules.orientation"
-                        />
+                          row
+                          mandatory
+                        >
+                          <v-radio
+                            value="Hoch"
+                          >
+                            <template v-slot:label>
+                              <v-icon left>
+                                mdi-cellphone
+                              </v-icon>
+                              Hoch
+                            </template>
+                          </v-radio>
+                          <v-radio
+                            value="Breit"
+                          >
+                            <template v-slot:label>
+                              <v-icon left>
+                                mdi-cellphone mdi-rotate-90
+                              </v-icon>
+                              Breit
+                            </template>
+                          </v-radio>
+                        </v-radio-group>
                         <v-radio-group
                           v-model="selectedItem.rotation"
                           row
@@ -164,7 +183,7 @@
                         >
                           <v-radio
                             label="Ohne Rotation"
-                            value="null"
+                            :value="null"
                           />
                           <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
@@ -261,6 +280,23 @@
                                   mdi-{{ selectedItem.lastRequest > (new Date).valueOf() - 300000 ? 'wifi' : 'wifi-off' }}
                                 </v-icon>
                               </p>
+                            </v-col>
+                          </v-row>
+                          <v-row
+                            justify="center"
+                            class="text-h3"
+                          >
+                            <v-col
+                              cols="12"
+                            >
+                              <v-text-field
+                                v-model="selectedItem.deviceUUID"
+                                prepend-icon="mdi-card-account-details-outline"
+                                placeholder="Geräte UUID"
+                                label="Geräte UUID"
+                                type="text"
+                                disabled
+                              />
                             </v-col>
                           </v-row>
                           <v-row
@@ -367,6 +403,7 @@
                               :value="selectedItem.description"
                               outlined
                               disabled
+                              height="80"
                             />
                           </v-row>
                           <v-row
@@ -380,20 +417,31 @@
                                 justify="center"
                                 class="text-h5"
                               >
-                                <p>Freier Speicher</p>
+                                <p>Belegter Speicher</p>
                               </v-row>
                               <v-row
                                 justify="center"
                               >
                                 <v-progress-circular
-                                  :value="selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100"
-                                  color="success"
+                                  :value="100 - Math.floor(selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100)"
+                                  color="error"
                                   size="150"
                                   width="25"
-                                  rotate="90"
+                                  rotate="270"
                                 >
-                                  <strong>{{ Math.floor(selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100) }} %</strong>
+                                  <strong>{{ 100 - Math.floor(selectedItem.freeDiskSpace.slice(0,-1) / selectedItem.totalDiskSpace.slice(0,-1) * 100) }} %</strong>
                                 </v-progress-circular>
+                              </v-row>
+                              <v-row
+                                justify="center"
+                                class=""
+                              >
+                                <span>
+                                  {{ selectedItem.totalDiskSpace.slice(0,-1) - selectedItem.freeDiskSpace.slice(0,-1) }}
+                                  GB von&nbsp;
+                                  {{ selectedItem.totalDiskSpace.slice(0,-1) }} GB&nbsp;
+                                  belegt
+                                </span>
                               </v-row>
                             </v-col>
                             <v-col
@@ -438,6 +486,7 @@
                           md="6"
                         >
                           <v-data-table
+                            v-model="selectedLinks"
                             :sort-by="['active', 'start', 'end']"
                             :sort-desc="['true', 'true', 'true']"
                             :headers="linkHeader"
@@ -447,8 +496,133 @@
                             :items-per-page="selectedItem.link.length"
                             hide-default-footer
                             must-sort
+                            show-select
                             multi-sort
                           >
+                            <template v-slot:header.actions>
+                              <v-dialog
+                                transition="dialog-bottom-transition"
+                                max-width="1000"
+                                @click:outside="selectedLinks = []"
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn
+                                    v-bind="attrs"
+                                    color="error"
+                                    :disabled="selectedLinks.length < 1"
+                                    elevation="0"
+                                    min-width="0"
+                                    small
+                                    class="px-2 ml-1"
+                                    v-on="on"
+                                  >
+                                    <v-icon>
+                                      mdi-trash-can
+                                    </v-icon>
+                                  </v-btn>
+                                </template>
+                                <template
+                                  v-slot:default="dialog"
+                                >
+                                  <v-card>
+                                    <v-overlay
+                                      :value="loader"
+                                      absolute
+                                    >
+                                      <v-progress-circular
+                                        indeterminate
+                                        size="128"
+                                      />
+                                    </v-overlay>
+                                    <v-toolbar
+                                      color="error"
+                                      dark
+                                    >
+                                      <v-toolbar-title>
+                                        <v-icon>
+                                          mdi-close
+                                        </v-icon>
+                                        Löschen
+                                      </v-toolbar-title>
+                                    </v-toolbar>
+                                    <v-card-text>
+                                      <div>
+                                        <div class="text-h3 pa-3">
+                                          Sind Sie sich sicher, dass diese Links gelöscht werden soll ?
+                                        </div>
+                                        <ul
+                                          style="width: 100%"
+                                          class="mt-4 mb-10"
+                                        >
+                                          <li
+                                            v-for="selectLink in selectedLinks"
+                                            :key="selectLink.linkUUID"
+                                            class="text-h5"
+                                          >
+                                            <div class="d-flex">
+                                              <div
+                                                style="width: 50%"
+                                                class="d-block text-truncate px-2"
+                                              >
+                                                {{ selectLink.video.name }}
+                                              </div>
+                                              <div
+                                                style="width: 25%"
+                                                class="d-block text-truncate px-2"
+                                              >
+                                                {{ unixToReadable(selectLink.start, 'DD.MM.YYYY') }} - {{ unixToReadable(selectLink.end, 'DD.MM.YYYY') }}
+                                              </div>
+                                              <v-icon
+                                                style="width: 48px"
+                                                class="d-block text-truncate px-2"
+                                              >
+                                                mdi-cellphone {{ selectLink.video.orientation_V2 === 'Hoch' ? '' : 'mdi-rotate-90' }}
+                                              </v-icon>
+                                              <v-icon
+                                                v-if="selectLink.video.rotation"
+                                                style="width: 48px"
+                                                class="d-block text-truncate px-2"
+                                              >
+                                                mdi-phone-rotate-landscape {{ rotationClass(selectLink.video) }}
+                                              </v-icon>
+                                            </div>
+                                          </li>
+                                        </ul>
+                                        <v-btn
+                                          block
+                                          color="error"
+                                          @click="linkBulkDelete(); dialog.value = false"
+                                        >
+                                          Löschen
+                                        </v-btn>
+                                        <v-divider class="mx-3 mb-2 mt-4" />
+                                        <div class="mx-3 mb-2">
+                                          Gelöschte Links sind nicht wiederherstellbar.
+                                        </div>
+                                      </div>
+                                    </v-card-text>
+                                    <v-card-actions class="justify-end">
+                                      <v-btn
+                                        text
+                                        @click="dialog.value = false"
+                                      >
+                                        Schließen
+                                      </v-btn>
+                                    </v-card-actions>
+                                  </v-card>
+                                </template>
+                              </v-dialog>
+                            </template>
+                            <template v-slot:item.orientation_V2="{ item }">
+                              <v-icon>
+                                mdi-cellphone {{ item.video.orientation_V2 === 'Hoch' ? '' : 'mdi-rotate-90' }}
+                              </v-icon>
+                            </template>
+                            <template v-slot:item.rotation="{ item }">
+                              <v-icon v-if="item.video.rotation">
+                                mdi-phone-rotate-landscape {{ rotationClass(item.video) }}
+                              </v-icon>
+                            </template>
                             <template v-slot:item.start="{ item }">
                               {{ unixToReadable(item.start, "DD.MM.YYYY kk:mm" ) }}
                             </template>
@@ -811,14 +985,14 @@
           disabled: true,
           width: 600,
           title: 'Ändern',
-          text: '',
-          info: '',
+          text: 'Dieser Bereich befindet sich noch in der Entwicklung.',
+          info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
         },
         {
           color: 'error',
           icon: 'mdi-close',
           action: 'linkDelete',
-          disabled: false,
+          disabled: true,
           width: 600,
           title: 'Löschen',
           text: 'Sind Sie sich sicher, dass dieser Link gelöscht werden soll ?',
@@ -831,16 +1005,28 @@
           value: 'video.name',
         },
         {
+          text: '',
+          value: 'orientation_V2',
+        },
+        {
+          text: '',
+          value: 'rotation',
+        },
+        {
           text: 'Start',
           value: 'start',
+          width: 150,
         },
         {
           text: 'Ende',
           value: 'end',
+          width: 150,
         },
         {
           text: '',
           value: 'actions',
+          sortable: false,
+          align: 'center',
         },
       ],
       items: [],
@@ -860,6 +1046,7 @@
       },
       selectedItem: {},
       selectedLink: {},
+      selectedLinks: [],
       search: undefined,
     }),
     computed: {
@@ -874,9 +1061,17 @@
       Socket.send('link')
     },
     methods: {
+      a: function (a) {
+        console.log(a)
+      },
       rotationClass: function (item) {
-        if (item.orientation === 'Breit' && item.rotation === 'Rechts') return 'mdi-rotate-270'
-        if (item.orientation === 'Hoch' && item.rotation === 'Links') return 'mdi-flip-h'
+        if (Object.prototype.hasOwnProperty.call(item, 'orientation')) {
+          if (item.orientation === 'Breit' && item.rotation === 'Rechts') return 'mdi-rotate-270'
+          if (item.orientation === 'Hoch' && item.rotation === 'Links') return 'mdi-flip-h'
+        } else if (Object.prototype.hasOwnProperty.call(item, 'orientation_V2')) {
+          if (item.orientation_V2 === 'Breit' && item.rotation === 'Rechts') return 'mdi-rotate-270'
+          if (item.orientation_V2 === 'Hoch' && item.rotation === 'Links') return 'mdi-flip-h'
+        }
       },
       rowClass: function (link) {
         if (!link.active) return 'grey lighten-1'
@@ -979,6 +1174,7 @@
           })
           .catch(error => {
             this.loader = false
+            console.log(error)
             this.alert = {
               value: true,
               type: 'error',
@@ -988,6 +1184,32 @@
       },
       linkDelete: function (item) {
         this.selectedLink = item
+      },
+      linkBulkDelete: function () {
+        this.loader = true
+        const uuidList = this.selectedLinks.map(link => link.linkUUID)
+        const uuidListString = JSON.stringify(uuidList)
+        axios.delete('http://kodizabbix:3333/v2/link/bulk', { data: { uuidList: uuidListString } }).then((response) => {
+          uuidList.forEach(uuid => {
+            const linkPos = this.selectedItem.link.map(link => link.linkUUID).indexOf(uuid)
+            this.selectedItem.link.splice(linkPos, 1)
+          })
+          this.loader = false
+          this.alert = {
+            value: true,
+            type: 'success',
+            text: response.data.message,
+          }
+        }).catch((error) => {
+          this.loader = false
+          this.alert = {
+            value: true,
+            type: 'error',
+            text: error.response.data.message,
+          }
+        }).finally(() => {
+          this.selectedLinks = []
+        })
       },
       sendLinkDelete: function () {
         this.loader = true

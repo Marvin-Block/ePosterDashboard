@@ -82,6 +82,8 @@
         this.networkStatus = this.statusList[0]
         const content = JSON.parse(msg.data)
         this[content.type + 's'] = content.rows
+        this[content.type + 's'] = Object.freeze(this[content.type + 's'].map(entry => { return { ...entry } }))
+        // todo: move socket handle to components
       },
     },
   }

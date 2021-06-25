@@ -179,89 +179,137 @@
                     >
                       <v-text-field
                         v-model="uploadItem.values.name"
-                        class="pb-1"
+                        class="pb-1 mt-4"
                         type="text"
                         label="Name"
                         :rules="uploadItem.rules.name"
                       />
-                      <v-text-field
-                        v-model="uploadItem.values.orientation"
-                        class="pb-1"
-                        type="text"
-                        label="Ausrichtung"
-                        :rules="uploadItem.rules.orientation"
-                      />
-                      <v-radio-group
-                        v-model="uploadItem.values.rotation"
-                        row
-                        mandatory
-                      >
-                        <v-radio
-                          label="Ohne Rotation"
-                        />
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on, attrs }">
+                      <v-row>
+                        <v-col
+                          cols="12"
+                          sm="4"
+                        >
+                          <v-text-field
+                            v-model="uploadItem.values.width"
+                            :rules="uploadItem.rules.width"
+                            class="pb-1"
+                            type="text"
+                            label="Breite"
+                            disabled
+                          />
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          sm="4"
+                        >
+                          <v-text-field
+                            v-model="uploadItem.values.height"
+                            :rules="uploadItem.rules.height"
+                            class="pb-1"
+                            type="text"
+                            label="Höhe"
+                            disabled
+                          />
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          sm="4"
+                        >
+                          <v-radio-group
+                            v-model="uploadItem.values.orientation"
+                            row
+                            mandatory
+                          >
                             <v-radio
-                              value="Links"
-                              v-bind="attrs"
-                              v-on="on"
+                              value="Hoch"
                             >
                               <template v-slot:label>
-                                <v-icon
-                                  left
-                                  style="transform: scale(-1, 1)"
-                                >
-                                  mdi-phone-rotate-landscape
+                                <v-icon left>
+                                  mdi-cellphone
                                 </v-icon>
-                                Links
+                                Hoch
                               </template>
                             </v-radio>
-                          </template>
-                          <span>Nach Links rotiert</span>
-                        </v-tooltip>
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on, attrs }">
                             <v-radio
-                              value="Rechts"
-                              v-bind="attrs"
-                              v-on="on"
+                              value="Breit"
                             >
                               <template v-slot:label>
-                                <v-icon
-                                  left
-                                >
-                                  mdi-phone-rotate-landscape
+                                <v-icon left>
+                                  mdi-cellphone mdi-rotate-90
                                 </v-icon>
-                                Rechts
+                                Breit
                               </template>
                             </v-radio>
-                          </template>
-                          <span>Nach Rechts rotiert</span>
-                        </v-tooltip>
-                      </v-radio-group>
-                      <v-text-field
-                        v-model="uploadItem.values.width"
-                        :rules="uploadItem.rules.width"
-                        class="pb-1"
-                        type="text"
-                        label="Breite"
-                        disabled
-                      />
-                      <v-text-field
-                        v-model="uploadItem.values.height"
-                        :rules="uploadItem.rules.height"
-                        class="pb-1"
-                        type="text"
-                        label="Höhe"
-                        disabled
-                      />
-                      <v-text-field
-                        v-model="uploadItem.values.length"
-                        class="pb-1"
-                        type="text"
-                        label="Länge (in Sekunden)"
-                        :disabled="!!file && file.type.startsWith('video/')"
-                      />
+                          </v-radio-group>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col
+                          cols="12"
+                          sm="6"
+                        >
+                          <v-text-field
+                            v-model="uploadItem.values.length"
+                            class="pb-1"
+                            type="text"
+                            label="Länge (in Sekunden)"
+                            :disabled="!!file && file.type.startsWith('video/')"
+                          />
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          sm="6"
+                        >
+                          <v-radio-group
+                            v-model="uploadItem.values.rotation"
+                            row
+                            mandatory
+                          >
+                            <v-radio
+                              label="Ohne Rotation"
+                            />
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-radio
+                                  value="Links"
+                                  v-bind="attrs"
+                                  v-on="on"
+                                >
+                                  <template v-slot:label>
+                                    <v-icon
+                                      left
+                                      style="transform: scale(-1, 1)"
+                                    >
+                                      mdi-phone-rotate-landscape
+                                    </v-icon>
+                                    Links
+                                  </template>
+                                </v-radio>
+                              </template>
+                              <span>Nach Links rotiert</span>
+                            </v-tooltip>
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-radio
+                                  value="Rechts"
+                                  v-bind="attrs"
+                                  v-on="on"
+                                >
+                                  <template v-slot:label>
+                                    <v-icon
+                                      left
+                                    >
+                                      mdi-phone-rotate-landscape
+                                    </v-icon>
+                                    Rechts
+                                  </template>
+                                </v-radio>
+                              </template>
+                              <span>Nach Rechts rotiert</span>
+                            </v-tooltip>
+                          </v-radio-group>
+                        </v-col>
+                      </v-row>
                       <v-file-input
                         v-model="file"
                         :rules="fileRules"
@@ -375,23 +423,110 @@
                         lazy-validation
                       >
                         <v-text-field
-                          v-for="(field, j) in editFields"
-                          :key="j"
-                          v-model="selectedItem[field.value]"
-                          class="pb-1"
-                          :type="field.type"
-                          :label="field.name"
-                          :rules="field.rules"
+                          v-model="selectedItem.name"
+                          class="pb-1 mt-4"
+                          type="text"
+                          label="Name"
+                          :rules="[v => !!v || 'Name ist ein Pflichtfeld',v => (v && v.length > 4) || 'Der Name muss mindestens 5 Zeichen lang sein']"
                         />
-                        <v-btn
-                          :disabled="!valid || loadingButton"
-                          :loading="loadingButton"
-                          color="success"
-                          class="mr-4"
-                          @click="sendEdit(item); dialog.value = false; resetValidation(action.action)"
-                        >
-                          Speichern
-                        </v-btn>
+                        <v-row>
+                          <v-col
+                            cols="12"
+                            sm="6"
+                          >
+                            <v-radio-group
+                              v-model="selectedItem.orientation_V2"
+                              mandatory
+                            >
+                              <v-radio
+                                value="Hoch"
+                              >
+                                <template v-slot:label>
+                                  <v-icon left>
+                                    mdi-cellphone
+                                  </v-icon>
+                                  Hoch
+                                </template>
+                              </v-radio>
+                              <v-radio
+                                value="Breit"
+                              >
+                                <template v-slot:label>
+                                  <v-icon left>
+                                    mdi-cellphone mdi-rotate-90
+                                  </v-icon>
+                                  Breit
+                                </template>
+                              </v-radio>
+                            </v-radio-group>
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            sm="6"
+                          >
+                            <v-radio-group
+                              v-model="selectedItem.rotation"
+                              mandatory
+                            >
+                              <v-radio
+                                label="Ohne Rotation"
+                                :value="null"
+                              />
+                              <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-radio
+                                    value="Links"
+                                    v-bind="attrs"
+                                    v-on="on"
+                                  >
+                                    <template v-slot:label>
+                                      <v-icon
+                                        left
+                                        style="transform: scale(-1, 1)"
+                                      >
+                                        mdi-phone-rotate-landscape
+                                      </v-icon>
+                                      Links
+                                    </template>
+                                  </v-radio>
+                                </template>
+                                <span>Nach Links rotiert</span>
+                              </v-tooltip>
+                              <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-radio
+                                    value="Rechts"
+                                    v-bind="attrs"
+                                    v-on="on"
+                                  >
+                                    <template v-slot:label>
+                                      <v-icon
+                                        left
+                                      >
+                                        mdi-phone-rotate-landscape
+                                      </v-icon>
+                                      Rechts
+                                    </template>
+                                  </v-radio>
+                                </template>
+                                <span>Nach Rechts rotiert</span>
+                              </v-tooltip>
+                            </v-radio-group>
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col>
+                            <v-btn
+                              :disabled="!valid || loadingButton"
+                              :loading="loadingButton"
+                              color="success"
+                              class="mr-4"
+                              @click="sendEdit(item); dialog.value = false; resetValidation(action.action)"
+                            >
+                              Speichern
+                            </v-btn>
+                          </v-col>
+                        </v-row>
                       </v-form>
                       <v-divider class="mx-3 mb-2 mt-8" />
                       <div class="mx-3 mb-2">
@@ -664,17 +799,13 @@
         },
       ],
       headers: [
-        // {
-        //   text: 'ID',
-        //   value: 'id',
-        // },
-        // {
-        //   text: 'KW',
-        //   value: 'calendarWeek',
-        // },
         {
           text: 'Name',
           value: 'name',
+        },
+        {
+          text: 'Kategorie',
+          value: 'category',
         },
         {
           text: 'Ausrichtung',
@@ -694,10 +825,6 @@
           value: 'updatedAt',
           filterable: false,
         },
-        // {
-        //   text: 'Verlinkungen',
-        //   value: 'link.length',
-        // },
         {
           sortable: false,
           text: '',
@@ -731,22 +858,6 @@
           rules: [
             v => !!v || 'Breite ist ein Pflichtfeld',
             v => /^\d{3,4}$/.test(v) || 'Die Breite muss 3-4 stellig sein',
-          ],
-        },
-        {
-          name: 'Ausrichtung',
-          value: 'orientation_V2',
-          type: 'text',
-          rules: [
-            v => /^(?=[\s\S])/.test(v) ? /^(hoch|breit)$/i.test(v) || 'Hoch oder Breit' : true,
-          ],
-        },
-        {
-          name: 'Rotation',
-          value: 'rotation',
-          type: 'text',
-          rules: [
-            v => /^(?=[\s\S])/.test(v) ? /^(rechts|links)$/i.test(v) || 'Rechts oder Links' : true,
           ],
         },
       ],
@@ -809,93 +920,9 @@
         const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
         return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i]
       },
-      /**
-       * Link Object retrieved from the API
-       * @typedef {Object} Link
-       * @property {Number} id - id
-       * @property {String} linkUUID - Unique identifier for the Link
-       * @property {String} deviceUUID - Unique identifier for the Device
-       * @property {String} videoUUID - Unique identifier for the Video
-       * @property {String} name - Name of the Link (optional)
-       * @property {String} start - Start time as Unix Timestamp (Format: Milliseconds)
-       * @property {String} end - End time as Unix Timestamp (Format: Milliseconds)
-       * @property {Boolean} active - Is Video visible or not
-       * @property {Number} position - Position of the Video
-       * @property {String} createdAt - Entry created at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z")
-       * @property {String} updatedAt - Entry updated at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z"))
-       */
-      /**
-       * Video Object retrieved from the API
-       * @typedef {Object} Video
-       * @property {Number} id - id
-       * @property {String} videoUUID - Unique identifier
-       * @property {String} name - Name
-       * @property {String} path - Path on Server
-       * @property {Number} size - File size
-       * @property {Number} width - Width
-       * @property {Number} height - Height
-       * @property {String} md5 - MD5 hash
-       * @property {String} calendarWeek - Calendar Week (optional)
-       * @property {String} orientation_V2 - Orientation (optional)
-       * @property {String} rotation - Rotation (optional)
-       * @property {String} createdAt - Entry created at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z")
-       * @property {String} updatedAt - Entry updated at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z"))
-       * @property {Array} link - Array of {@link Link} objects
-       */
-      /**
-       * Action for the Video Data Table
-       * @typedef {Object} Action
-       * @property {String} color - Color for the action icon
-       * @property {String} icon - Material Design Icon (Format: mdi-...)
-       * @property {String} action - Action identifier
-       * @property {String} title - Displayname
-       * @property {String} text - Textbox content
-       * @property {String} info - Additional Information
-       */
-      /**
-       * Calls the given function and passes it the {@link Video} object
-       * @param {Action} action - Action Object
-       * @param {Video} item - Video Object
-       */
       actionHandle: function (action, item) {
         this[action.action](item)
       },
-      /**
-       * Link Object retrieved from the API
-       * @typedef {Object} Link
-       * @property {Number} id - id
-       * @property {String} linkUUID - Unique identifier for the Link
-       * @property {String} deviceUUID - Unique identifier for the Device
-       * @property {String} videoUUID - Unique identifier for the Video
-       * @property {String} name - Name of the Link (optional)
-       * @property {String} start - Start time as Unix Timestamp (Format: Milliseconds)
-       * @property {String} end - End time as Unix Timestamp (Format: Milliseconds)
-       * @property {Boolean} active - Is Video visible or not
-       * @property {Number} position - Position of the Video
-       * @property {String} createdAt - Entry created at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z")
-       * @property {String} updatedAt - Entry updated at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z"))
-       */
-      /**
-       * Video Object retrieved from the API
-       * @typedef {Object} Video
-       * @property {Number} id - id
-       * @property {String} videoUUID - Unique identifier
-       * @property {String} name - Name
-       * @property {String} path - Path on Server
-       * @property {Number} size - File size
-       * @property {Number} width - Width
-       * @property {Number} height - Height
-       * @property {String} md5 - MD5 hash
-       * @property {String} calendarWeek - Calendar Week (optional)
-       * @property {String} orientation_V2 - Orientation (optional)
-       * @property {String} rotation - Rotation (optional)
-       * @property {String} createdAt - Entry created at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z")
-       * @property {String} updatedAt - Entry updated at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z"))
-       * @property {Array} link - Array of {@link Link} objects
-       */
-      /**
-       * @param {Video} item - Video Object
-       */
       download: function (item) {
         axios.get(`http://kodizabbix:3333/v2/video/file/${item.videoUUID}`, { responseType: 'blob' })
           .then(resp => {
@@ -917,42 +944,6 @@
             }
           })
       },
-      /**
-       * Link Object retrieved from the API
-       * @typedef {Object} Link
-       * @property {Number} id - id
-       * @property {String} linkUUID - Unique identifier for the Link
-       * @property {String} deviceUUID - Unique identifier for the Device
-       * @property {String} videoUUID - Unique identifier for the Video
-       * @property {String} name - Name of the Link (optional)
-       * @property {String} start - Start time as Unix Timestamp (Format: Milliseconds)
-       * @property {String} end - End time as Unix Timestamp (Format: Milliseconds)
-       * @property {Boolean} active - Is Video visible or not
-       * @property {Number} position - Position of the Video
-       * @property {String} createdAt - Entry created at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z")
-       * @property {String} updatedAt - Entry updated at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z"))
-       */
-      /**
-       * Video Object retrieved from the API
-       * @typedef {Object} Video
-       * @property {Number} id - id
-       * @property {String} videoUUID - Unique identifier
-       * @property {String} name - Name
-       * @property {String} path - Path on Server
-       * @property {Number} size - File size
-       * @property {Number} width - Width
-       * @property {Number} height - Height
-       * @property {String} md5 - MD5 hash
-       * @property {String} calendarWeek - Calendar Week (optional)
-       * @property {String} orientation_V2 - Orientation (optional)
-       * @property {String} rotation - Rotation (optional)
-       * @property {String} createdAt - Entry created at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z")
-       * @property {String} updatedAt - Entry updated at date (Format: "YYYY-MM-DDTHH:mm:SS.000Z" Example: "2021-05-17T13:05:14.000Z"))
-       * @property {Array} link - Array of {@link Link} objects
-       */
-      /**
-       * @param {Video} item - Video Object
-       */
       preview: function (item) {
         axios.get(`http://kodizabbix:3333/v2/video/file/${item.videoUUID}`)
           .then(response => {

@@ -21,7 +21,7 @@ module.exports = {
     indent: 'off',
     //
     'no-unused-vars': 'warn',
-    'no-shadow': 'off',
+    'vue/no-template-shadow': 'off',
   },
 
   overrides: [
