@@ -249,11 +249,10 @@
                           sm="6"
                         >
                           <v-text-field
-                            v-model="uploadItem.values.length"
+                            v-model="uploadItem.values.category"
                             class="pb-1"
                             type="text"
-                            label="Länge (in Sekunden)"
-                            :disabled="!!file && file.type.startsWith('video/')"
+                            label="Kategorie"
                           />
                         </v-col>
                         <v-col
@@ -310,16 +309,36 @@
                           </v-radio-group>
                         </v-col>
                       </v-row>
-                      <v-file-input
-                        v-model="file"
-                        :rules="fileRules"
-                        show-size
-                        label="Datei"
-                        accept="video/mp4, image/*"
-                        placeholder="Wähle ein Video aus"
-                        @change="inspectFile"
-                        @click:clear="resetUploadForm"
-                      />
+                      <v-row>
+                        <v-col
+                          cols="12"
+                          sm="6"
+                        >
+                          <v-file-input
+                            v-model="file"
+                            :rules="fileRules"
+                            show-size
+                            filled
+                            label="Datei"
+                            accept="video/mp4, image/*"
+                            placeholder="Wähle ein Video aus"
+                            @change="inspectFile"
+                            @click:clear="resetUploadForm"
+                          />
+                        </v-col>
+                        <v-col
+                          cols="12"
+                          sm="6"
+                        >
+                          <v-text-field
+                            v-model="uploadItem.values.length"
+                            class="pb-1"
+                            type="text"
+                            label="Länge (in Sekunden)"
+                            :disabled="!file || file.type.startsWith('video/')"
+                          />
+                        </v-col>
+                      </v-row>
                     </v-form>
                   </v-card-text>
 
@@ -428,6 +447,12 @@
                           type="text"
                           label="Name"
                           :rules="[v => !!v || 'Name ist ein Pflichtfeld',v => (v && v.length > 4) || 'Der Name muss mindestens 5 Zeichen lang sein']"
+                        />
+                        <v-text-field
+                          v-model="selectedItem.category"
+                          class="pb-1 mt-4"
+                          type="text"
+                          label="Kategorie"
                         />
                         <v-row>
                           <v-col
@@ -832,35 +857,6 @@
         },
       ],
       items: [],
-      editFields: [
-        {
-          name: 'Name',
-          value: 'name',
-          type: 'text',
-          rules: [
-            v => !!v || 'Name ist ein Pflichtfeld',
-            v => (v && v.length > 4) || 'Der Name muss mindestens 5 Zeichen lang sein',
-          ],
-        },
-        {
-          name: 'Höhe',
-          value: 'height',
-          type: 'number',
-          rules: [
-            v => !!v || 'Höhe ist ein Pflichtfeld',
-            v => /^\d{3,4}$/.test(v) || 'Die Höhe muss 3-4 stellig sein',
-          ],
-        },
-        {
-          name: 'Breite',
-          value: 'width',
-          type: 'number',
-          rules: [
-            v => !!v || 'Breite ist ein Pflichtfeld',
-            v => /^\d{3,4}$/.test(v) || 'Die Breite muss 3-4 stellig sein',
-          ],
-        },
-      ],
       uploadItem: {
         rules: {
           name: [
@@ -885,6 +881,7 @@
           rotation: null,
           width: null,
           height: null,
+          category: null,
           length: null,
         },
       },
@@ -1002,8 +999,9 @@
       sendDelete: function () {
         axios.delete(`http://kodizabbix:3333/v2/video/${this.selectedItem.videoUUID}`)
           .then((response) => {
-            const itemPos = this.videos.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
-            this.videos.splice(itemPos, 1)
+            // const itemPos = this.videos.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
+            // console.log(this.videos, itemPos)
+            // this.videos.splice(itemPos, 1)
             this.alert = {
               value: true,
               type: 'success',
@@ -1076,6 +1074,7 @@
           const postData = new FormData()
           postData.append('videoUUID', uuidv4())
           postData.append('name', this.uploadItem.values.name)
+          postData.append('category', this.uploadItem.values.category)
           postData.append('width', this.uploadItem.values.width)
           postData.append('height', this.uploadItem.values.height)
           postData.append('orientation', this.uploadItem.values.orientation)
