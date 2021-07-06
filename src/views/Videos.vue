@@ -25,6 +25,7 @@
           loading-text="Videos werden geladen..."
           :loading="videos.length < 1"
           @page-count="pageCount = $event"
+          @contextmenu:row="show"
         >
           <template v-slot:top>
             <v-toolbar
@@ -705,6 +706,90 @@
             </v-dialog>
           </template>
         </v-data-table>
+        <v-menu
+          v-model="showMenu"
+          :position-x="x"
+          :position-y="y"
+          absolute
+          transition="slide-y-transition"
+          offset-y
+        >
+          <v-list>
+            <v-list-item>
+              <v-list-item-content>
+                <v-menu
+                  open-on-click
+                  offset-x
+                  transition="slide-y-transition"
+                >
+                  <template v-slot:activator="{on, attrs}">
+                    <v-row
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      <v-col
+                        cols="10"
+                      >
+                        Zu Playlist Hinzufügen
+                      </v-col>
+                      <v-col
+                        cols="2"
+                      >
+                        <v-icon
+                          class="float-right"
+                        >
+                          mdi-chevron-right
+                        </v-icon>
+                      </v-col>
+                    </v-row>
+                    <v-row
+                      style="cursor: pointer;"
+                      @click="addPlaylist"
+                    >
+                      <v-col
+                        cols="10"
+                      >
+                        Neue Playlist
+                      </v-col>
+                      <v-col
+                        cols="2"
+                      >
+                        <v-icon
+                          class="float-right"
+                        >
+                          mdi-playlist-plus
+                        </v-icon>
+                      </v-col>
+                    </v-row>
+                  </template>
+                  <v-list>
+                    <v-list-item>
+                      <v-list-item-content>
+                        <v-icon>
+                          mdi-window-close mdi-spin
+                        </v-icon>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content>
+                        <v-icon>
+                          mdi-window-close mdi-spin
+                        </v-icon>
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content>
+                        <v-icon>
+                          mdi-window-close mdi-spin
+                        </v-icon>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
         <div class="text-center pt-2">
           <v-pagination
             v-model="page"
@@ -753,6 +838,9 @@
         type: 'error',
         text: 'Oopsie.. :(',
       },
+      showMenu: false,
+      x: 0,
+      y: 0,
       loader: false,
       dialog: false,
       valid: true,
@@ -904,6 +992,20 @@
       Socket.send('link')
     },
     methods: {
+      addPlaylist () {
+        console.log(this.selectedItem)
+        this.selectedItem = {}
+      },
+      show (e, item) {
+        this.selectedItem = item.item
+        e.preventDefault()
+        this.showMenu = false
+        this.x = e.clientX
+        this.y = e.clientY
+        this.$nextTick(() => {
+          this.showMenu = true
+        })
+      },
       rotationClass: function (item) {
         if (item.orientation_V2 === 'Breit' && item.rotation === 'Rechts') return 'mdi-rotate-270'
         if (item.orientation_V2 === 'Hoch' && item.rotation === 'Links') return 'mdi-flip-h'

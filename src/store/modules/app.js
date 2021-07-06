@@ -43,6 +43,11 @@ const state = {
     //   icon: 'mdi-history',
     //   to: '/logs/',
     // },
+    {
+      title: 'Playlist',
+      icon: 'mdi-folder',
+      to: '/playlist/',
+    },
     // {
     //   title: 'Pages',
     //   icon: 'mdi-image',

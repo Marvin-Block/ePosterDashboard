@@ -35,6 +35,9 @@ const router = new Router({
       // Logs
       route('Logs', null, 'logs'),
 
+      // Logs
+      route('Playlist', null, 'playlist'),
+
       // Pages
       route('Timeline', null, 'components/timeline'),
       route('UserProfile', null, 'components/profile'),

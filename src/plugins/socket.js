@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import { sync } from 'vuex-pathify'
 
 const socket = new WebSocket('ws://kodizabbix:3331')
 
