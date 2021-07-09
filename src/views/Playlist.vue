@@ -290,6 +290,7 @@
     }),
     methods: {
       addPlaylist (e) {
+        this.$store.dispatch('app/updatePlaylists', this.playlists)
         console.log(e)
       },
     },
