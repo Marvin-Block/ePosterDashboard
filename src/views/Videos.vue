@@ -765,21 +765,27 @@
                   <v-list>
                     <v-list-item>
                       <v-list-item-content>
-                        <v-icon>
+                        <v-icon
+                          left
+                        >
                           mdi-window-close mdi-spin
                         </v-icon>
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-content>
-                        <v-icon>
+                        <v-icon
+                          left
+                        >
                           mdi-window-close mdi-spin
                         </v-icon>
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-content>
-                        <v-icon>
+                        <v-icon
+                          left
+                        >
                           mdi-window-close mdi-spin
                         </v-icon>
                       </v-list-item-content>
@@ -997,14 +1003,14 @@
         this.selectedItem = {}
       },
       show (e, item) {
-        this.selectedItem = item.item
-        e.preventDefault()
-        this.showMenu = false
-        this.x = e.clientX
-        this.y = e.clientY
-        this.$nextTick(() => {
-          this.showMenu = true
-        })
+        // this.selectedItem = item.item
+        // e.preventDefault()
+        // this.showMenu = false
+        // this.x = e.clientX
+        // this.y = e.clientY
+        // this.$nextTick(() => {
+        //   this.showMenu = true
+        // })
       },
       rotationClass: function (item) {
         if (item.orientation_V2 === 'Breit' && item.rotation === 'Rechts') return 'mdi-rotate-270'

@@ -424,42 +424,6 @@
       deviceSelected: [],
       tab: 0,
       tabs: ['Geräte', 'Videos', 'Zeitraum'],
-      videoHeaders: [
-        {
-          text: 'Name',
-          value: 'name',
-        },
-        {
-          text: 'Ausrichtung',
-          value: 'orientation_V2',
-        },
-        {
-          text: 'Rotation',
-          value: 'rotation',
-        },
-      ],
-      deviceHeaders: [
-        {
-          text: 'Standort',
-          value: 'location',
-        },
-        {
-          text: 'Beschreibung',
-          value: 'description',
-        },
-        {
-          text: 'Ausrichtung',
-          value: 'orientation',
-        },
-        {
-          text: 'Rotation',
-          value: 'rotation',
-        },
-        {
-          text: 'Inhalte',
-          value: 'link.length',
-        },
-      ],
       deviceHelpImages: [
         {
           title: 'Test 1',
@@ -526,6 +490,66 @@
         ) steps.push(3)
         return steps
       },
+      videoHeaders () {
+        return [
+          {
+            text: 'Name',
+            value: 'name',
+          },
+          {
+            text: 'Kategorie',
+            value: 'category',
+          },
+          {
+            text: 'Ausrichtung',
+            value: 'orientation_V2',
+            filter: value => {
+              if (!this.deviceSelected || this.deviceSelected.length < 1) return true
+              return value === this.deviceSelected[0].orientation
+            },
+          },
+          {
+            text: 'Rotation',
+            value: 'rotation',
+            filter: value => {
+              if (!this.deviceSelected || this.deviceSelected.length < 1) return true
+              return value === this.deviceSelected[0].rotation
+            },
+          },
+        ]
+      },
+      deviceHeaders () {
+        return [
+          {
+            text: 'Standort',
+            value: 'location',
+          },
+          {
+            text: 'Beschreibung',
+            value: 'description',
+          },
+          {
+            text: 'Ausrichtung',
+            value: 'orientation',
+            filter: value => {
+              if (!this.deviceSelected || this.deviceSelected.length < 1) return true
+              return value === this.deviceSelected[0].orientation
+            },
+          },
+          {
+            text: 'Rotation',
+            value: 'rotation',
+            filter: value => {
+              if (!this.deviceSelected || this.deviceSelected.length < 1) return true
+              return value === this.deviceSelected[0].rotation
+            },
+          },
+          {
+            text: 'Inhalte',
+            value: 'link.length',
+          },
+        ]
+      },
     },
     beforeMount () {
       Socket.send('video')
@@ -555,7 +579,9 @@
       },
       next (valid) {
         if (!valid) return
-
+        if (this.tab === 0) {
+          console.log(this.deviceSelected, this.videoSelected)
+        }
         if (this.tab === this.tabs.length - 1) {
           const postData = new FormData()
           const postVideos = []
