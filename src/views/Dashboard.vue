@@ -3,10 +3,49 @@
     id="dashboard-view"
     fluid
     tag="section"
+    style="margin-top:-80px"
   >
-    <view-intro
-      heading="ePoster Administration"
-    />
+    <v-row>
+      <v-col
+        cols="12"
+        md="6"
+      >
+        <!--        <material-card-->
+        <!--          color="grey"-->
+        <!--          title="Erreichbarkeits Verlauf"-->
+        <!--          icon-small-->
+        <!--          icon="mdi-monitor-cellphone-star"-->
+        <!--        >-->
+        <!--          <v-card-text>-->
+        <!--            <chartist-->
+        <!--              :data="colouredLine.data"-->
+        <!--              :options="colouredLine.options"-->
+        <!--              type="Line"-->
+        <!--              style="max-height: 150px;"-->
+        <!--              class="mt-3"-->
+        <!--            />-->
+        <!--          </v-card-text>-->
+        <!--        </material-card>-->
+      </v-col>
+      <v-col
+        cols="12"
+        md="6"
+      >
+        <material-card
+          color="#254AA5"
+          title="Standorte"
+          icon-small
+          icon="mdi-map-marker"
+        >
+          <v-card-text>
+            <div
+              id="map"
+              style="width: 100%; height: 400px;"
+            />
+          </v-card-text>
+        </material-card>
+      </v-col>
+    </v-row>
     <v-row>
       <!--      stat cards below-->
       <v-col
@@ -84,7 +123,7 @@
         </v-card>
       </v-col>
 
-<!----------------------------------------->
+      <!----------------------------------------->
 
       <v-col
         cols="12"
@@ -152,7 +191,7 @@
         </v-card>
       </v-col>
 
-<!----------------------------------------->
+      <!----------------------------------------->
 
       <v-col
         cols="12"
@@ -220,7 +259,7 @@
         </v-card>
       </v-col>
 
-<!----------------------------------------->
+      <!----------------------------------------->
 
       <v-col
         cols="12"
@@ -316,10 +355,10 @@
           <v-card-text>
             <v-data-table
               :headers="videoHeaders"
-              :items="this.videos.slice(0,5)"
+              :items="videos.slice(0,5)"
               no-data-text="Es scheint keine neuen Videos zu geben"
               loading-text="Videos werden geladen..."
-              :loading="this.videos.length < 1"
+              :loading="videos.length < 1"
               hide-default-footer
               disable-sort
               sort-by="createdAt"
@@ -350,8 +389,8 @@
           <v-card-text>
             <v-data-table
               :headers="deviceHeaders"
-              :items="this.devices.slice(0,5)"
-              :loading="this.devices.length < 1"
+              :items="devices.slice(0,5)"
+              :loading="devices.length < 1"
               disable-sort
               sort-by="createdAt"
               sort-desc
@@ -377,44 +416,49 @@
 
 <script>
   // Utilities
-  import { get, sync } from 'vuex-pathify'
+  import { get } from 'vuex-pathify'
   import moment from 'moment'
   import Socket from '@/plugins/socket'
+  import MaterialCard from '@/components/MaterialCard'
+  import { Loader } from 'google-maps'
+  import MarkerClusterer from '@googlemaps/markerclustererplus'
+
   export default {
     name: 'DashboardView',
-
+    components: { MaterialCard },
     data: () => ({
+      map: null,
       videoHeaders: [
         {
           text: 'Name',
-          value: 'name',
+          value: 'name'
         },
         {
           text: 'Größe',
-          value: 'size',
+          value: 'size'
         },
         {
           text: 'Erstellt',
-          value: 'createdAt',
-        },
+          value: 'createdAt'
+        }
       ],
       deviceHeaders: [
         {
           text: 'Standort',
-          value: 'location',
+          value: 'location'
         },
         {
           text: 'Beschreibung',
-          value: 'description',
+          value: 'description'
         },
         {
           text: 'Status',
-          value: 'lastRequest',
+          value: 'lastRequest'
         },
         {
           text: 'Erstellt',
-          value: 'createdAt',
-        },
+          value: 'createdAt'
+        }
       ],
       stats: [
         {
@@ -424,7 +468,7 @@
           color: 'primary',
           icon: 'mdi-creation',
           title: 'Neue Videos',
-          value: '0',
+          value: '0'
         },
         {
           // actionIcon: 'mdi-history',
@@ -432,7 +476,7 @@
           color: 'success',
           icon: 'mdi-wifi',
           title: 'Geräte Online',
-          value: '215',
+          value: '215'
         },
         {
           // actionIcon: 'mdi-history',
@@ -441,7 +485,7 @@
           color: 'error',
           icon: 'mdi-wifi-off',
           title: 'Geräte Offline',
-          value: '5',
+          value: '5'
         },
         {
           // actionIcon: 'mdi-calendar-range',
@@ -450,8 +494,8 @@
           color: '#254AA5',
           icon: 'mdi-monitor-clean',
           title: 'Neue Geräte',
-          value: '2',
-        },
+          value: '2'
+        }
         // {
         //   actionIcon: 'mdi-tag',
         //   actionText: 'Tracked from Google Analytics',
@@ -477,8 +521,29 @@
         //   value: '+245',
         // },
       ],
+      colouredLine: {
+        data: {
+          labels: ["'06", "'07", "'08", "'09", "'10", "'11", "'12", "'13", "'14", "'15"],
+          series: [
+            [275, 500, 290, 55, 700, 700, 500, 750, 630, 900, 930]
+          ]
+        },
+        options: {
+          low: 0,
+          high: 1000, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+          chartPadding: {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+          }
+        }
+      },
+      zoomFluid: undefined,
+      zoomCoords: undefined
     }),
     computed: {
+      filialen: get('app/filialen'),
       videos: get('app/videos'),
       devices: get('app/devices'),
       today: function () {
@@ -499,13 +564,111 @@
       videosToday: function () {
         const result = this.videos.filter(video => moment().diff(video.createdAt, 'days') === 0)
         return result.length
-      },
+      }
     },
     beforeMount () {
       Socket.send('video')
       Socket.send('device')
+      const loader = new Loader('AIzaSyDyWlypXz9Ul65CORLC8vKbUXMYlpWDBgM', {
+        libraries: ['geometry', 'places', 'visualization']
+      })
+      loader.load().then((google) => {
+        this.initMap(google)
+      })
+      // ScriptJs('https://maps.googleapis.com/maps/api/js?key=AIzaSyDyWlypXz9Ul65CORLC8vKbUXMYlpWDBgM&libraries=geometry,places,visualization', () => {
+      //   this.initMap()
+      // })
     },
     methods: {
+      zoomTo () {
+        if (this.zoomFluid === 10) { return 0 } else {
+          this.zoomFluid++
+          this.map.setZoom(this.zoomFluid)
+          setTimeout(this.zoomTo(), 500)
+        }
+      },
+      initMap (google) {
+        // eslint-disable-next-line no-undef
+        const map = new google.maps.Map(document.getElementById('map'), {
+          // Koordinaten KODi Oberhausen Zum Eisenhammer 52
+          center: { lat: 51.4899947, lng: 6.8473578 },
+          // center: { lat: 51.1657, lng: 10.4515 },
+          zoom: 6,
+          disableDefaultUI: true,
+          mapId: 'c01bff633aa1134d'
+        })
+        // const heatmapData = []
+        const markerCluster = this.filialen.map((filiale) => {
+          // eslint-disable-next-line no-undef
+          const marker = new google.maps.Marker({
+            // eslint-disable-next-line no-undef
+            position: new google.maps.LatLng(filiale.Latitude, filiale.Longitude),
+            icon: {
+              path: 'M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z',
+              // path: 'M 12 11.5 M 12 2 A 7 7 0 0 0 5 9 C 5 14.25 12 22 12 22 C 12 22 19 14.25 19 9 A 7 7 0 0 0 12 2 Z',
+              fillColor: filiale.Status === 'Online' ? '#4caf50' : '#ff5252',
+              fillOpacity: 1,
+              // eslint-disable-next-line no-undef
+              anchor: new google.maps.Point(12, 0),
+              strokeWeight: 1,
+              strokeColor: '#000'
+            },
+            map: map
+          })
+          google.maps.event.addListener(marker, 'click', () => {
+            this.zoomCoords = marker.getPosition()
+            this.zoomFluid = map.getZoom()
+            map.panTo(this.zoomCoords)
+            this.zoomTo()
+          })
+          return marker
+        })
+        // const cluster = new MarkerClusterer(map, markerCluster, {
+        //   // imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
+        //   styles: [
+        //     MarkerClusterer.withDefaultStyle({
+        //       url: require('@/assets/map-marker.svg'),
+        //       textColor: '#ff00ff',
+        //       textSize: 10
+        //     }),
+        //     MarkerClusterer.withDefaultStyle({
+        //       url: require('@/assets/map-marker.svg'),
+        //       textColor: '#ff0000',
+        //       textSize: 11
+        //     }),
+        //     MarkerClusterer.withDefaultStyle({
+        //       url: require('@/assets/map-marker.svg'),
+        //       textColor: '#ffffff',
+        //       textSize: 12
+        //     })
+        //   ]
+        // })
+        // eslint-disable-next-line no-undef
+        // const heatmap = new google.maps.visualization.HeatmapLayer({
+        //   data: heatmapData,
+        //   radius: 15,
+        //   opacity: 0.6,
+        //   gradient: [
+        //     'rgba(0, 255, 255, 0)',
+        //     'rgba(0, 255, 255, 1)',
+        //     'rgba(0, 191, 255, 1)',
+        //     'rgba(0, 127, 255, 1)',
+        //     'rgba(0, 63, 255, 1)',
+        //     'rgba(0, 0, 255, 1)',
+        //     'rgba(0, 0, 223, 1)',
+        //     'rgba(0, 0, 191, 1)',
+        //     'rgba(0, 0, 159, 1)',
+        //     'rgba(0, 0, 127, 1)',
+        //     'rgba(63, 0, 91, 1)',
+        //     'rgba(96, 11, 40, 1)',
+        //     'rgba(192, 22, 80, 1)',
+        //     'rgba(240, 28, 100, 1)'
+        //   ]
+        // })
+        // heatmap.setMap(map)
+
+        this.map = map
+      },
       formatTime: function (time, format) {
         return moment(time).format(format)
       },
@@ -514,8 +677,8 @@
         if (bytes === 0) return '0 Byte'
         const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
         return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i]
-      },
-    },
+      }
+    }
   }
 </script>
 <style lang="sass">
@@ -533,4 +696,14 @@
 
 .v-card__subtitle--material-stats
   color: #3C4858
+
+//  Disable watermark and footer options
+.gmnoprint .gm-style-cc
+  display: none !important
+
+.gm-style-cc
+  display: none !important
+
+a[title="Dieses Gebiet in Google Maps öffnen (in neuem Fenster)"]
+  display: none !important
 </style>

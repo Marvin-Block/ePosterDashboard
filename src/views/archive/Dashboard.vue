@@ -389,7 +389,7 @@
   import Vue from 'vue'
 
   const lineSmooth = Vue.chartist.Interpolation.cardinal({
-    tension: 0,
+    tension: 0
   })
 
   export default {
@@ -402,7 +402,7 @@
         AU: 760,
         GB: 690,
         RO: 600,
-        BR: 550,
+        BR: 550
       },
       charts: [{
         type: 'Bar',
@@ -413,12 +413,12 @@
         data: {
           labels: ['Ja', 'Fe', 'Ma', 'Ap', 'Mai', 'Ju', 'Jul', 'Au', 'Se', 'Oc', 'No', 'De'],
           series: [
-            [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895],
-          ],
+            [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]
+          ]
         },
         options: {
           axisX: {
-            showGrid: false,
+            showGrid: false
           },
           low: 0,
           high: 1000,
@@ -426,8 +426,8 @@
             top: 0,
             right: 5,
             bottom: 0,
-            left: 0,
-          },
+            left: 0
+          }
         },
         responsiveOptions: [
           ['screen and (max-width: 640px)', {
@@ -435,10 +435,10 @@
             axisX: {
               labelInterpolationFnc: function (value) {
                 return value[0]
-              },
-            },
-          }],
-        ],
+              }
+            }
+          }]
+        ]
       }, {
         type: 'Line',
         color: 'success',
@@ -448,8 +448,8 @@
         data: {
           labels: ['12am', '3pm', '6pm', '9pm', '12pm', '3am', '6am', '9am'],
           series: [
-            [230, 750, 450, 300, 280, 240, 200, 190],
-          ],
+            [230, 750, 450, 300, 280, 240, 200, 190]
+          ]
         },
         options: {
           lineSmooth,
@@ -459,9 +459,9 @@
             top: 0,
             right: 0,
             bottom: 0,
-            left: 0,
-          },
-        },
+            left: 0
+          }
+        }
       }, {
         type: 'Line',
         color: '#254AA5',
@@ -471,8 +471,8 @@
         data: {
           labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
           series: [
-            [12, 17, 7, 17, 23, 18, 38],
-          ],
+            [12, 17, 7, 17, 23, 18, 38]
+          ]
         },
         options: {
           lineSmooth,
@@ -482,9 +482,9 @@
             top: 0,
             right: 0,
             bottom: 0,
-            left: 0,
-          },
-        },
+            left: 0
+          }
+        }
       }],
       listings: [
         {
@@ -492,22 +492,22 @@
           location: 'Barcelona, Spain',
           price: '$899/night',
           text: 'The place is close to Barceloneta Beach and bus stop just 2 min by walk and near to "Naviglio" where you can enjoy the life in Barcelona.',
-          title: 'Cozy 5 Stars Apartment',
+          title: 'Cozy 5 Stars Apartment'
         },
         {
           image: 3,
           location: 'Office Studio',
           price: '$1.119/night',
           text: 'The place is close to Metro Station and bus stop just 2 min by walk and near to "Naviglio" where you can enjoy the night life in London, UK.',
-          title: 'Office Studio',
+          title: 'Office Studio'
         },
         {
           image: 1,
           location: 'Milan, Italy',
           price: '$459/night',
           text: 'The place is close to Metro Station and bus stop just 2 min by walk and near to "Naviglio" where you can enjoy the main night life in Milan.',
-          title: 'Beautiful Castle',
-        },
+          title: 'Beautiful Castle'
+        }
       ],
       stats: [
         {
@@ -516,7 +516,7 @@
           color: '#FD9A13',
           icon: 'mdi-sofa-single',
           title: 'Bookings',
-          value: '184',
+          value: '184'
         },
         {
           actionIcon: 'mdi-tag',
@@ -524,7 +524,7 @@
           color: 'primary',
           icon: 'mdi-chart-bar',
           title: 'Website Visits',
-          value: '75.521',
+          value: '75.521'
         },
         {
           actionIcon: 'mdi-calendar-range',
@@ -532,7 +532,7 @@
           color: 'success',
           icon: 'mdi-store',
           title: 'Revenue',
-          value: '$34,245',
+          value: '$34,245'
         },
         {
           actionIcon: 'mdi-history',
@@ -540,16 +540,16 @@
           color: '#254AA5',
           icon: 'mdi-twitter',
           title: 'Followers',
-          value: '+245',
-        },
-      ],
+          value: '+245'
+        }
+      ]
     }),
 
     computed: {
       sales: get('sales/sales'),
       totalSales () {
         return this.sales.reduce((acc, val) => acc + val.salesInM, 0)
-      },
-    },
+      }
+    }
   }
 </script>

@@ -2,7 +2,7 @@ module.exports = {
   root: true,
 
   env: {
-    node: true,
+    node: true
   },
 
   plugins: ['vuetify'],
@@ -10,7 +10,7 @@ module.exports = {
   extends: 'vuetify',
 
   parserOptions: {
-    parser: 'babel-eslint',
+    parser: 'babel-eslint'
   },
 
   rules: {
@@ -21,18 +21,18 @@ module.exports = {
     indent: 'off',
     //
     'no-unused-vars': 'warn',
-    'vue/no-template-shadow': 'off',
+    'vue/no-template-shadow': 'off'
   },
 
   overrides: [
     {
       files: [
         '**/__tests__/*.{j,t}s?(x)',
-        '**/tests/unit/**/*.spec.{j,t}s?(x)',
+        '**/tests/unit/**/*.spec.{j,t}s?(x)'
       ],
       env: {
-        jest: true,
-      },
-    },
-  ],
+        jest: true
+      }
+    }
+  ]
 }
