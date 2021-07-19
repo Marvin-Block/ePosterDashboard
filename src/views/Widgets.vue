@@ -240,37 +240,37 @@
       colors: [
         'error',
         'success',
-        'info',
+        'info'
       ],
       headers: [
         {
           sortable: false,
           text: 'ID',
-          value: 'id',
+          value: 'id'
         },
         {
           sortable: false,
           text: 'Name',
-          value: 'name',
+          value: 'name'
         },
         {
           sortable: false,
           text: 'Salary',
           value: 'salary',
-          align: 'right',
+          align: 'right'
         },
         {
           sortable: false,
           text: 'Country',
           value: 'country',
-          align: 'right',
+          align: 'right'
         },
         {
           sortable: false,
           text: 'City',
           value: 'city',
-          align: 'right',
-        },
+          align: 'right'
+        }
       ],
       items: [
         {
@@ -278,36 +278,36 @@
           name: 'Dakota Rice',
           country: 'Niger',
           city: 'Oud-Tunrhout',
-          salary: '$35,738',
+          salary: '$35,738'
         },
         {
           id: 2,
           name: 'Minerva Hooper',
           country: 'Curaçao',
           city: 'Sinaai-Waas',
-          salary: '$23,738',
+          salary: '$23,738'
         },
         {
           id: 3,
           name: 'Sage Rodriguez',
           country: 'Netherlands',
           city: 'Overland Park',
-          salary: '$56,142',
+          salary: '$56,142'
         },
         {
           id: 4,
           name: 'Philip Chanley',
           country: 'Korea, South',
           city: 'Gloucester',
-          salary: '$38,735',
+          salary: '$38,735'
         },
         {
           id: 5,
           name: 'Doris Greene',
           country: 'Malawi',
           city: 'Feldkirchen in Kārnten',
-          salary: '$63,542',
-        },
+          salary: '$63,542'
+        }
       ],
       menu: false,
       plans: [
@@ -316,71 +316,71 @@
           heading: 'Small Company',
           icon: 'mdi-home',
           title: '$29',
-          text: 'This is good if your company size is between 2 and 10 Persons.',
+          text: 'This is good if your company size is between 2 and 10 Persons.'
         },
         {
           heading: 'Freelancer',
           icon: 'mdi-sofa',
           title: 'FREE',
-          text: 'This is good if your company size is between 2 and 10 Persons.',
-        },
+          text: 'This is good if your company size is between 2 and 10 Persons.'
+        }
       ],
       tabs: 0,
       tasks: {
         0: [
           {
             text: 'Sign contract for "What are conference organizers afraid of?"',
-            value: true,
+            value: true
           },
           {
             text: 'Lines From Great Russian Literature? Or E-mails From My Boss?',
-            value: false,
+            value: false
           },
           {
             text: 'Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit',
-            value: false,
+            value: false
           },
           {
             text: 'Create 4 Invisible User Experiences you Never Knew About',
-            value: true,
-          },
+            value: true
+          }
         ],
         1: [
           {
             text: 'Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit',
-            value: true,
+            value: true
           },
           {
             text: 'Sign contract for "What are conference organizers afraid of?"',
-            value: false,
-          },
+            value: false
+          }
         ],
         2: [
           {
             text: 'Lines From Great Russian Literature? Or E-mails From My Boss?',
-            value: false,
+            value: false
           },
           {
             text: 'Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit',
-            value: true,
+            value: true
           },
           {
             text: 'Sign contract for "What are conference organizers afraid of?"',
-            value: true,
-          },
-        ],
+            value: true
+          }
+        ]
       },
       timelines: [
         {
           title: 'Some title',
           icon: 'mdi-briefcase',
           text: 'Wifey made the best Father\'s Day meal ever. So thankful so happy so blessed. Thank you for making my family We just had fun with the “future” theme !!! It was a fun night all together ... The always rude Kanye Show at 2am Sold Out Famous viewing @ Figueroa and 12th in downtown.',
-          subtext: '11 hours ago via twitter',
+          subtext: '11 hours ago via twitter'
         },
         {
           title: 'Another one',
           icon: 'mdi-puzzle',
-          text: 'Thank God for the support of my wife and real friends. I also wanted to point out that it’s the first album to go number 1 off of streaming!!! I love you Ellen and also my number one design rule of anything I do from shoes to music to homes is that Kim has to like it....',
+          text: 'Thank God for the support of my wife and real friends. I also wanted to point out that it’s the first album to go number 1 off of streaming!!! I love you Ellen and also my number one design rule of anything I do from shoes to music to homes is that Kim has to like it....'
         },
         {
           title: 'Another title',
@@ -391,10 +391,10 @@
           actions: [
             'Action',
             'Another Action',
-            'Something else here',
-          ],
-        },
-      ],
-    }),
+            'Something else here'
+          ]
+        }
+      ]
+    })
   }
 </script>

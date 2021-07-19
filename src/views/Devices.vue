@@ -12,7 +12,7 @@
         <v-data-table
           item-key="deviceUUID"
           :headers="headers"
-          :items="devices"
+          :items="devices.items"
           :search.sync="search"
           :page.sync="page"
           :items-per-page="itemsPerPage"
@@ -23,7 +23,7 @@
           no-results-text="Es wurde leider nichts gefunden"
           no-data-text="Es scheint keine Geräte zu geben"
           loading-text="Geräte werden geladen..."
-          :loading="devices.length < 1"
+          :loading="devices.status === 'loading'"
           @page-count="pageCount = $event"
         >
           <template v-slot:top>
@@ -847,7 +847,7 @@
 </template>
 
 <script>
-  import { sync } from 'vuex-pathify'
+  import { call, sync } from 'vuex-pathify'
   import MaterialCard from '@/components/MaterialCard'
   import _ from 'lodash'
   import moment from 'moment'
@@ -1051,17 +1051,30 @@
       search: undefined
     }),
     computed: {
-      ...sync('app', [
-        'devices',
-        'videos'
-      ])
+      videos: sync('videos'),
+      devices: sync('devices')
+      // ...sync('app', [
+      //   'devices',
+      //   'videos'
+      // ])
     },
     beforeMount () {
-      Socket.send('device')
-      Socket.send('video')
-      Socket.send('link')
+      this.loadVideos()
+      this.loadDevices()
+      // this.loadLinks()
+      // Socket.send('device')
+      // Socket.send('video')
+      // Socket.send('link')
     },
     methods: {
+      loadVideos: call('videos/load'),
+      loadDevices: call('devices/load'),
+      loadLinks: call('links/load'),
+      deleteDevice: call('devices/delete'),
+      deleteLink: call('links/delete'),
+      deleteBulkLink: call('links/deleteBulk'),
+      insertDevice: call('devices/insert'),
+      replaceDevice: call('devices/replace'),
       a: function (a) {
         console.log(a)
       },
@@ -1123,7 +1136,7 @@
         this.selectedItem = Object.assign(this.selectedItem, item)
         const videoList = this.selectedItem.link.map((link) => link.videoUUID)
         this.selectedItem.link.forEach(link => {
-          const videoObj = this.videos.filter(video => videoList.includes(video.videoUUID)).find(video => link.videoUUID === video.videoUUID)
+          const videoObj = this.videos.items.filter(video => videoList.includes(video.videoUUID)).find(video => link.videoUUID === video.videoUUID)
           delete videoObj.link
           link.video = videoObj
         })
@@ -1138,7 +1151,7 @@
           API.device.update(body)
             .then((response) => {
               this.loader = false
-              Object.assign(item, this.selectedItem)
+              this.replaceDevice(this.selectedItem)
               this.alert = {
                 value: true,
                 type: 'success',
@@ -1169,8 +1182,7 @@
         this.loader = true
         API.device.delete(this.selectedItem.deviceUUID)
           .then((response) => {
-            const itemPos = this.devices.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
-            this.devices.splice(itemPos, 1)
+            this.deleteDevice(this.selectedItem.deviceUUID)
             this.loader = false
             this.alert = {
               value: true,
@@ -1197,10 +1209,12 @@
         const uuidListString = JSON.stringify(uuidList)
         API.link.deleteBulk(uuidListString)
           .then((response) => {
-            uuidList.forEach(uuid => {
-              const linkPos = this.selectedItem.link.map(link => link.linkUUID).indexOf(uuid)
-              this.selectedItem.link.splice(linkPos, 1)
-            })
+            // todo: fix bulk delete
+            // uuidList.forEach(uuid => {
+            //   const linkPos = this.selectedItem.link.map(link => link.linkUUID).indexOf(uuid)
+            //   this.selectedItem.link.splice(linkPos, 1)
+            // })
+            this.deleteBulkLink(uuidList)
             this.loader = false
             this.alert = {
               value: true,
@@ -1224,8 +1238,7 @@
         this.loader = true
         API.link.delete(this.selectedLink.linkUUID)
           .then((response) => {
-            const linkPos = this.selectedItem.link.map(link => link.linkUUID).indexOf(this.selectedLink.linkUUID)
-            this.selectedItem.link.splice(linkPos, 1)
+            this.deleteLink(this.selectedLink.linkUUID)
             this.loader = false
             this.alert = {
               value: true,

@@ -15,7 +15,7 @@
     >
       <v-toolbar flat>
         <v-text-field
-          v-model="search"
+          v-model="playlists.search"
           prepend-inner-icon="mdi-magnify"
           class="ml-auto"
           hide-details
@@ -175,7 +175,8 @@
               <v-card-text class="d-flex justify-space-between black--text">
                 {{ playlist.name }}
                 <v-spacer />
-                {{ playlist.videos.length }} Videos
+                xxx Videos
+<!--                {{ playlist.videos.length }}-->
               </v-card-text>
               <v-card-actions
                 class="align-center justify-end"
@@ -274,11 +275,11 @@
   import { v4 as uuidv4 } from 'uuid'
   import Socket from '@/plugins/socket'
   import axios from 'axios'
-  import { sync } from 'vuex-pathify'
+  import { sync, call, get } from 'vuex-pathify'
+  import * as API from '@/api'
   export default {
     name: 'Playlist',
     data: () => ({
-      search: '',
       loader: false,
       alert: {
         value: false,
@@ -291,23 +292,21 @@
         category: null,
         video: []
       },
-      valid: true
+      valid: true,
+      search: ''
     }),
     computed: {
-      ...sync('app', [
-        'playlists'
-      ]),
-      filter () {
-        return this.playlists.filter(item => {
-          return item.name.toLowerCase().startsWith(this.search.toLowerCase())
-        })
-      }
+      playlists: sync('playlists'),
+      filter: get('playlists/filter')
     },
     beforeMount () {
-      Socket.send('playlist')
+      this.loadPlaylists()
       this.newPlaylist.playlistUUID = uuidv4()
     },
     methods: {
+      loadPlaylists: call('playlists/load'),
+      deletePlaylist: call('playlists/delete'),
+      insertPlaylist: call('playlists/insert'),
       addPlaylist (dialog) {
         this.loader = true
         const postData = new FormData()
@@ -315,35 +314,37 @@
         postData.append('name', this.newPlaylist.name)
         postData.append('category', this.newPlaylist.category)
         postData.append('description', this.newPlaylist.description)
-        axios.post('http://kodizabbix:3333/v2/playlist', postData).then(response => {
-          this.loader = false
-          this.alert = {
-            value: true,
-            type: 'success',
-            text: response.data.message
-          }
-          Socket.send('playlist')
-          dialog.value = false
-          this.newPlaylist = {
-            playlistUUID: uuidv4(),
-            name: null,
-            category: null,
-            video: []
-          }
-        }).catch(error => {
-          this.loader = false
-          this.alert = {
-            value: true,
-            type: 'error',
-            text: error.response.data.message
-          }
-        })
+        API.playlist.send(postData)
+          .then(response => {
+            this.insertPlaylist(this.newPlaylist)
+            this.loader = false
+            this.alert = {
+              value: true,
+              type: 'success',
+              text: response.data.message
+            }
+            dialog.value = false
+            this.newPlaylist = {
+              playlistUUID: uuidv4(),
+              name: null,
+              category: null,
+              video: []
+            }
+          })
+          .catch(error => {
+            this.loader = false
+            this.alert = {
+              value: true,
+              type: 'error',
+              text: error.response.data.message
+            }
+          })
       },
       removePlaylist (uuid) {
         this.loader = true
-        axios.delete(`http://kodizabbix:3333/v2/playlist/${uuid}`)
+        API.playlist.delete(uuid)
           .then((response) => {
-            this.playlists = this.playlists.filter(playlist => { return playlist.playlistUUID !== uuid })
+            this.deletePlaylist(uuid)
             this.loader = false
             this.alert = {
               value: true,

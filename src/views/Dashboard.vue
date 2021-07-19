@@ -389,8 +389,8 @@
           <v-card-text>
             <v-data-table
               :headers="deviceHeaders"
-              :items="devices.slice(0,5)"
-              :loading="devices.length < 1"
+              :items="devices.items"
+              :loading="devices.status === 'loading'"
               disable-sort
               sort-by="createdAt"
               sort-desc
@@ -543,38 +543,20 @@
     }),
     computed: {
       videosToday: get('videos/videosToday'),
+      devicesToday: get('devices/devicesToday'),
+      offlineDevices: get('devices/offlineDevices'),
+      onlineDevices: get('devices/onlineDevices'),
       filialen: get('app/filialen'),
       videos: get('videos/topFive'),
-      devices: get('app/devices'),
-      deviceHistory: get('app/deviceHistorie'),
+      devices: get('devices/topFive'),
+      // deviceHistory: get('app/deviceHistorie'),
       today: function () {
         return moment(new Date()).format('DD.MM.YYYY')
-      },
-      onlineDevices: function () {
-        const result = this.devices.filter(device => device.lastRequest > (new Date()).valueOf() - 300000)
-        return result.length
-      },
-      offlineDevices: function () {
-        const result = this.devices.filter(device => device.lastRequest < (new Date()).valueOf() - 300000)
-        return result.length
-      },
-      devicesToday: function () {
-        const result = this.devices.filter(device => moment().diff(device.createdAt, 'days') === 0)
-        return result.length
       }
-      // videosToday: function () {
-      //   const result = this.videos.filter(video => moment().diff(video.createdAt, 'days') === 0)
-      //   return result.length
-      // }
-    },
-    mounted () {
-      console.log(this.videos)
     },
     beforeMount () {
       this.loadVideos()
-      // Socket.send('video')
-      Socket.send('device')
-      // Socket.send('devicehistory')
+      this.loadDevices()
       const loader = new Loader('AIzaSyDyWlypXz9Ul65CORLC8vKbUXMYlpWDBgM', {
         libraries: ['geometry', 'places', 'visualization']
       })
@@ -584,6 +566,7 @@
     },
     methods: {
       loadVideos: call('videos/load'),
+      loadDevices: call('devices/load'),
       zoomTo () {
         if (this.zoomFluid === 10) { return 0 } else {
           this.zoomFluid++

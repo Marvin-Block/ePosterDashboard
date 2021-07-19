@@ -1,6 +1,5 @@
 import { make } from 'vuex-pathify'
 import * as API from '@/api'
-import moment from 'moment'
 
 const state = {
   items: [],
@@ -13,7 +12,7 @@ const actions = {
   load ({ commit }) {
     commit('status', 'loading')
     API
-      .video
+      .link
       .fetch()
       .then(data => {
         data = data.data.data.rows
@@ -24,7 +23,7 @@ const actions = {
   },
   replace ({ commit }, item) {
     const data = state.items.map(item => Object.assign({}, item))
-    const itemPos = data.map(video => video.id).indexOf(item.id)
+    const itemPos = data.map(link => link.id).indexOf(item.id)
     Object.assign(data[itemPos], item)
     commit('items', data)
   },
@@ -32,25 +31,26 @@ const actions = {
     const data = items.map(item => Object.assign({}, item))
     commit('items', data)
   },
-  delete ({ commit }, id) {
-    const data = state.items.map(item => Object.assign({}, item)).filter(video => video.id !== id)
+  deleteBulk ({ commit }, uuidList) {
+    const data = state.items.map(item => Object.assign({}, item))
+    uuidList.forEach(uuid => {
+      const pos = data.map(link => link.linkUUID).indexOf(uuid)
+      data.splice(pos, 1)
+    })
     commit('items', data)
   },
-  insert ({ commit }, newItem) {
-    const data = state.items.map(item => Object.assign({}, item))
-    data.unshift(newItem)
+  delete ({ commit }, uuid) {
+    const data = state.items.map(item => Object.assign({}, item)).filter(link => link.linkUUID !== uuid)
+    commit('items', data)
+  },
+  insert ({ commit }, items, itemToAdd) {
+    items.unshift(itemToAdd)
+    const data = items.map(item => Object.assign({}, item))
     commit('items', data)
   }
 }
 
-const getters = {
-  topFive: (state, getters) => {
-    return { items: state.items.slice(0, 5), status: state.status }
-  },
-  videosToday: (state, getters) => {
-    return state.items.filter(item => moment().diff(item.createdAt, 'days') === 0).length
-  }
-}
+const getters = {}
 
 export default {
   namespaced: true,

@@ -279,16 +279,16 @@
       accounts: [
         {
           icon: 'mdi-pencil',
-          type: 'design',
+          type: 'design'
         },
         {
           icon: 'mdi-code-tags',
-          type: 'code',
+          type: 'code'
         },
         {
           icon: 'mdi-laptop',
-          type: 'develop',
-        },
+          type: 'develop'
+        }
       ],
       address: '',
       city: '',
@@ -311,11 +311,11 @@
         'Oklahoma', 'Oregon', 'Palau', 'Pennsylvania', 'Puerto Rico',
         'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee',
         'Texas', 'Utah', 'Vermont', 'Virgin Island', 'Virginia',
-        'Washington', 'West Virginia', 'Wisconsin', 'Wyoming',
+        'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
       ],
       street: '',
       tab: 0,
-      tabs: ['About', 'Account', 'Address'],
+      tabs: ['About', 'Account', 'Address']
     }),
 
     computed: {
@@ -347,7 +347,7 @@
         ) steps.push(3)
 
         return steps
-      },
+      }
     },
 
     methods: {
@@ -366,8 +366,8 @@
         if (!value) return (this.image = null)
 
         this.image = URL.createObjectURL(value)
-      },
-    },
+      }
+    }
   }
 </script>
 

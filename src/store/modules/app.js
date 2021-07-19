@@ -6,11 +6,6 @@ const state = {
   drawer: null,
   drawerImage: false,
   mini: true,
-  videos: [],
-  devices: [],
-  links: [],
-  logs: [],
-  playlists: [],
   items: [
     {
       title: 'Dashboard',
@@ -1316,8 +1311,7 @@ const state = {
       'Longitude': 9.148464,
       'Status': 'Online'
     }
-  ],
-  deviceHistorie: []
+  ]
 }
 
 const mutations = make.mutations(state)

@@ -468,9 +468,8 @@
       ]
     }),
     computed: {
-      // videos: get('app/videos'),
       videos: get('videos/items'),
-      devices: get('app/devices'),
+      devices: get('devices/items'),
       dateRangeText () {
         return this.dates.join(' ~ ')
       },

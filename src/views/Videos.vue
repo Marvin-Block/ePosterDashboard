@@ -9,20 +9,6 @@
       color="accent"
       title="Videos"
     >
-      <div>
-        {{ videos.status }}
-        {{ videos.items.length }}
-      </div>
-      <v-btn
-        @click="deleteVideo(videos.items, 0)"
-      >
-        delete
-      </v-btn>
-      <v-btn
-        @click="insertVideo(videos.items, videos.items[2])"
-      >
-        Insert
-      </v-btn>
       <v-card-text>
         <v-data-table
           item-key="videoUUID"
@@ -820,7 +806,7 @@
 </template>
 
 <script>
-  import { get, sync, call } from 'vuex-pathify'
+  import { sync, call } from 'vuex-pathify'
   import MaterialCard from '@/components/MaterialCard'
   import _ from 'lodash'
   import { v4 as uuidv4 } from 'uuid'
@@ -986,12 +972,13 @@
     }),
     computed: {
       videos: sync('videos'),
-      ...sync('app', [
-        'playlists'
-      ])
+      playlists: sync('playlists')
+    },
+    mounted () {
+      window.videos = this.videos
     },
     beforeMount () {
-      Socket.send('video')
+      // Socket.send('video')
       Socket.send('link')
     },
     methods: {
@@ -999,6 +986,7 @@
       updateVideo: call('videos/update'),
       deleteVideo: call('videos/delete'),
       insertVideo: call('videos/insert'),
+      replaceVideo: call('videos/replace'),
       addPlaylist () {
         console.log(this.selectedItem)
         this.selectedItem = {}
@@ -1084,7 +1072,7 @@
           const body = _.pick(this.selectedItem, 'videoUUID', 'name', 'category', 'calendarWeek', 'orientation_V2', 'rotation')
           API.video.update(body)
             .then((response) => {
-              Object.assign(item, this.selectedItem)
+              this.replaceVideo(this.selectedItem)
               this.loadingButton = false
               this.alert = {
                 value: true,
@@ -1112,8 +1100,7 @@
       sendDelete: function () {
         API.video.delete(this.selectedItem.videoUUID)
           .then((response) => {
-            const itemPos = this.videos.items.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
-            this.deleteVideo(this.videos.items, itemPos)
+            this.deleteVideo(this.selectedItem.id)
             this.alert = {
               value: true,
               type: 'success',
@@ -1179,7 +1166,6 @@
               }
             }
           }
-          // todo: add upload progress
           const postData = new FormData()
           postData.append('videoUUID', uuidv4())
           postData.append('name', this.uploadItem.values.name)
@@ -1210,7 +1196,7 @@
               }
             })
             .finally(() => {
-              Socket.send('video')
+              this.loadVideos()
               this.resetUploadForm()
             })
         }

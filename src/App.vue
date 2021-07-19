@@ -23,32 +23,6 @@
     },
     data: () => ({
       interval: undefined,
-      statusList: [
-        {
-          text: 'API erreichbar',
-          icon: 'mdi-cloud-check',
-          color: 'green',
-          darken: '3'
-        },
-        {
-          text: 'API nicht erreichbar',
-          icon: 'mdi-cloud-alert',
-          color: 'red',
-          darken: '3'
-        },
-        {
-          text: 'API im Wartungsmodus',
-          icon: 'mdi-cloud-lock',
-          color: 'orange',
-          darken: '4'
-        },
-        {
-          text: 'Verbindung wird aufgebaut',
-          icon: 'mdi-cloud-search',
-          color: 'blue',
-          darken: '1'
-        }
-      ],
       getVideoError: false,
       getDeviceError: false,
       getLinkError: false,
@@ -57,10 +31,7 @@
     }),
     computed: {
       ...sync('app', [
-        'videos',
-        'devices',
         'logs',
-        'links',
         'playlists',
         'playlistvideos'
       ]),
@@ -71,22 +42,20 @@
     },
     created: function () {
       Socket.$on('message', this.handleMessage)
-      this.updateNetworkStatus('connecting')
     },
     beforeMount () {
-      setInterval(() => {
-        Socket.send('device')
-        Socket.send('video')
-        Socket.send('link')
-        Socket.send('playlistvideo')
-        Socket.send('playlist')
-        Socket.send('deviceHistorie')
-      }, 60000)
+      this.loadNetworkStatus()
+      this.loadVideos()
+      this.loadDevices()
+      // this.loadLinks()
     },
     methods: {
-      updateNetworkStatus: call('networkStatus/update'),
+      loadVideos: call('videos/load'),
+      loadDevices: call('devices/load'),
+      loadLinks: call('links/load'),
+      loadPlaylist: call('playlist/load'),
+      loadNetworkStatus: call('networkStatus/load'),
       handleMessage (msg) {
-        this.updateNetworkStatus('online')
         const content = JSON.parse(msg.data)
         this[content.type + 's'] = content.rows
         // this[content.type + 's'] = Object.freeze(this[content.type + 's'].map(entry => { return { ...entry } }))

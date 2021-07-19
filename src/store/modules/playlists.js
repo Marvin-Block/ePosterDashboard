@@ -1,10 +1,10 @@
 import { make } from 'vuex-pathify'
 import * as API from '@/api'
-import moment from 'moment'
 
 const state = {
   items: [],
-  status: ''
+  status: '',
+  search: ''
 }
 
 const mutations = make.mutations(state)
@@ -13,7 +13,7 @@ const actions = {
   load ({ commit }) {
     commit('status', 'loading')
     API
-      .video
+      .playlist
       .fetch()
       .then(data => {
         data = data.data.data.rows
@@ -24,7 +24,7 @@ const actions = {
   },
   replace ({ commit }, item) {
     const data = state.items.map(item => Object.assign({}, item))
-    const itemPos = data.map(video => video.id).indexOf(item.id)
+    const itemPos = data.map(playlist => playlist.id).indexOf(item.id)
     Object.assign(data[itemPos], item)
     commit('items', data)
   },
@@ -32,8 +32,8 @@ const actions = {
     const data = items.map(item => Object.assign({}, item))
     commit('items', data)
   },
-  delete ({ commit }, id) {
-    const data = state.items.map(item => Object.assign({}, item)).filter(video => video.id !== id)
+  delete ({ commit }, uuid) {
+    const data = state.items.map(item => Object.assign({}, item)).filter(playlist => playlist.playlistUUID !== uuid)
     commit('items', data)
   },
   insert ({ commit }, newItem) {
@@ -44,11 +44,8 @@ const actions = {
 }
 
 const getters = {
-  topFive: (state, getters) => {
-    return { items: state.items.slice(0, 5), status: state.status }
-  },
-  videosToday: (state, getters) => {
-    return state.items.filter(item => moment().diff(item.createdAt, 'days') === 0).length
+  filter: (state, getters) => {
+    return state.items.filter(item => item.name.toLowerCase().startsWith(state.search.toLowerCase()))
   }
 }
 

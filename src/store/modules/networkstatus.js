@@ -1,8 +1,8 @@
 // Pathify
 import { make } from 'vuex-pathify'
+import * as API from '@/api'
 
 const state = {
-  items: [],
   list: {
     online: {
       text: 'API erreichbar',
@@ -40,6 +40,19 @@ const state = {
 const mutations = make.mutations(state)
 
 const actions = {
+  load ({ commit }) {
+    commit('current', state.list['connecting'])
+    API
+      .device
+      .fetchPart(0, 0)
+      .then(response => {
+        commit('current', state.list['online'])
+      })
+      .catch(err => {
+        commit('current', state.list['offline'])
+        console.log(err.message)
+      })
+  },
   update ({ commit }, status) {
     if (Object.getOwnPropertyNames(state.list).includes(status)) {
       commit('current', state.list[status])

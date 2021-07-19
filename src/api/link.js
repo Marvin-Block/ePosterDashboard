@@ -1,6 +1,9 @@
 import API from '@/plugins/api'
 
 export default {
+  fetch () {
+    return API.get('/link/all/')
+  },
   fetchPart (offset, limit) {
     return API.get(`/link/${offset ?? 0}/${limit ?? 100}`)
   },

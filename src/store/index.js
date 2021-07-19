@@ -21,8 +21,6 @@ store.subscribe(mutation => {
   store.dispatch('user/update', mutation)
 })
 
-store.dispatch('app/init')
-
 export default store
 
 export const ROOT_DISPATCH = Object.freeze({ root: true })
