@@ -7,8 +7,9 @@
 <script>
   /* eslint-disable no-prototype-builtins */
   import '@/styles/overrides.sass'
-  import { sync } from 'vuex-pathify'
+  import { call, sync } from 'vuex-pathify'
   import Socket from '@/plugins/socket'
+
   export default {
     name: 'App',
     metaInfo: {
@@ -17,8 +18,8 @@
       htmlAttrs: { lang: 'en' },
       meta: [
         { charset: 'utf-8' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      ],
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+      ]
     },
     data: () => ({
       interval: undefined,
@@ -27,32 +28,32 @@
           text: 'API erreichbar',
           icon: 'mdi-cloud-check',
           color: 'green',
-          darken: '3',
+          darken: '3'
         },
         {
           text: 'API nicht erreichbar',
           icon: 'mdi-cloud-alert',
           color: 'red',
-          darken: '3',
+          darken: '3'
         },
         {
           text: 'API im Wartungsmodus',
           icon: 'mdi-cloud-lock',
           color: 'orange',
-          darken: '4',
+          darken: '4'
         },
         {
           text: 'Verbindung wird aufgebaut',
           icon: 'mdi-cloud-search',
           color: 'blue',
-          darken: '1',
-        },
+          darken: '1'
+        }
       ],
       getVideoError: false,
       getDeviceError: false,
       getLinkError: false,
       getLogError: false,
-      client: null,
+      client: null
     }),
     computed: {
       ...sync('app', [
@@ -60,34 +61,37 @@
         'devices',
         'logs',
         'links',
-        'networkStatus',
+        'playlists',
+        'playlistvideos'
       ]),
+      networkStatus: sync('networkStatus/current')
     },
     beforeDestroy () {
       Socket.$off('message', this.handleMessage)
     },
     created: function () {
       Socket.$on('message', this.handleMessage)
-      this.networkStatus = this.statusList[3]
+      this.updateNetworkStatus('connecting')
     },
     beforeMount () {
       setInterval(() => {
         Socket.send('device')
         Socket.send('video')
         Socket.send('link')
+        Socket.send('playlistvideo')
+        Socket.send('playlist')
+        Socket.send('deviceHistorie')
       }, 60000)
     },
     methods: {
+      updateNetworkStatus: call('networkStatus/update'),
       handleMessage (msg) {
-        this.networkStatus = this.statusList[0]
+        this.updateNetworkStatus('online')
         const content = JSON.parse(msg.data)
-        if (content.type === 'asd') {
-          this.$store.dispatch('app/updateLinks', content.rows)
-        }
         this[content.type + 's'] = content.rows
-        this[content.type + 's'] = Object.freeze(this[content.type + 's'].map(entry => { return { ...entry } }))
+        // this[content.type + 's'] = Object.freeze(this[content.type + 's'].map(entry => { return { ...entry } }))
         // todo: move socket handle to components
-      },
-    },
+      }
+    }
   }
 </script>

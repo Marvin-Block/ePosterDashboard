@@ -394,10 +394,10 @@
 </template>
 
 <script>
-  import { get } from 'vuex-pathify'
-  import axios from 'axios'
+  import { call, get } from 'vuex-pathify'
   import moment from 'moment'
   import Socket from '@/plugins/socket'
+  import * as API from '@/api'
   export default {
     name: 'Links',
 
@@ -407,7 +407,7 @@
       alert: {
         value: false,
         type: 'error',
-        text: 'Oopsie.. :(',
+        text: 'Oopsie.. :('
       },
       deviceHelpDialog: false,
       videoHelpDialog: false,
@@ -427,48 +427,49 @@
       deviceHelpImages: [
         {
           title: 'Test 1',
-          image: '@/assets/test1.png',
+          image: '@/assets/test1.png'
         },
         {
           title: 'Test 2',
-          image: '@/assets/test2.png',
+          image: '@/assets/test2.png'
         },
         {
           title: 'Test 3',
-          image: '@/assets/test3.png',
-        },
+          image: '@/assets/test3.png'
+        }
       ],
       videoHelpImages: [
         {
           title: '',
-          image: '',
+          image: ''
         },
         {
           title: '',
-          image: '',
+          image: ''
         },
         {
           title: '',
-          image: '',
-        },
+          image: ''
+        }
       ],
       timeHelpImages: [
         {
           title: '',
-          image: '',
+          image: ''
         },
         {
           title: '',
-          image: '',
+          image: ''
         },
         {
           title: '',
-          image: '',
-        },
-      ],
+          image: ''
+        }
+      ]
     }),
     computed: {
-      videos: get('app/videos'),
+      // videos: get('app/videos'),
+      videos: get('videos/items'),
       devices: get('app/devices'),
       dateRangeText () {
         return this.dates.join(' ~ ')
@@ -494,11 +495,11 @@
         return [
           {
             text: 'Name',
-            value: 'name',
+            value: 'name'
           },
           {
             text: 'Kategorie',
-            value: 'category',
+            value: 'category'
           },
           {
             text: 'Ausrichtung',
@@ -506,7 +507,7 @@
             filter: value => {
               if (!this.deviceSelected || this.deviceSelected.length < 1) return true
               return value === this.deviceSelected[0].orientation
-            },
+            }
           },
           {
             text: 'Rotation',
@@ -514,19 +515,19 @@
             filter: value => {
               if (!this.deviceSelected || this.deviceSelected.length < 1) return true
               return value === this.deviceSelected[0].rotation
-            },
-          },
+            }
+          }
         ]
       },
       deviceHeaders () {
         return [
           {
             text: 'Standort',
-            value: 'location',
+            value: 'location'
           },
           {
             text: 'Beschreibung',
-            value: 'description',
+            value: 'description'
           },
           {
             text: 'Ausrichtung',
@@ -534,7 +535,7 @@
             filter: value => {
               if (!this.deviceSelected || this.deviceSelected.length < 1) return true
               return value === this.deviceSelected[0].orientation
-            },
+            }
           },
           {
             text: 'Rotation',
@@ -542,21 +543,23 @@
             filter: value => {
               if (!this.deviceSelected || this.deviceSelected.length < 1) return true
               return value === this.deviceSelected[0].rotation
-            },
+            }
           },
           {
             text: 'Inhalte',
-            value: 'link.length',
-          },
+            value: 'link.length'
+          }
         ]
-      },
+      }
     },
     beforeMount () {
-      Socket.send('video')
+      this.loadVideos()
+      // Socket.send('video')
       Socket.send('device')
       Socket.send('link')
     },
     methods: {
+      loadVideos: call('videos/load'),
       checkDateOrder: function () {
         if (this.dates[0] > this.dates[1]) this.arrayMove(this.dates, 0, 1)
       },
@@ -580,7 +583,7 @@
       next (valid) {
         if (!valid) return
         if (this.tab === 0) {
-          console.log(this.deviceSelected, this.videoSelected)
+          // console.log(this.deviceSelected, this.videoSelected)
         }
         if (this.tab === this.tabs.length - 1) {
           const postData = new FormData()
@@ -597,19 +600,17 @@
           postData.append('start', new Date(this.dates[0] + ' ' + this.startTime).valueOf())
           postData.append('end', new Date(this.dates[1] + ' ' + this.endTime).valueOf())
           postData.append('active', 1)
-          axios.post('http://kodizabbix:3333/v2/link', postData, {
-            'Content-Type': 'multipart/form-data',
-          }).then((response) => {
+          API.link.send(postData, { 'Content-Type': 'multipart/form-data' }).then((response) => {
             this.alert = {
               value: true,
               type: 'success',
-              text: response.data.message,
+              text: response.data.message
             }
           }).catch((error) => {
             this.alert = {
               value: true,
               type: 'error',
-              text: error.response.data.message,
+              text: error.response.data.message
             }
           }).finally(() => {
             Socket.send('device')
@@ -629,8 +630,8 @@
         if (!value) return (this.image = null)
 
         this.image = URL.createObjectURL(value)
-      },
-    },
+      }
+    }
   }
 </script>
 

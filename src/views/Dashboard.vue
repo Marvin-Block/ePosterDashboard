@@ -355,10 +355,10 @@
           <v-card-text>
             <v-data-table
               :headers="videoHeaders"
-              :items="videos.slice(0,5)"
+              :items="videos.items"
               no-data-text="Es scheint keine neuen Videos zu geben"
               loading-text="Videos werden geladen..."
-              :loading="videos.length < 1"
+              :loading="videos.status === 'loading'"
               hide-default-footer
               disable-sort
               sort-by="createdAt"
@@ -416,12 +416,11 @@
 
 <script>
   // Utilities
-  import { get } from 'vuex-pathify'
+  import { call, get, sync } from 'vuex-pathify'
   import moment from 'moment'
   import Socket from '@/plugins/socket'
   import MaterialCard from '@/components/MaterialCard'
   import { Loader } from 'google-maps'
-  import MarkerClusterer from '@googlemaps/markerclustererplus'
 
   export default {
     name: 'DashboardView',
@@ -543,9 +542,11 @@
       zoomCoords: undefined
     }),
     computed: {
+      videosToday: get('videos/videosToday'),
       filialen: get('app/filialen'),
-      videos: get('app/videos'),
+      videos: get('videos/topFive'),
       devices: get('app/devices'),
+      deviceHistory: get('app/deviceHistorie'),
       today: function () {
         return moment(new Date()).format('DD.MM.YYYY')
       },
@@ -560,26 +561,29 @@
       devicesToday: function () {
         const result = this.devices.filter(device => moment().diff(device.createdAt, 'days') === 0)
         return result.length
-      },
-      videosToday: function () {
-        const result = this.videos.filter(video => moment().diff(video.createdAt, 'days') === 0)
-        return result.length
       }
+      // videosToday: function () {
+      //   const result = this.videos.filter(video => moment().diff(video.createdAt, 'days') === 0)
+      //   return result.length
+      // }
+    },
+    mounted () {
+      console.log(this.videos)
     },
     beforeMount () {
-      Socket.send('video')
+      this.loadVideos()
+      // Socket.send('video')
       Socket.send('device')
+      // Socket.send('devicehistory')
       const loader = new Loader('AIzaSyDyWlypXz9Ul65CORLC8vKbUXMYlpWDBgM', {
         libraries: ['geometry', 'places', 'visualization']
       })
       loader.load().then((google) => {
         this.initMap(google)
       })
-      // ScriptJs('https://maps.googleapis.com/maps/api/js?key=AIzaSyDyWlypXz9Ul65CORLC8vKbUXMYlpWDBgM&libraries=geometry,places,visualization', () => {
-      //   this.initMap()
-      // })
     },
     methods: {
+      loadVideos: call('videos/load'),
       zoomTo () {
         if (this.zoomFluid === 10) { return 0 } else {
           this.zoomFluid++

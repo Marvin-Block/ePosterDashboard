@@ -11,8 +11,8 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules,
   plugins: [
-    pathify.plugin,
-  ],
+    pathify.plugin
+  ]
 })
 
 store.subscribe(mutation => {

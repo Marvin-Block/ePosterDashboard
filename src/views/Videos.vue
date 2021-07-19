@@ -9,11 +9,25 @@
       color="accent"
       title="Videos"
     >
+      <div>
+        {{ videos.status }}
+        {{ videos.items.length }}
+      </div>
+      <v-btn
+        @click="deleteVideo(videos.items, 0)"
+      >
+        delete
+      </v-btn>
+      <v-btn
+        @click="insertVideo(videos.items, videos.items[2])"
+      >
+        Insert
+      </v-btn>
       <v-card-text>
         <v-data-table
           item-key="videoUUID"
           :headers="headers"
-          :items="videos"
+          :items="videos.items"
           :search.sync="search"
           :page.sync="page"
           :items-per-page="itemsPerPage"
@@ -23,7 +37,7 @@
           no-results-text="Es wurde leider nichts gefunden"
           no-data-text="Es scheint keine Videos zu geben"
           loading-text="Videos werden geladen..."
-          :loading="videos.length < 1"
+          :loading="videos.status === 'loading'"
           @page-count="pageCount = $event"
           @contextmenu:row="show"
         >
@@ -762,32 +776,13 @@
                       </v-col>
                     </v-row>
                   </template>
-                  <v-list>
+                  <v-list
+                    v-for="playlist in playlists"
+                    :key="playlist.playlistUUID"
+                  >
                     <v-list-item>
                       <v-list-item-content>
-                        <v-icon
-                          left
-                        >
-                          mdi-window-close mdi-spin
-                        </v-icon>
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-content>
-                        <v-icon
-                          left
-                        >
-                          mdi-window-close mdi-spin
-                        </v-icon>
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-content>
-                        <v-icon
-                          left
-                        >
-                          mdi-window-close mdi-spin
-                        </v-icon>
+                        {{ playlist.name }}
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
@@ -825,24 +820,25 @@
 </template>
 
 <script>
-  import { sync } from 'vuex-pathify'
+  import { get, sync, call } from 'vuex-pathify'
   import MaterialCard from '@/components/MaterialCard'
-  import axios from 'axios'
   import _ from 'lodash'
   import { v4 as uuidv4 } from 'uuid'
   import moment from 'moment'
   import Socket from '@/plugins/socket'
+  import * as API from '@/api'
+
   export default {
     name: 'Videos',
     components:
       {
-        MaterialCard,
+        MaterialCard
       },
     data: () => ({
       alert: {
         value: false,
         type: 'error',
-        text: 'Oopsie.. :(',
+        text: 'Oopsie.. :('
       },
       showMenu: false,
       x: 0,
@@ -864,7 +860,7 @@
           width: 600,
           title: 'Download',
           text: 'Der Download wurde gestartet.',
-          info: 'Sollte kein Download starten, melden Sie sich bitte bei der IT.',
+          info: 'Sollte kein Download starten, melden Sie sich bitte bei der IT.'
         },
         {
           color: '',
@@ -874,7 +870,7 @@
           width: 600,
           title: 'Vorschau',
           text: 'Die Vorschau wurde in einem neuen Fenster geöffnet.',
-          info: 'Sollte kein Video angezeigt werden, melden Sie sich bitte bei der IT.',
+          info: 'Sollte kein Video angezeigt werden, melden Sie sich bitte bei der IT.'
         },
         {
           color: 'black',
@@ -884,7 +880,7 @@
           width: null,
           title: 'Links',
           text: '',
-          info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
+          info: 'Dieser Bereich befindet sich noch in der Entwicklung.'
         },
         {
           color: 'black',
@@ -894,7 +890,7 @@
           width: null,
           title: 'Test',
           text: '',
-          info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
+          info: 'Dieser Bereich befindet sich noch in der Entwicklung.'
         },
         {
           color: 'blue',
@@ -904,7 +900,7 @@
           width: 600,
           title: 'Ändern',
           text: '',
-          info: 'Das Feld "Rotation" ist noch etwas buggy. Soll das Feld leer sein, muss einmal was eingetragen und gelöscht werden.',
+          info: 'Das Feld "Rotation" ist noch etwas buggy. Soll das Feld leer sein, muss einmal was eingetragen und gelöscht werden.'
         },
         {
           color: 'error',
@@ -914,60 +910,60 @@
           width: 600,
           title: 'Löschen',
           text: 'Sind Sie sich sicher, dass dieses Video gelöscht werden soll ?',
-          info: 'Gelöschte Videos sind nicht wiederherstellbar',
-        },
+          info: 'Gelöschte Videos sind nicht wiederherstellbar'
+        }
       ],
       headers: [
         {
           text: 'Name',
-          value: 'name',
+          value: 'name'
         },
         {
           text: 'Kategorie',
-          value: 'category',
+          value: 'category'
         },
         {
           text: 'Ausrichtung',
-          value: 'orientation_V2',
+          value: 'orientation_V2'
         },
         {
           text: 'Rotation',
-          value: 'rotation',
+          value: 'rotation'
         },
         {
           text: 'Größe',
           value: 'size',
-          filterable: false,
+          filterable: false
         },
         {
           text: 'Letzte Änderung',
           value: 'updatedAt',
-          filterable: false,
+          filterable: false
         },
         {
           sortable: false,
           text: '',
-          value: 'actions',
-        },
+          value: 'actions'
+        }
       ],
       items: [],
       uploadItem: {
         rules: {
           name: [
             v => !!v || 'Name ist ein Pflichtfeld',
-            v => (v && v.length > 4) || 'Der Name muss mindestens 5 Zeichen lang sein',
+            v => (v && v.length > 4) || 'Der Name muss mindestens 5 Zeichen lang sein'
           ],
           orientation: [
-            v => !v || /^(hoch|breit)$/i.test(v) || 'Hoch oder Breit',
+            v => !v || /^(hoch|breit)$/i.test(v) || 'Hoch oder Breit'
           ],
           height: [
             v => !!v || 'Höhe ist ein Pflichtfeld',
-            v => /^\d{3,4}$/.test(v) || 'Die Höhe muss 3-4 stellig sein',
+            v => /^\d{3,4}$/.test(v) || 'Die Höhe muss 3-4 stellig sein'
           ],
           width: [
             v => !!v || 'Breite ist ein Pflichtfeld',
-            v => /^\d{3,4}$/.test(v) || 'Die Breite muss 3-4 stellig sein',
-          ],
+            v => /^\d{3,4}$/.test(v) || 'Die Breite muss 3-4 stellig sein'
+          ]
         },
         values: {
           name: null,
@@ -976,41 +972,46 @@
           width: null,
           height: null,
           category: null,
-          length: null,
-        },
+          length: null
+        }
       },
       uploadProgress: 0,
       uploadText: 'Die Datei wird Hochgeladen',
       selectedItem: {},
       fileRules: [
-        v => !!v || 'Das Video ist ein Pflichtfeld',
+        v => !!v || 'Das Video ist ein Pflichtfeld'
       ],
       file: null,
-      search: null,
+      search: null
     }),
     computed: {
+      videos: sync('videos'),
       ...sync('app', [
-        'videos',
-      ]),
+        'playlists'
+      ])
     },
     beforeMount () {
       Socket.send('video')
       Socket.send('link')
     },
     methods: {
+      loadVideos: call('videos/load'),
+      updateVideo: call('videos/update'),
+      deleteVideo: call('videos/delete'),
+      insertVideo: call('videos/insert'),
       addPlaylist () {
         console.log(this.selectedItem)
         this.selectedItem = {}
       },
       show (e, item) {
-        // this.selectedItem = item.item
-        // e.preventDefault()
-        // this.showMenu = false
-        // this.x = e.clientX
-        // this.y = e.clientY
-        // this.$nextTick(() => {
-        //   this.showMenu = true
-        // })
+        this.selectedItem = item.item
+        e.preventDefault()
+        this.showMenu = false
+        this.x = e.clientX
+        this.y = e.clientY
+        this.$nextTick(() => {
+          this.showMenu = true
+        })
       },
       rotationClass: function (item) {
         if (item.orientation_V2 === 'Breit' && item.rotation === 'Rechts') return 'mdi-rotate-270'
@@ -1029,10 +1030,10 @@
         this[action.action](item)
       },
       download: function (item) {
-        axios.get(`http://kodizabbix:3333/v2/video/file/${item.videoUUID}`, { responseType: 'blob' })
-          .then(resp => {
-            if (resp.data.type !== 'video/mp4') return
-            const url = window.URL.createObjectURL(resp.data)
+        API.video.fetchFile(item.videoUUID, { responseType: 'blob' })
+          .then(response => {
+            if (response.data.type !== 'video/mp4') return
+            const url = window.URL.createObjectURL(response.data)
             const a = document.createElement('a')
             a.style.display = 'none'
             a.href = url
@@ -1045,22 +1046,24 @@
             this.alert = {
               value: true,
               type: 'error',
-              text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message,
+              text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message
             }
           })
       },
       preview: function (item) {
-        axios.get(`http://kodizabbix:3333/v2/video/file/${item.videoUUID}`)
+        API.video.fetchFile(item.videoUUID)
           .then(response => {
+            this.loader = false
             if (response.status === 200) {
-              window.open(`http://kodizabbix:3333/v2/video/file/${item.videoUUID}`, 's', `width= ${item.height > item.width ? '576' : '1024'}, height= ${item.height > item.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
+              window.open(response.request.responseURL, 's', `width= ${item.height > item.width ? '576' : '1024'}, height= ${item.height > item.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
             }
           })
           .catch((error) => {
+            this.loader = false
             this.alert = {
               value: true,
               type: 'error',
-              text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message,
+              text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message
             }
           })
       },
@@ -1078,53 +1081,51 @@
       sendEdit: function (item) {
         if (this.validate()) {
           this.loadingButton = true
-          axios.put('http://kodizabbix:3333/v2/video',
-                    _.pick(this.selectedItem, 'videoUUID', 'name', 'calendarWeek', 'orientation_V2', 'rotation'),
-          ).then((response) => {
-            Object.assign(item, this.selectedItem)
-            this.loadingButton = false
-            this.alert = {
-              value: true,
-              type: 'success',
-              text: response.data.message,
-            }
-          }).catch((error) => {
-            this.loadingButton = false
-            this.alert = {
-              value: true,
-              type: 'error',
-              text: error.response.data.message,
-            }
-          }).finally(() => {
-            Socket.send('video')
-            this.selectedItem = {}
-          })
+          const body = _.pick(this.selectedItem, 'videoUUID', 'name', 'category', 'calendarWeek', 'orientation_V2', 'rotation')
+          API.video.update(body)
+            .then((response) => {
+              Object.assign(item, this.selectedItem)
+              this.loadingButton = false
+              this.alert = {
+                value: true,
+                type: 'success',
+                text: response.data.message
+              }
+            })
+            .catch((error) => {
+              this.loadingButton = false
+              this.alert = {
+                value: true,
+                type: 'error',
+                text: error.response.data.message
+              }
+            })
+            .finally(() => {
+              Socket.send('video')
+              this.selectedItem = {}
+            })
         }
       },
       delete: function (item) {
         this.selectedItem = item
       },
       sendDelete: function () {
-        axios.delete(`http://kodizabbix:3333/v2/video/${this.selectedItem.videoUUID}`)
+        API.video.delete(this.selectedItem.videoUUID)
           .then((response) => {
-            // const itemPos = this.videos.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
-            // console.log(this.videos, itemPos)
-            // this.videos.splice(itemPos, 1)
+            const itemPos = this.videos.items.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
+            this.deleteVideo(this.videos.items, itemPos)
             this.alert = {
               value: true,
               type: 'success',
-              text: response.data.message,
+              text: response.data.message
             }
           })
           .catch(error => {
             this.alert = {
               value: true,
               type: 'error',
-              text: error.response.data.message,
+              text: error.response.data.message
             }
-          })
-          .finally(() => {
-            Socket.send('video')
           })
       },
       validate: function () {
@@ -1176,7 +1177,7 @@
               } else {
                 this.uploadProgress = percentCompleted
               }
-            },
+            }
           }
           // todo: add upload progress
           const postData = new FormData()
@@ -1191,27 +1192,30 @@
           }
           postData.append('length', this.uploadItem.values.length)
           postData.append('uploadedFile', this.file)
-          axios.post('http://kodizabbix:3333/v2/video', postData, config).then(response => {
-            this.loader = false
-            this.alert = {
-              value: true,
-              type: 'success',
-              text: response.data.message,
-            }
-          }).catch(error => {
-            this.loader = false
-            this.alert = {
-              value: true,
-              type: 'error',
-              text: error.response.data.message,
-            }
-          }).finally(() => {
-            Socket.send('video')
-            this.resetUploadForm()
-          })
+          API.video.send(postData, config)
+            .then(response => {
+              this.loader = false
+              this.alert = {
+                value: true,
+                type: 'success',
+                text: response.data.message
+              }
+            })
+            .catch(error => {
+              this.loader = false
+              this.alert = {
+                value: true,
+                type: 'error',
+                text: error.response.data.message
+              }
+            })
+            .finally(() => {
+              Socket.send('video')
+              this.resetUploadForm()
+            })
         }
-      },
-    },
+      }
+    }
   }
 </script>
 <style lang="sass">

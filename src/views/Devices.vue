@@ -849,21 +849,22 @@
 <script>
   import { sync } from 'vuex-pathify'
   import MaterialCard from '@/components/MaterialCard'
-  import axios from 'axios'
   import _ from 'lodash'
   import moment from 'moment'
   import Socket from '@/plugins/socket'
+  import * as API from '@/api'
+
   export default {
     name: 'Devices',
     components:
       {
-        MaterialCard,
+        MaterialCard
       },
     data: () => ({
       alert: {
         value: false,
         type: 'error',
-        text: 'Oopsie.. :(',
+        text: 'Oopsie.. :('
       },
       loader: false,
       valid: true,
@@ -881,7 +882,7 @@
           width: 600,
           title: 'SSH',
           text: 'Die SSH Anfrage wurde in einem neuen Fenster geöffnet.',
-          info: 'Bitte stellen Sie sicher das WinSCP oder Putty installiert ist.',
+          info: 'Bitte stellen Sie sicher das WinSCP oder Putty installiert ist.'
         },
         {
           color: '',
@@ -891,7 +892,7 @@
           width: 600,
           title: 'Neustart',
           text: 'Dieser Bereich befindet sich noch in der Entwicklung.',
-          info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
+          info: 'Dieser Bereich befindet sich noch in der Entwicklung.'
         },
         {
           color: 'black',
@@ -901,7 +902,7 @@
           width: null,
           title: 'Links',
           text: '',
-          info: '',
+          info: ''
         },
         {
           color: 'blue',
@@ -911,7 +912,7 @@
           width: 600,
           title: 'Ändern',
           text: '',
-          info: '',
+          info: ''
         },
         {
           color: 'error',
@@ -921,50 +922,50 @@
           width: 600,
           title: 'Löschen',
           text: 'Sind Sie sich sicher, dass dieses Gerät gelöscht werden soll ?',
-          info: 'Gelöschte Geräte sind nicht wiederherstellbar, werden aber bei der nächsten Anfrage wieder angelegt.',
-        },
+          info: 'Gelöschte Geräte sind nicht wiederherstellbar, werden aber bei der nächsten Anfrage wieder angelegt.'
+        }
       ],
       headers: [
         {
           text: 'ID',
           value: 'id',
-          filterable: false,
+          filterable: false
         },
         {
           text: 'Standort',
-          value: 'location',
+          value: 'location'
         },
         {
           text: 'Beschreibung',
-          value: 'description',
+          value: 'description'
         },
         {
           text: 'Ausrichtung',
-          value: 'orientation',
+          value: 'orientation'
         },
         {
           text: 'Rotation',
-          value: 'rotation',
+          value: 'rotation'
         },
         {
           text: 'Letzte Kommunikation',
           value: 'updatedAt',
-          filterable: false,
+          filterable: false
         },
         {
           text: 'Inhalte',
-          value: 'link.length',
+          value: 'link.length'
         },
         {
           text: 'Status',
           value: 'lastRequest',
-          filterable: false,
+          filterable: false
         },
         {
           sortable: false,
           text: '',
-          value: 'actions',
-        },
+          value: 'actions'
+        }
       ],
       linkActions: [
         {
@@ -975,7 +976,7 @@
           width: 600,
           title: 'Vorschau',
           text: 'Die Vorschau wurde in einem neuen Fenster geöffnet.',
-          info: 'Sollte kein Video angezeigt werden, melden Sie sich bitte bei der IT.',
+          info: 'Sollte kein Video angezeigt werden, melden Sie sich bitte bei der IT.'
         },
         {
           // todo
@@ -986,7 +987,7 @@
           width: 600,
           title: 'Ändern',
           text: 'Dieser Bereich befindet sich noch in der Entwicklung.',
-          info: 'Dieser Bereich befindet sich noch in der Entwicklung.',
+          info: 'Dieser Bereich befindet sich noch in der Entwicklung.'
         },
         {
           color: 'error',
@@ -996,64 +997,64 @@
           width: 600,
           title: 'Löschen',
           text: 'Sind Sie sich sicher, dass dieser Link gelöscht werden soll ?',
-          info: 'Gelöschte Links sind nicht wiederherstellbar.',
-        },
+          info: 'Gelöschte Links sind nicht wiederherstellbar.'
+        }
       ],
       linkHeader: [
         {
           text: 'Name',
-          value: 'video.name',
+          value: 'video.name'
         },
         {
           text: '',
-          value: 'orientation_V2',
+          value: 'orientation_V2'
         },
         {
           text: '',
-          value: 'rotation',
+          value: 'rotation'
         },
         {
           text: 'Start',
           value: 'start',
-          width: 150,
+          width: 150
         },
         {
           text: 'Ende',
           value: 'end',
-          width: 150,
+          width: 150
         },
         {
           text: '',
           value: 'actions',
           sortable: false,
-          align: 'center',
-        },
+          align: 'center'
+        }
       ],
       items: [],
       editFields: {
         rules: {
           location: [
             v => !!v || 'Der Standort ist ein Pflichtfeld',
-            v => /^\d{3}\s-\s.*/.test(v) || 'Bitte auf das Format achten -> 000 - HierDerName',
+            v => /^\d{3}\s-\s.*/.test(v) || 'Bitte auf das Format achten -> 000 - HierDerName'
           ],
           orientation: [
-            v => /^(?=[\s\S])/.test(v) ? /^(hoch|breit)$/i.test(v) || 'Hoch oder Breit' : true,
+            v => /^(?=[\s\S])/.test(v) ? /^(hoch|breit)$/i.test(v) || 'Hoch oder Breit' : true
           ],
           rotation: [
-            v => /^(?=[\s\S])/.test(v) ? /^(rechts|links)$/i.test(v) || 'Rechts oder Links' : true,
-          ],
-        },
+            v => /^(?=[\s\S])/.test(v) ? /^(rechts|links)$/i.test(v) || 'Rechts oder Links' : true
+          ]
+        }
       },
       selectedItem: {},
       selectedLink: {},
       selectedLinks: [],
-      search: undefined,
+      search: undefined
     }),
     computed: {
       ...sync('app', [
         'devices',
-        'videos',
-      ]),
+        'videos'
+      ])
     },
     beforeMount () {
       Socket.send('device')
@@ -1080,21 +1081,19 @@
       },
       linkPreview: function (item) {
         this.loader = true
-        axios.get(`http://kodizabbix:3333/v2/video/file/${item.videoUUID}`)
-          .then(response => {
-            this.loader = false
-            if (response.status === 200) {
-              window.open(`http://kodizabbix:3333/v2/video/file/${item.videoUUID}`, 's', `width= ${item.video.height > item.video.width ? '576' : '1024'}, height= ${item.video.height > item.video.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
-            }
-          })
-          .catch((error) => {
-            this.loader = false
-            this.alert = {
-              value: true,
-              type: 'error',
-              text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message,
-            }
-          })
+        API.video.fetchFile(item.videoUUID).then(response => {
+          this.loader = false
+          if (response.status === 200) {
+            window.open(response.request.responseURL, 's', `width= ${item.video.height > item.video.width ? '576' : '1024'}, height= ${item.video.height > item.video.width ? '1024' : '576'}, left=150, top=10, resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no`)
+          }
+        }).catch((error) => {
+          this.loader = false
+          this.alert = {
+            value: true,
+            type: 'error',
+            text: error.response.status === 404 ? 'Es konnte kein Video gefunden werden' : error.response.data.message
+          }
+        })
       },
       openPiDashboard: function (ip) {
         window.open('http://' + ip, 's', 'resizable=yes, toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, copyhistory=no')
@@ -1106,6 +1105,12 @@
         return moment(moment.unix(ms / 1000)).format(format)
       },
       actionHandle: function (action, item) {
+        // if (action.action === 'link') {
+        //   API.deviceHistory.fetchByUUID(item.deviceUUID).then(response => {
+        //     const data = response.data
+        //     console.log(data)
+        //   })
+        // }
         this[action.action](item)
       },
       ssh: function (item) {
@@ -1129,24 +1134,25 @@
       sendEdit: function (item) {
         if (this.validate()) {
           this.loader = true
-          axios.put('http://kodizabbix:3333/v2/device',
-                    _.pick(this.selectedItem, 'deviceUUID', 'location', 'type', 'description', 'orientation', 'rotation'),
-          ).then((response) => {
-            this.loader = false
-            Object.assign(item, this.selectedItem)
-            this.alert = {
-              value: true,
-              type: 'success',
-              text: response.data.message,
-            }
-          }).catch((error) => {
-            this.loader = false
-            this.alert = {
-              value: true,
-              type: 'error',
-              text: error.response.data.message,
-            }
-          })
+          const body = _.pick(this.selectedItem, 'deviceUUID', 'location', 'type', 'description', 'orientation', 'rotation')
+          API.device.update(body)
+            .then((response) => {
+              this.loader = false
+              Object.assign(item, this.selectedItem)
+              this.alert = {
+                value: true,
+                type: 'success',
+                text: response.data.message
+              }
+            })
+            .catch((error) => {
+              this.loader = false
+              this.alert = {
+                value: true,
+                type: 'error',
+                text: error.response.data.message
+              }
+            })
         }
       },
       linkEdit: function (item) {
@@ -1161,7 +1167,7 @@
       },
       sendDelete: function () {
         this.loader = true
-        axios.delete(`http://kodizabbix:3333/v2/device/${this.selectedItem.deviceUUID}`)
+        API.device.delete(this.selectedItem.deviceUUID)
           .then((response) => {
             const itemPos = this.devices.map(function (x) { return x.id }).indexOf(this.selectedItem.id)
             this.devices.splice(itemPos, 1)
@@ -1169,7 +1175,7 @@
             this.alert = {
               value: true,
               type: 'success',
-              text: response.data.message,
+              text: response.data.message
             }
           })
           .catch(error => {
@@ -1178,7 +1184,7 @@
             this.alert = {
               value: true,
               type: 'error',
-              text: error.response.data.message,
+              text: error.response.data.message
             }
           })
       },
@@ -1189,31 +1195,34 @@
         this.loader = true
         const uuidList = this.selectedLinks.map(link => link.linkUUID)
         const uuidListString = JSON.stringify(uuidList)
-        axios.delete('http://kodizabbix:3333/v2/link/bulk', { data: { uuidList: uuidListString } }).then((response) => {
-          uuidList.forEach(uuid => {
-            const linkPos = this.selectedItem.link.map(link => link.linkUUID).indexOf(uuid)
-            this.selectedItem.link.splice(linkPos, 1)
+        API.link.deleteBulk(uuidListString)
+          .then((response) => {
+            uuidList.forEach(uuid => {
+              const linkPos = this.selectedItem.link.map(link => link.linkUUID).indexOf(uuid)
+              this.selectedItem.link.splice(linkPos, 1)
+            })
+            this.loader = false
+            this.alert = {
+              value: true,
+              type: 'success',
+              text: response.data.message
+            }
           })
-          this.loader = false
-          this.alert = {
-            value: true,
-            type: 'success',
-            text: response.data.message,
-          }
-        }).catch((error) => {
-          this.loader = false
-          this.alert = {
-            value: true,
-            type: 'error',
-            text: error.response.data.message,
-          }
-        }).finally(() => {
-          this.selectedLinks = []
-        })
+          .catch((error) => {
+            this.loader = false
+            this.alert = {
+              value: true,
+              type: 'error',
+              text: error.response.data.message
+            }
+          })
+          .finally(() => {
+            this.selectedLinks = []
+          })
       },
       sendLinkDelete: function () {
         this.loader = true
-        axios.delete(`http://kodizabbix:3333/v2/link/${this.selectedLink.linkUUID}`)
+        API.link.delete(this.selectedLink.linkUUID)
           .then((response) => {
             const linkPos = this.selectedItem.link.map(link => link.linkUUID).indexOf(this.selectedLink.linkUUID)
             this.selectedItem.link.splice(linkPos, 1)
@@ -1221,7 +1230,7 @@
             this.alert = {
               value: true,
               type: 'success',
-              text: response.data.message,
+              text: response.data.message
             }
           })
           .catch(error => {
@@ -1229,7 +1238,7 @@
             this.alert = {
               value: true,
               type: 'error',
-              text: error.response.data.message,
+              text: error.response.data.message
             }
           })
       },
@@ -1239,8 +1248,8 @@
       resetValidation: function (action) {
         if (action === 'edit') { this.$refs.form[0].resetValidation() }
         this.linkVideos = []
-      },
-    },
+      }
+    }
   }
 </script>
 <style lang="sass">

@@ -76,29 +76,28 @@
       DefaultList: () => import(
         /* webpackChunkName: "default-list" */
         './List'
-      ),
+      )
     },
-
     computed: {
       ...get('user', [
         'dark',
         'gradient',
-        'image',
+        'image'
       ]),
       ...get('app', [
         'items',
-        'version',
+        'version'
       ]),
       ...sync('app', [
         'drawer',
         'drawerImage',
-        'mini',
-        'networkStatus',
+        'mini'
       ]),
+      networkStatus: sync('networkStatus/current'),
       isMobile: function () {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-      },
-    },
+      }
+    }
   }
 </script>
 

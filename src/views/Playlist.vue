@@ -5,7 +5,7 @@
     tag="section"
   >
     <view-intro
-      heading="In Entwicklung"
+      heading="Dieser Bereich ist noch in der Entwicklung"
       style="margin-top: -70px"
     />
 
@@ -13,6 +13,18 @@
       max-height="85vh"
       class="overflow-y-scroll"
     >
+      <v-toolbar flat>
+        <v-text-field
+          v-model="search"
+          prepend-inner-icon="mdi-magnify"
+          class="ml-auto"
+          hide-details
+          label="Suchen.."
+          single-line
+          style="max-width: 150px;"
+        />
+        <v-spacer />
+      </v-toolbar>
       <v-container fluid>
         <v-row>
           <v-col
@@ -24,24 +36,117 @@
               flat
               class="d-flex justify-space-around align-center"
             >
-              <v-card
-                hover
-                height="50%"
-                width="50%"
-                class="d-flex justify-space-around align-center"
-                @click="addPlaylist"
+              <v-dialog
+                transition="dialog-bottom-transition"
+                max-width="800"
               >
-                <v-icon
-                  x-large
-                  color="success"
-                >
-                  mdi-plus-circle-outline
-                </v-icon>
-              </v-card>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-card
+                    v-bind="attrs"
+                    outlined
+                    hover
+                    height="50%"
+                    width="50%"
+                    class="d-flex justify-space-around align-center"
+                    v-on="on"
+                  >
+                    <v-icon
+                      x-large
+                      color="success"
+                    >
+                      mdi-plus-circle-outline
+                    </v-icon>
+                  </v-card>
+                </template>
+                <template v-slot:default="dialog">
+                  <v-card>
+                    <v-overlay
+                      :value="loader"
+                      absolute
+                    >
+                      <v-progress-circular
+                        indeterminate
+                        size="128"
+                      />
+                    </v-overlay>
+                    <v-toolbar
+                      color="green"
+                      dark
+                    >
+                      <v-toolbar-title>
+                        <v-icon>
+                          mdi-folder-plus
+                        </v-icon>
+                        Neue Playlist
+                      </v-toolbar-title>
+                    </v-toolbar>
+                    <v-card-text>
+                      <v-form
+                        ref="form"
+                        v-model="valid"
+                        class="pa-3"
+                        lazy-validation
+                      >
+                        <v-row>
+                          <v-col
+                            cols="12"
+                            md="6"
+                          >
+                            <v-text-field
+                              v-model="newPlaylist.name"
+                              class="pb-1"
+                              type="text"
+                              label="Name"
+                            />
+                          </v-col>
+                          <v-col
+                            cols="12"
+                            md="6"
+                          >
+                            <v-text-field
+                              v-model="newPlaylist.category"
+                              class="pb-1"
+                              type="text"
+                              label="Kategorie"
+                            />
+                          </v-col>
+                        </v-row>
+                        <v-textarea
+                          v-model="newPlaylist.description"
+                          class="pb-1"
+                          type="text"
+                          label="Beschreibung"
+                        />
+                        <v-btn
+                          :disabled="!valid || loader"
+                          :loading="loader"
+                          color="success"
+                          class="mr-4"
+                          @click="addPlaylist(dialog);"
+                        >
+                          Speichern
+                        </v-btn>
+                      </v-form>
+                      <v-divider class="mx-3 mb-2 mt-8" />
+                      <div class="mx-3 mb-2">
+                        PlaylistUUID: {{ newPlaylist.playlistUUID }}
+                      </div>
+                    </v-card-text>
+                    <v-card-actions class="justify-end">
+                      <v-btn
+                        text
+                        @click="dialog.value = false"
+                      >
+                        Schließen
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </template>
+              </v-dialog>
             </v-card>
           </v-col>
           <v-col
-            v-for="playlist in playlists"
+            v-for="playlist in filter"
             :key="playlist.playlistUUID"
             cols="12"
             md="3"
@@ -70,7 +175,7 @@
               <v-card-text class="d-flex justify-space-between black--text">
                 {{ playlist.name }}
                 <v-spacer />
-                {{ playlist.playlistLinks.length }} Videos
+                {{ playlist.videos.length }} Videos
               </v-card-text>
               <v-card-actions
                 class="align-center justify-end"
@@ -106,7 +211,7 @@
                         </v-toolbar-title>
                       </v-toolbar>
                       <v-card-text>
-                        {{ playlist.playlistLinks }}
+                        {{ playlist.videos }}
                       </v-card-text>
                       <v-card-actions class="justify-end">
                         <v-btn
@@ -131,6 +236,7 @@
                 <v-btn
                   style="margin: 0 !important;"
                   icon
+                  @click="removePlaylist(playlist.playlistUUID)"
                 >
                   <v-icon
                     color="error"
@@ -144,155 +250,117 @@
         </v-row>
       </v-container>
     </v-card>
+    <v-snackbar
+      v-model="alert.value"
+      class="v-snackbar--material"
+      timeout="5000"
+      bottom
+      right
+      color="transparent"
+    >
+      <v-alert
+        v-model="alert.value"
+        class="ma-0"
+        :type="alert.type"
+        dismissible
+      >
+        {{ alert.text }}
+      </v-alert>
+    </v-snackbar>
   </v-container>
 </template>
 
 <script>
-  import ViewIntro from '@/components/ViewIntro'
+  import { v4 as uuidv4 } from 'uuid'
+  import Socket from '@/plugins/socket'
+  import axios from 'axios'
+  import { sync } from 'vuex-pathify'
   export default {
     name: 'Playlist',
-    components: { ViewIntro },
     data: () => ({
-      playlists: [
-        {
-          playlistUUID: 'fc24ed1b-1396-42e6-b527-80d17af33bdc',
-          name: 'Test Playlist 1',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque laoreet neque id nulla rutrum, at posuere erat venenatis. Suspendisse potenti. Duis nisl arcu, dapibus id sodales et, porttitor non mauris. Integer ultricies ante nunc, id malesuada odio lobortis porta. Pellentesque quis euismod nulla, et consectetur enim. Phasellus lectus velit, interdum tempor vestibulum imperdiet, ornare sed urna. Quisque ac purus mattis, consectetur lectus et, interdum lacus. Maecenas eu turpis tortor. Aenean sed ante nisl. Cras est quam, imperdiet ac rutrum sed, feugiat eu dui. Donec rutrum libero tortor, sed tempus tellus elementum vel. Fusce ullamcorper turpis id tristique consectetur. Nulla tempus nec dolor eu iaculis.',
-          playlistLinks: [
-            {
-              videoUUID: 'e3d08d01-3c4b-409f-99a1-d646425957f0',
-              name: 'Hans1', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-            {
-              videoUUID: '0bae58ab-e303-435e-8719-af22b9b5cff5',
-              name: 'Hans2', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-            {
-              videoUUID: 'aeda186d-8b6b-41fc-9f65-df4156ca2bc1',
-              name: 'Hans3', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-          ],
-        },
-        {
-          playlistUUID: '9cd94ca1-1ec8-496c-8f71-0f3901a5589d',
-          name: 'Test Playlist 2',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque laoreet neque id nulla rutrum, at posuere erat venenatis. Suspendisse potenti. Duis nisl arcu, dapibus id sodales et, porttitor non mauris. Integer ultricies ante nunc, id malesuada odio lobortis porta. Pellentesque quis euismod nulla, et consectetur enim. Phasellus lectus velit, interdum tempor vestibulum imperdiet, ornare sed urna. Quisque ac purus mattis, consectetur lectus et, interdum lacus. Maecenas eu turpis tortor. Aenean sed ante nisl. Cras est quam, imperdiet ac rutrum sed, feugiat eu dui. Donec rutrum libero tortor, sed tempus tellus elementum vel. Fusce ullamcorper turpis id tristique consectetur. Nulla tempus nec dolor eu iaculis.',
-          playlistLinks: [
-            {
-              videoUUID: 'e3d08d01-3c4b-409f-99a1-d646425957f0',
-              name: 'Hans1', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-            {
-              videoUUID: '0bae58ab-e303-435e-8719-af22b9b5cff5',
-              name: 'Hans2', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-            {
-              videoUUID: 'aeda186d-8b6b-41fc-9f65-df4156ca2bc1',
-              name: 'Hans3', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-          ],
-        },
-        {
-          playlistUUID: '02cbcdbc-ecf2-4ff6-ab44-30b57aa33073',
-          name: 'Test Playlist 3',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque laoreet neque id nulla rutrum, at posuere erat venenatis. Suspendisse potenti. Duis nisl arcu, dapibus id sodales et, porttitor non mauris. Integer ultricies ante nunc, id malesuada odio lobortis porta. Pellentesque quis euismod nulla, et consectetur enim. Phasellus lectus velit, interdum tempor vestibulum imperdiet, ornare sed urna. Quisque ac purus mattis, consectetur lectus et, interdum lacus. Maecenas eu turpis tortor. Aenean sed ante nisl. Cras est quam, imperdiet ac rutrum sed, feugiat eu dui. Donec rutrum libero tortor, sed tempus tellus elementum vel. Fusce ullamcorper turpis id tristique consectetur. Nulla tempus nec dolor eu iaculis.',
-          playlistLinks: [
-            {
-              videoUUID: 'e3d08d01-3c4b-409f-99a1-d646425957f0',
-              name: 'Hans1', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-            {
-              videoUUID: '0bae58ab-e303-435e-8719-af22b9b5cff5',
-              name: 'Hans2', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-            {
-              videoUUID: 'aeda186d-8b6b-41fc-9f65-df4156ca2bc1',
-              name: 'Hans3', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-          ],
-        },
-        {
-          playlistUUID: '02cbcdbc-ecf2-4ff6-ab44-30b57aa33073',
-          name: 'Test Playlist 4',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque laoreet neque id nulla rutrum, at posuere erat venenatis. Suspendisse potenti. Duis nisl arcu, dapibus id sodales et, porttitor non mauris. Integer ultricies ante nunc, id malesuada odio lobortis porta. Pellentesque quis euismod nulla, et consectetur enim. Phasellus lectus velit, interdum tempor vestibulum imperdiet, ornare sed urna. Quisque ac purus mattis, consectetur lectus et, interdum lacus. Maecenas eu turpis tortor. Aenean sed ante nisl. Cras est quam, imperdiet ac rutrum sed, feugiat eu dui. Donec rutrum libero tortor, sed tempus tellus elementum vel. Fusce ullamcorper turpis id tristique consectetur. Nulla tempus nec dolor eu iaculis.',
-          playlistLinks: [
-            {
-              videoUUID: 'e3d08d01-3c4b-409f-99a1-d646425957f0',
-              name: 'Hans1', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-            {
-              videoUUID: '0bae58ab-e303-435e-8719-af22b9b5cff5',
-              name: 'Hans2', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-            {
-              videoUUID: 'aeda186d-8b6b-41fc-9f65-df4156ca2bc1',
-              name: 'Hans3', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-            {
-              videoUUID: '84a5b512-d085-4194-8c6e-96696cfc206e',
-              name: 'Hans4', // for dev purpose
-              start: '1622498400000',
-              end: '1640991540000',
-              active: 1,
-              position: 999,
-            },
-          ],
-        },
-      ],
-    }),
-    methods: {
-      addPlaylist (e) {
-        this.$store.dispatch('app/updatePlaylists', this.playlists)
-        console.log(e)
+      search: '',
+      loader: false,
+      alert: {
+        value: false,
+        type: 'error',
+        text: 'Oopsie.. :('
       },
+      newPlaylist: {
+        playlistUUID: null,
+        name: null,
+        category: null,
+        video: []
+      },
+      valid: true
+    }),
+    computed: {
+      ...sync('app', [
+        'playlists'
+      ]),
+      filter () {
+        return this.playlists.filter(item => {
+          return item.name.toLowerCase().startsWith(this.search.toLowerCase())
+        })
+      }
     },
+    beforeMount () {
+      Socket.send('playlist')
+      this.newPlaylist.playlistUUID = uuidv4()
+    },
+    methods: {
+      addPlaylist (dialog) {
+        this.loader = true
+        const postData = new FormData()
+        postData.append('playlistUUID', this.newPlaylist.playlistUUID)
+        postData.append('name', this.newPlaylist.name)
+        postData.append('category', this.newPlaylist.category)
+        postData.append('description', this.newPlaylist.description)
+        axios.post('http://kodizabbix:3333/v2/playlist', postData).then(response => {
+          this.loader = false
+          this.alert = {
+            value: true,
+            type: 'success',
+            text: response.data.message
+          }
+          Socket.send('playlist')
+          dialog.value = false
+          this.newPlaylist = {
+            playlistUUID: uuidv4(),
+            name: null,
+            category: null,
+            video: []
+          }
+        }).catch(error => {
+          this.loader = false
+          this.alert = {
+            value: true,
+            type: 'error',
+            text: error.response.data.message
+          }
+        })
+      },
+      removePlaylist (uuid) {
+        this.loader = true
+        axios.delete(`http://kodizabbix:3333/v2/playlist/${uuid}`)
+          .then((response) => {
+            this.playlists = this.playlists.filter(playlist => { return playlist.playlistUUID !== uuid })
+            this.loader = false
+            this.alert = {
+              value: true,
+              type: 'success',
+              text: response.data.message
+            }
+          })
+          .catch(error => {
+            this.loader = false
+            console.log(error)
+            this.alert = {
+              value: true,
+              type: 'error',
+              text: error.response.data.message
+            }
+          })
+      }
+    }
   }
 </script>
