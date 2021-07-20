@@ -585,6 +585,7 @@
           // console.log(this.deviceSelected, this.videoSelected)
         }
         if (this.tab === this.tabs.length - 1) {
+          if (this.dates.length !== 2) return alert('Bitte wählen Sie einen gültigen Datumsbereich aus.')
           const postData = new FormData()
           const postVideos = []
           const postDevices = []

@@ -762,13 +762,17 @@
                       </v-col>
                     </v-row>
                   </template>
-                  <v-list
-                    v-for="playlist in playlists"
-                    :key="playlist.playlistUUID"
-                  >
-                    <v-list-item>
+                  <v-list>
+                    <v-list-item
+                      v-for="playlist in playlists.items"
+                      :key="playlist.playlistUUID"
+                    >
                       <v-list-item-content>
-                        {{ playlist.name }}
+                        <v-btn
+                          tile
+                        >
+                          {{ playlist.name }}
+                        </v-btn>
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
@@ -974,15 +978,13 @@
       videos: sync('videos'),
       playlists: sync('playlists')
     },
-    mounted () {
-      window.videos = this.videos
-    },
     beforeMount () {
-      // Socket.send('video')
-      Socket.send('link')
+      this.loadVideos()
+      this.loadPlaylists()
     },
     methods: {
       loadVideos: call('videos/load'),
+      loadPlaylists: call('playlists/load'),
       updateVideo: call('videos/update'),
       deleteVideo: call('videos/delete'),
       insertVideo: call('videos/insert'),

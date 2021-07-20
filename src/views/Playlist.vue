@@ -175,8 +175,7 @@
               <v-card-text class="d-flex justify-space-between black--text">
                 {{ playlist.name }}
                 <v-spacer />
-                xxx Videos
-<!--                {{ playlist.videos.length }}-->
+                {{ playlist.videos.length }}
               </v-card-text>
               <v-card-actions
                 class="align-center justify-end"
