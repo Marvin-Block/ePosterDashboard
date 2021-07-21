@@ -8,8 +8,7 @@
   /* eslint-disable no-prototype-builtins */
   import '@/styles/overrides.sass'
   import { call, sync } from 'vuex-pathify'
-  import Socket from '@/plugins/socket'
-
+  let videoClient, deviceClient
   export default {
     name: 'App',
     metaInfo: {
@@ -37,30 +36,84 @@
       ]),
       networkStatus: sync('networkStatus/current')
     },
-    beforeDestroy () {
-      Socket.$off('message', this.handleMessage)
+    mounted () {
+      videoClient = this.$sse.create({
+        url: 'http://localhost:3333/sse/video',
+        format: 'json',
+        polyfill: true
+      })
+      videoClient.on('message', (message) => {
+        console.warn('Message without event', message)
+      })
+      videoClient.on('data', (data) => {
+        this.addVideos(data)
+      })
+      videoClient.on('update', (data) => {
+        this.replaceVideo(data)
+      })
+      videoClient.on('delete', (data) => {
+        this.deleteVideo(data)
+      })
+      videoClient.on('add', (data) => {
+        this.insertVideo(data)
+      })
+      videoClient.connect()
+        .then(sse => {
+          console.log('[i] Connected to /sse/video')
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+      deviceClient = this.$sse.create({
+        url: 'http://localhost:3333/sse/device',
+        format: 'json',
+        polyfill: true
+      })
+      deviceClient.on('message', (message) => {
+        console.warn('Message without event', message)
+      })
+      deviceClient.on('data', (data) => {
+        this.addDevices(data)
+      })
+      deviceClient.on('update', (data) => {
+        this.replaceDevice(data)
+      })
+      deviceClient.on('delete', (data) => {
+        this.deleteDevice(data)
+      })
+      deviceClient.on('add', (data) => {
+        this.insertDevice(data)
+      })
+      deviceClient.connect()
+        .then(sse => {
+          console.log('[i] Connected to /sse/device')
+        })
+        .catch((err) => {
+          console.error(err)
+        })
     },
-    created: function () {
-      Socket.$on('message', this.handleMessage)
+    beforeDestroy () {
+      videoClient.disconnect()
+      deviceClient.disconnect()
     },
     beforeMount () {
       this.loadNetworkStatus()
-      this.loadVideos()
       this.loadDevices()
+      // this.loadVideos()
       // this.loadLinks()
     },
     methods: {
-      loadVideos: call('videos/load'),
-      loadDevices: call('devices/load'),
+      addVideos: call('videos/add'),
+      replaceVideo: call('videos/replace'),
+      deleteVideo: call('videos/delete'),
+      insertVideo: call('videos/insert'),
+      addDevices: call('devices/add'),
+      replaceDevice: call('devices/replace'),
+      deleteDevice: call('devices/delete'),
+      insertDevice: call('devices/insert'),
       loadLinks: call('links/load'),
       loadPlaylist: call('playlist/load'),
-      loadNetworkStatus: call('networkStatus/load'),
-      handleMessage (msg) {
-        const content = JSON.parse(msg.data)
-        this[content.type + 's'] = content.rows
-        // this[content.type + 's'] = Object.freeze(this[content.type + 's'].map(entry => { return { ...entry } }))
-        // todo: move socket handle to components
-      }
+      loadNetworkStatus: call('networkStatus/load')
     }
   }
 </script>

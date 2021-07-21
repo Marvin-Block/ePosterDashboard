@@ -825,6 +825,7 @@
         MaterialCard
       },
     data: () => ({
+      messages: [],
       alert: {
         value: false,
         type: 'error',
@@ -979,18 +980,13 @@
       playlists: sync('playlists')
     },
     beforeMount () {
-      this.loadVideos()
+      // this.loadVideos()
       this.loadPlaylists()
     },
     methods: {
-      loadVideos: call('videos/load'),
       loadPlaylists: call('playlists/load'),
-      updateVideo: call('videos/update'),
-      deleteVideo: call('videos/delete'),
-      insertVideo: call('videos/insert'),
-      replaceVideo: call('videos/replace'),
       addPlaylist () {
-        console.log(this.selectedItem)
+        // console.log(this.selectedItem)
         this.selectedItem = {}
       },
       show (e, item) {
@@ -1074,7 +1070,6 @@
           const body = _.pick(this.selectedItem, 'videoUUID', 'name', 'category', 'calendarWeek', 'orientation_V2', 'rotation')
           API.video.update(body)
             .then((response) => {
-              this.replaceVideo(this.selectedItem)
               this.loadingButton = false
               this.alert = {
                 value: true,
@@ -1091,7 +1086,6 @@
               }
             })
             .finally(() => {
-              Socket.send('video')
               this.selectedItem = {}
             })
         }
@@ -1102,7 +1096,6 @@
       sendDelete: function () {
         API.video.delete(this.selectedItem.videoUUID)
           .then((response) => {
-            this.deleteVideo(this.selectedItem.id)
             this.alert = {
               value: true,
               type: 'success',
@@ -1198,7 +1191,6 @@
               }
             })
             .finally(() => {
-              this.loadVideos()
               this.resetUploadForm()
             })
         }

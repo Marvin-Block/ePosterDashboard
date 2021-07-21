@@ -25,6 +25,7 @@
     "vue-i18n": "^8.18.2",
     "vue-meta": "^2.3.3",
     "vue-router": "^3.1.6",
+    "vue-sse": "^2.2.0",
     "vue-world-map": "^0.1.1",
     "vuetify": "^2.4.11",
     "vuex": "^3.4.0",

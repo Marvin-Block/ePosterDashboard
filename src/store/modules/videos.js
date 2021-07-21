@@ -22,6 +22,11 @@ const actions = {
       })
       .catch(err => commit('status', err.message))
   },
+  add ({ commit }, items) {
+    const data = state.items.map(item => Object.assign({}, item))
+    data.push(...items)
+    commit('items', data)
+  },
   replace ({ commit }, item) {
     const data = state.items.map(item => Object.assign({}, item))
     const itemPos = data.map(video => video.id).indexOf(item.id)
@@ -32,8 +37,8 @@ const actions = {
     const data = items.map(item => Object.assign({}, item))
     commit('items', data)
   },
-  delete ({ commit }, id) {
-    const data = state.items.map(item => Object.assign({}, item)).filter(video => video.id !== id)
+  delete ({ commit }, item) {
+    const data = state.items.map(item => Object.assign({}, item)).filter(video => video.id !== item.id)
     commit('items', data)
   },
   insert ({ commit }, newItem) {

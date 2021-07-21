@@ -10,8 +10,8 @@ const emitter = new Vue({
       } else {
        // a
       }
-    },
-  },
+    }
+  }
 })
 
 socket.onmessage = function (msg) {

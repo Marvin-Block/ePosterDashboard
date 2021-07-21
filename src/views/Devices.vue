@@ -230,7 +230,7 @@
                           :loading="loadingButton"
                           color="success"
                           class="mr-4"
-                          @click="sendEdit(item)"
+                          @click="sendEdit(item); dialog = false"
                         >
                           Speichern
                         </v-btn>
@@ -1058,14 +1058,6 @@
       //   'videos'
       // ])
     },
-    beforeMount () {
-      this.loadVideos()
-      this.loadDevices()
-      // this.loadLinks()
-      // Socket.send('device')
-      // Socket.send('video')
-      // Socket.send('link')
-    },
     methods: {
       loadVideos: call('videos/load'),
       loadDevices: call('devices/load'),
@@ -1151,7 +1143,6 @@
           API.device.update(body)
             .then((response) => {
               this.loader = false
-              this.replaceDevice(this.selectedItem)
               this.alert = {
                 value: true,
                 type: 'success',
@@ -1182,7 +1173,6 @@
         this.loader = true
         API.device.delete(this.selectedItem.deviceUUID)
           .then((response) => {
-            this.deleteDevice(this.selectedItem.deviceUUID)
             this.loader = false
             this.alert = {
               value: true,
@@ -1214,7 +1204,6 @@
             //   const linkPos = this.selectedItem.link.map(link => link.linkUUID).indexOf(uuid)
             //   this.selectedItem.link.splice(linkPos, 1)
             // })
-            this.deleteBulkLink(uuidList)
             this.loader = false
             this.alert = {
               value: true,
